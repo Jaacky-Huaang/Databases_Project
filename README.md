@@ -4,14 +4,14 @@
  To build an online Air Ticket Reservation System
 
 ## Getting Started
-### Prerequisites
+### Packages
 * flask
 * flask-wtf
 * flask-bcrypt
 
 ### Start the server
 1. Create the database
-2. Run the python file run.py
+2. Run the python file ``python3 run.py``
 
 ## Resources
 ### A Simple Flask Tutorial by Corey Schafer
