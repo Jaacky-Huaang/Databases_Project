@@ -1,8 +1,13 @@
-from flask import Flask, render_template, request, url_for, redirect, session
+# Import Flask Library
+from flask import Flask
 import mysql.connector
+
+# Import our python files
+# import forms
 
 # Initialize the app from Flask
 app = Flask(__name__)
+app.config['SECRET_KEY'] = '24c34e0557b4cddff58f81952034d281'
 
 # Configure MySQL
 conn = mysql.connector.connect(host='localhost',
@@ -10,9 +15,4 @@ conn = mysql.connector.connect(host='localhost',
                                password='',
                                database='ticket_reservation')
 
-# Define a route to hello function
-@app.route('/')
-def hello():
-    if 'username' in session:
-        return redirect(url_for('home'))
-    return render_template('index.html')
+from reservation import routes
