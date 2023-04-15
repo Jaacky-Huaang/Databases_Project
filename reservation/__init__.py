@@ -1,5 +1,6 @@
 # Import Flask Library
 from flask import Flask
+from flask_bcrypt import Bcrypt
 import mysql.connector
 
 # Import our python files
@@ -14,5 +15,8 @@ conn = mysql.connector.connect(host='localhost',
                                user='root',
                                password='',
                                database='ticket_reservation')
+
+# Initialize Bcrypt for password hashing
+bcrypt = Bcrypt(app)
 
 from reservation import routes

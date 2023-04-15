@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1>Select Your Status</h1>
+    <p>Choose the type of user you are to Login as.</p>
+    <h2>Customer</h2>
+    <a href="{{ url_for('login_customer') }}" class="btn btn-primary">Login</a>
+    <h2>Agent</h2>
+    <a href="{{ url_for('login_agent') }}" class="btn btn-primary">Login</a>
+    <h2>Airline Staff</h2>
+    <a href="{{ url_for('login_airline_staff') }}" class="btn btn-primary">Login</a>
+{% endblock %}

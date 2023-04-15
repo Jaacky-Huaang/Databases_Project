@@ -35,3 +35,6 @@
 *Last Update: 2023.4.15*
 
 ![File Structure](./img/file_structure.png)
+
+## Notes
+* Change the password to varchar(60) to handle the hash password
