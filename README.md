@@ -26,15 +26,40 @@
 * [wtforms](https://wtforms.readthedocs.io/en/3.0.x/)
 * [bootstrap](https://getbootstrap.com/docs/5.3/getting-started/introduction/)
 
+### Bootstrap example code
+* https://getbootstrap.com/docs/5.2/examples/
+
 ## Webui Design Inspirations
 * https://wwws.airfrance.com.cn/
 * https://www.cathaypacific.com/cx/en_HK.html
 * https://www.skyscanner.com.hk/?&associateID=SEM_GGF_19370_00062
 
 ## File Structure
-*Last Update: 2023.4.15*
-
-![File Structure](./img/file_structure.png)
+*Last Update: 2023.4.16*
+```
+├── Project_3.pdf
+├── README.md
+├── Solution_ProjectPart2_create_tables_Fall_2021_v1.sql
+├── reservation
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   ├── __init__.cpython-38.pyc
+│   │   ├── forms.cpython-38.pyc
+│   │   └── routes.cpython-38.pyc
+│   ├── forms.py
+│   ├── routes.py
+│   ├── static
+│   │   └── main.css
+│   └── templates
+│       ├── about.html
+│       ├── index.html
+│       ├── layout.html
+│       ├── login.html
+│       ├── login_customer.html
+│       ├── register.html
+│       └── register_customer.html
+└── run.py
+```
 
 ## Notes
 * Change the password to varchar(60) to handle the hash password
