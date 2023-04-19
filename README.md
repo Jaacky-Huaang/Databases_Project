@@ -99,7 +99,10 @@ test1
 - [ ] view all booking agents
 - [ ] view frequent customers
 - [ ] view tickets reports
-- [ ] 
+- [ ] comparison of revenue
+- [ ] top destination
+- [ ] grand permissions(only for "Admin") to other stuffs
+- [ ] add new booking agent(only for "Admin") to its airline
 
 ### permission
 #### admin
