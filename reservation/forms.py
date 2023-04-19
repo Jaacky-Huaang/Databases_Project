@@ -50,3 +50,19 @@ class CustomerLoginForm(FlaskForm):
     # remember = BooleanField('Remember Me')
 
     submit = SubmitField('Login')
+
+
+class BookingAgentLoginForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email(), Length(min=1, max=50)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=1, max=50)])
+    # remember = BooleanField('Remember Me')
+
+    submit = SubmitField('Login')
+
+
+class StaffLoginForm(FlaskForm):
+    user_name = StringField('User Name', validators=[DataRequired(), Length(min=1, max=50)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=1, max=50)])
+    # remember = BooleanField('Remember Me')
+
+    submit = SubmitField('Login')

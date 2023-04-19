@@ -52,19 +52,74 @@ def register_customer():
             conn.commit()
             flash(f'Account created for {form.name.data}!', 'success')
             cursor.close()
+
             return redirect(url_for('login_customer'))
 
-    return render_template('register_customer.html', title='Register', form=form)
+    return render_template('register_customer.html', title='Register as Customer', form=form)
 
 
 @app.route('/register_agent', methods=['GET', 'POST'])
 def register_agent():
-    return render_template('register_agent.html')
+    form = forms.BookingAgentRegistrationForm()
+    if form.validate_on_submit():
+        email = form.email.data
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        booking_agent_id = form.booking_agent_id.data
+
+        cursor = conn.cursor()
+        query_find_email = "SELECT email FROM booking_agent WHERE email = '{}'"
+        cursor.execute(query_find_email.format(email))
+        dup_emails = cursor.fetchall()
+        query_find_agent_id = "SELECT booking_agent_id FROM booking_agent WHERE booking_agent_id = '{}'"
+        cursor.execute(query_find_agent_id.format(booking_agent_id))
+        dup_agent_ids = cursor.fetchall()
+        if len(dup_emails) + len(dup_agent_ids) > 0:
+            if len(dup_emails) > 0:
+                flash('Email already exists!', 'danger')
+                cursor.close()
+            if len(dup_agent_ids) > 0:
+                flash('Agent ID already exists!', 'danger')
+                cursor.close()
+        else:
+            query = "INSERT INTO booking_agent VALUES ('{}', '{}', '{}')"
+            cursor.execute(query.format(email, hashed_password, booking_agent_id))
+            conn.commit()
+            flash(f'Account created for {form.email.data}!', 'success')
+            cursor.close()
+
+            return redirect(url_for('login_agent'))
+
+    return render_template('register_agent.html', title='Register as Agent', form=form)
 
 
 @app.route('/register_airline_staff', methods=['GET', 'POST'])
 def register_airline_staff():
-    return render_template('register_airline_staff.html')
+    form = forms.StaffRegistrationForm()
+    if form.validate_on_submit():
+        user_name = form.user_name.data
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        first_name = form.first_name.data
+        last_name = form.last_name.data
+        date_of_birth = form.date_of_birth.data
+        airline_name = form.airline_name.data
+
+        cursor = conn.cursor()
+        query_find_user_name = "SELECT user_name FROM airline_staff WHERE user_name = '{}'"
+        cursor.execute(query_find_user_name.format(user_name))
+        dup_user_names = cursor.fetchall()
+        if len(dup_user_names) > 0:
+            flash('User name already exists!', 'danger')
+            cursor.close()
+        else:
+            query = "INSERT INTO airline_staff VALUES ('{}', '{}', '{}', '{}', '{}', '{}')"
+            cursor.execute(query.format(user_name, hashed_password, first_name, last_name, date_of_birth, airline_name))
+            conn.commit()
+            flash(f'Account created for {form.user_name.data}!', 'success')
+            cursor.close()
+
+            return redirect(url_for('login_airline_staff'))
+
+    return render_template('register_airline_staff.html', title='Register as Airline Staff', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -86,21 +141,61 @@ def login_customer():
         cursor.close()
 
         if data and bcrypt.check_password_hash(data[2], password):
+            # add the customer email to the session
             session['email'] = email
+            # add the user status to the session
+            session['status'] = 'customer'
+
             return redirect(url_for('home'))  # Change later
         elif not data:  # handle the case when the email does not exist
             flash('Email does not exist!', 'danger')
         else:  # handle the case when the password is wrong
             flash('Wrong password. Please enter the password again.', 'danger')
 
-    return render_template('login_customer.html', title='Login', form=form)
+    return render_template('login_customer.html', title='Login as Customer', form=form)
 
 
 @app.route('/login_agent', methods=['GET', 'POST'])
 def login_agent():
-    return render_template('login_agent.html')
+    form = forms.BookingAgentLoginForm()
+    if form.validate_on_submit():
+        email = form.email.data
+        password = form.password.data
+
+        cursor = conn.cursor()
+        query = "SELECT * FROM booking_agent WHERE email = '{}'"
+        cursor.execute(query.format(email))
+        data = cursor.fetchone()
+        cursor.close()
+
+        if data and bcrypt.check_password_hash(data[1], password):
+            # add the agent email to the session
+            session['email'] = email
+            # add the user status to the session
+            session['status'] = 'agent'
+
+            return redirect(url_for('home'))  # Change later
+    return render_template('login_agent.html', title='Login as Agent', form=form)
 
 
 @app.route('/login_airline_staff', methods=['GET', 'POST'])
 def login_airline_staff():
-    return render_template('login_airline_staff.html')
+    form = forms.StaffLoginForm()
+    if form.validate_on_submit():
+        user_name = form.user_name.data
+        password = form.password.data
+
+        cursor = conn.cursor()
+        query = "SELECT * FROM airline_staff WHERE user_name = '{}'"
+        cursor.execute(query.format(user_name))
+        data = cursor.fetchone()
+        cursor.close()
+
+        if data and bcrypt.check_password_hash(data[1], password):
+            # add the staff user name to the session
+            session['user_name'] = user_name
+            # add the user status to the session
+            session['status'] = 'airline_staff'
+
+            return redirect(url_for('home'))  # also change here later
+    return render_template('login_airline_staff.html', title='Login as Airline Staff', form=form)
