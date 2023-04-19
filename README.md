@@ -74,17 +74,36 @@ test1
 - [ ] flights status flight number, arrival/departure date
 
 ### login/register
-- [ ] login
-- [ ] register
+- [x] login
+- [x] register
 
 ### customer
 - [ ] purchased flight info (specify optionally) 
-- [ ] purchase ticket
+- [ ] purchase ticket (as long as there is room (capacity and ticket))
 - [ ] search for flight
 - [ ] track spending
 - [ ] logout
 ### agent
-- [ ] 
+- [ ] purchased flight info (specify optionally) 
+- [ ] purchase ticket (only for its airline)
+- [ ] search for flight
+- [ ] commission spending
+- [ ] top customer
+- [ ] logout
 ### airline stuff
-
+- [ ] view flights
+- [ ] create flights
+- [ ] change status of flight
+- [ ] add airplane
+- [ ] add airport
+- [ ] view all booking agents
+- [ ] view frequent customers
+- [ ] view tickets reports
 - [ ] 
+
+### permission
+#### admin
+- [ ] add new airplane to its airline
+- [ ] add new airplanes and new flight
+#### operator
+- [ ] set in progress flight's status
