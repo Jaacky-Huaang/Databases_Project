@@ -61,5 +61,30 @@
 └── run.py
 ```
 
+## testing merge
+test1
+
 ## Notes
 * Change the password to varchar(60) to handle the hash password
+
+
+## Check List
+### public search
+- [] upcoming flight, city/airport, date
+- [] flights status flight number, arrival/departure date
+
+### login/register
+- [] login
+- [] register
+
+### customer
+- [] purchased flight info (specify optionally) 
+- [] purchase ticket
+- [] search for flight
+- [] track spending
+- [] logout
+### agent
+- [] 
+### airline stuff
+
+- [] 
