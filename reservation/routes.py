@@ -2,12 +2,16 @@ from flask import render_template, request, url_for, redirect, session, flash
 from reservation import app, conn, bcrypt
 import reservation.forms as forms
 
-@app.route('/')
-@app.route('/home')
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/home', methods=['GET', 'POST'])
 def home():
     if 'username' in session:
         return redirect(url_for('home'))
-    return render_template('index.html')
+
+    # public search
+    form_upcoming_flight = forms.PublicSearchUpcomingFlightForm()
+
+    return render_template('index.html', form_upcoming_flight=form_upcoming_flight)
 
 @app.route('/about')
 def about():

@@ -66,3 +66,12 @@ class StaffLoginForm(FlaskForm):
     # remember = BooleanField('Remember Me')
 
     submit = SubmitField('Login')
+
+
+class PublicSearchUpcomingFlightForm(FlaskForm):
+    departure_place = StringField('Departure Airport/City', validators=[DataRequired(), Length(min=1, max=50)])
+    arrival_place = StringField('Arrival Airport/City', validators=[DataRequired(), Length(min=1, max=50)])
+    departure_time = DateField('Departure Time', validators=[DataRequired()])
+    arrival_time = DateField('Arrival Time', validators=[DataRequired()])
+
+    submit = SubmitField('Search')
