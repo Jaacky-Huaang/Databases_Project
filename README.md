@@ -70,21 +70,21 @@ test1
 
 ## Check List
 ### public search
-- [] upcoming flight, city/airport, date
-- [] flights status flight number, arrival/departure date
+- [ ] upcoming flight, city/airport, date
+- [ ] flights status flight number, arrival/departure date
 
 ### login/register
-- [] login
-- [] register
+- [ ] login
+- [ ] register
 
 ### customer
-- [] purchased flight info (specify optionally) 
-- [] purchase ticket
-- [] search for flight
-- [] track spending
-- [] logout
+- [ ] purchased flight info (specify optionally) 
+- [ ] purchase ticket
+- [ ] search for flight
+- [ ] track spending
+- [ ] logout
 ### agent
-- [] 
+- [ ] 
 ### airline stuff
 
-- [] 
+- [ ] 
