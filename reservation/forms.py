@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, DateField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, DateField, DateTimeField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, NumberRange
 
 
@@ -69,9 +69,11 @@ class StaffLoginForm(FlaskForm):
 
 
 class PublicSearchUpcomingFlightForm(FlaskForm):
-    departure_place = StringField('Departure Airport/City', validators=[DataRequired(), Length(min=1, max=50)])
-    arrival_place = StringField('Arrival Airport/City', validators=[DataRequired(), Length(min=1, max=50)])
-    departure_time = DateField('Departure Time', validators=[DataRequired()])
-    arrival_time = DateField('Arrival Time', validators=[DataRequired()])
+    departure_place = StringField('Departure Airport/City', validators=[])
+    arrival_place = StringField('Arrival Airport/City', validators=[])
+
+    # Maybe DateTimeField?
+    departure_time = StringField('Departure Time', validators=[])
+    arrival_time = StringField('Arrival Time', validators=[])
 
     submit = SubmitField('Search')
