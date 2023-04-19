@@ -1,4 +1,23 @@
 {% extends "layout.html" %}
 {% block content %}
     <h1>Home Page</h1>
+    <form class="row g-3" method="POST" action="">
+        {{ form.hidden_tag() }}
+        <legend class="border-bottom mb-4">Search for upcoming flights</legend>
+        <div class="form-group">
+
+        </div>
+    </form>
+
+
+
 {% endblock content %}
+
+{% block extra_content %}
+    <div class="bg-light p-5 rounded">
+        <div class="col-sm-8 mx-auto">
+            <h1>Extra page</h1>
+        </div>
+    </div>
+
+{% endblock extra_content %}
