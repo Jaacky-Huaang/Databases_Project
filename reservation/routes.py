@@ -19,7 +19,7 @@ def home():
         arrival_time = form_upcoming_flight.arrival_time.data
 
         cursor = conn.cursor()
-        query_upcoming_flight = f'SELECT * FROM flight F LEFF JOIN airport A1 ON F.departure_airport = A1.airport_name LEFT JOIN airport A2 ON F.arrival_airport = A2.airport_name WHERE (A1.airport_name LIKE "%{departure_place}%" OR A1.airport_city LIKE "%{departure_place}%") AND (A2.airport_name LIKE "%{arrival_place}%" OR A2.airport_city LIKE "%{arrival_place}%") AND F.departure_time LIKE "%{departure_time}%" AND F.arrival_time LIKE "%{arrival_time}%"'
+        query_upcoming_flight = f'SELECT * FROM flight F LEFT JOIN airport A1 ON F.departure_airport = A1.airport_name LEFT JOIN airport A2 ON F.arrival_airport = A2.airport_name WHERE (A1.airport_name LIKE "%{departure_place}%" OR A1.airport_city LIKE "%{departure_place}%") AND (A2.airport_name LIKE "%{arrival_place}%" OR A2.airport_city LIKE "%{arrival_place}%") AND F.departure_time LIKE "%{departure_time}%" AND F.arrival_time LIKE "%{arrival_time}%"'
         cursor.execute(query_upcoming_flight)
         search_result = cursor.fetchall()
         cursor.close()
