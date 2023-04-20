@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div>
+        <a class="text-decoration-none" href="{{ url_for('home') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+            </svg>
+            <div class="d-inline">Back to search</div>
+        </a>
+        <div class="space"></div>
+        <legend class="border-bottom mb-4">Upcoming Flights</legend>
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Airline Name</th>
+                    <th scope="col">Flight Number</th>
+                    <th scope="col">Departure Airport</th>
+                    <th scope="col">Departure Time</th>
+                    <th scope="col">Arrival Airport</th>
+                    <th scope="col">Arrival Time</th>
+                    <th scope="col">Ticket Price</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+{% endblock content %}

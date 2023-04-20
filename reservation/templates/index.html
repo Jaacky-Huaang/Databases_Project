@@ -73,9 +73,73 @@
 
 {% block extra_content %}
     <div class="bg-light p-5 rounded">
-        <div class="col-sm-8 mx-auto">
-            <h1>Extra page</h1>
-        </div>
-    </div>
+        <div class="col-sm-10 mx-auto">
+            <div>
+                <legend class="border-bottom mb-4">Flight Status</legend>
+
+                <form class="row g-3" method="POST" action="">
+                    <div class="col-md-3">
+                        {{ form_flight_status.flight_number.label(class="form-control-label") }}
+                        {% if form_flight_status.flight_number.errors %}
+                            {{ form_flight_status.flight_number(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form_flight_status.flight_number.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form_flight_status.flight_number(class="form-control") }}
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-3">
+                        {{ form_flight_status.departure_time.label(class="form-control-label") }}
+                        {% if form_flight_status.departure_time.errors %}
+                            {{ form_flight_status.departure_time(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form_flight_status.departure_time.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form_flight_status.departure_time(class="form-control") }}
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-3">
+                        {{ form_flight_status.arrival_time.label(class="form-control-label") }}
+                        {% if form_flight_status.arrival_time.errors %}
+                            {{ form_flight_status.arrival_time(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form_flight_status.arrival_time.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form_flight_status.arrival_time(class="form-control") }}
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label"></label>
+                        <div>
+                            <button type="submit" class="btn btn-secondary flex-fill">Check Flight Status</button>
+                        </div>
+                    </div>
+                </form>
+                <div class="space"></div>
+
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Flight Number</th>
+                            <th scope="col">Departure Time</th>
+                            <th scope="col">Arrival Time</th>
+                            <th scope="col">Flight Status</th>
+                        </tr>
+                    </thead>
+                </table>
+
+            </div>
 
 {% endblock extra_content %}

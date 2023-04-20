@@ -38,7 +38,7 @@ class BookingAgentRegistrationForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email(), Length(min=1, max=50)])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=1, max=50)])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message='Please type your password again')])
-    booking_agent_id = IntegerField('Booking Agent ID', validators=[DataRequired(), Length(min=11, max=11)])
+    booking_agent_id = IntegerField('Booking Agent ID', validators=[DataRequired()])  # how to set length to be 11?
 
     submit = SubmitField('Booking Agent Sign Up')
 
@@ -73,6 +73,14 @@ class PublicSearchUpcomingFlightForm(FlaskForm):
     arrival_place = StringField('Arrival Airport/City', validators=[])
 
     # Maybe DateTimeField?
+    departure_time = StringField('Departure Time', validators=[])
+    arrival_time = StringField('Arrival Time', validators=[])
+
+    submit = SubmitField('Search')
+
+
+class PublicSearchFlightStatusForm(FlaskForm):
+    flight_number = IntegerField('Flight Number', validators=[])
     departure_time = StringField('Departure Time', validators=[])
     arrival_time = StringField('Arrival Time', validators=[])
 

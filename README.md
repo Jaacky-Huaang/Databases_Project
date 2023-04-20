@@ -35,29 +35,47 @@
 * https://www.skyscanner.com.hk/?&associateID=SEM_GGF_19370_00062
 
 ## File Structure
-*Last Update: 2023.4.16*
+*Last Update: 2023.4.20*
 ```
 ├── Project_3.pdf
 ├── README.md
 ├── Solution_ProjectPart2_create_tables_Fall_2021_v1.sql
+├── img
 ├── reservation
 │   ├── __init__.py
-│   ├── __pycache__
-│   │   ├── __init__.cpython-38.pyc
-│   │   ├── forms.cpython-38.pyc
-│   │   └── routes.cpython-38.pyc
 │   ├── forms.py
 │   ├── routes.py
 │   ├── static
-│   │   └── main.css
+│   │   ├── assets
+│   │   │   ├── brand
+│   │   │   │   ├── bootstrap-logo-white.svg
+│   │   │   │   └── bootstrap-logo.svg
+│   │   │   └── dist
+│   │   │       ├── css
+│   │   │       │   ├── bootstrap.min.css
+│   │   │       │   ├── bootstrap.min.css.map
+│   │   │       │   ├── bootstrap.rtl.min.css
+│   │   │       │   └── bootstrap.rtl.min.css.map
+│   │   │       └── js
+│   │   │           ├── bootstrap.bundle.min.js
+│   │   │           └── bootstrap.bundle.min.js.map
+│   │   ├── login.css
+│   │   ├── main.css
+│   │   ├── navbar.css
+│   │   └── signin.css
 │   └── templates
 │       ├── about.html
 │       ├── index.html
 │       ├── layout.html
 │       ├── login.html
+│       ├── login_agent.html
+│       ├── login_airline_staff.html
 │       ├── login_customer.html
 │       ├── register.html
-│       └── register_customer.html
+│       ├── register_agent.html
+│       ├── register_airline_staff.html
+│       ├── register_customer.html
+│       └── upcoming_flight.html
 └── run.py
 ```
 
