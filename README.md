@@ -88,8 +88,8 @@ test1
 
 ## Check List
 ### public search
-- [ ] upcoming flight, city/airport, date
-- [ ] flights status flight number, arrival/departure date
+- [x] upcoming flight, city/airport, date
+- [x] flights status flight number, arrival/departure date
 
 ### login/register
 - [x] login

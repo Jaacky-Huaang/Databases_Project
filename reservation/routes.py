@@ -19,10 +19,22 @@ def home():
         cursor.execute(query_upcoming_flight)
         search_result = cursor.fetchall()
         cursor.close()
-        return redirect(url_for('upcoming_flight', search_result=json.dumps(search_result, default=str)))
+        if len(search_result) == 0:
+            flash('No flight found', 'danger')
+        else:
+            return redirect(url_for('upcoming_flight', search_result=json.dumps(search_result, default=str)))
 
     form_flight_status = forms.PublicSearchFlightStatusForm()
-    return render_template('index.html', form_upcoming_flight=form_upcoming_flight, form_flight_status=form_flight_status)
+    flight_number = '' if form_flight_status.flight_number.data==None else form_flight_status.flight_number.data
+    departure_time = '' if form_flight_status.departure_time.data==None else form_flight_status.departure_time.data
+    arrival_time = '' if form_flight_status.arrival_time.data==None else form_flight_status.arrival_time.data
+    cursor = conn.cursor()
+    query_flight_status = f'SELECT * FROM flight WHERE flight_num LIKE "%{flight_number}%" AND departure_time LIKE "%{departure_time}%" AND arrival_time LIKE "%{arrival_time}%"'
+    cursor.execute(query_flight_status)
+    status_search_result = cursor.fetchall()
+    cursor.close()
+
+    return render_template('index.html', form_upcoming_flight=form_upcoming_flight, form_flight_status=form_flight_status, status_search_result=status_search_result)
 
 
 @app.route('/about')

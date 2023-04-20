@@ -77,7 +77,7 @@
     <div class="bg-light p-5 rounded">
         <div class="col-sm-10 mx-auto">
             <div>
-                <legend class="border-bottom mb-4">Flight Status</legend>
+                <legend class="border-bottom mb-4">Flight Status BillBoard</legend>
 
                 <form class="row g-3" method="POST" action="">
                     <div class="col-md-3">
@@ -125,7 +125,7 @@
                     <div class="col-md-3">
                         <label class="form-label"></label>
                         <div>
-                            <button type="submit" class="btn btn-secondary flex-fill">Check Flight Status</button>
+                            <button type="submit" class="btn btn-outline-secondary">Search Flight Status</button>
                         </div>
                     </div>
                 </form>
@@ -140,6 +140,15 @@
                             <th scope="col">Flight Status</th>
                         </tr>
                     </thead>
+                    <tbody>
+                        {% for flight in status_search_result %}
+                            <tr>
+                                <td>{{ flight.flight_num }}</td>
+                                <td>{{ flight.departure_time }}</td>
+                                <td>{{ flight.arrival_time }}</td>
+                                <td>{{ flight.status }}</td>
+                            </tr>
+                        {% endfor %}
                 </table>
 
             </div>
