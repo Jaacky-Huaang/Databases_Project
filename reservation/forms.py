@@ -77,3 +77,11 @@ class PublicSearchUpcomingFlightForm(FlaskForm):
     arrival_time = StringField('Arrival Time', validators=[])
 
     submit = SubmitField('Search')
+
+
+class PublicSearchFlightStatusForm(FlaskForm):
+    flight_number = IntegerField('Flight Number', validators=[])
+    departure_time = StringField('Departure Time', validators=[])
+    arrival_time = StringField('Arrival Time', validators=[])
+
+    submit = SubmitField('Search')
