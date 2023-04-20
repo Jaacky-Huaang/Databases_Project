@@ -5,14 +5,12 @@ import reservation.forms as forms
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home', methods=['GET', 'POST'])
 def home():
-    if 'username' in session:
-        return redirect(url_for('home'))
+    # if 'username' in session:
+    #     return redirect(url_for('home'))
 
     # public search
-    search_result = None
     form_upcoming_flight = forms.PublicSearchUpcomingFlightForm()
     if form_upcoming_flight.validate_on_submit():
-        print('validated')
         departure_place = form_upcoming_flight.departure_place.data
         arrival_place = form_upcoming_flight.arrival_place.data
         departure_time = form_upcoming_flight.departure_time.data
@@ -23,10 +21,11 @@ def home():
         cursor.execute(query_upcoming_flight)
         search_result = cursor.fetchall()
         cursor.close()
-        
-        print(search_result)
 
-    return render_template('index.html', search_result=search_result, form_upcoming_flight=form_upcoming_flight)
+        print(search_result)
+        return redirect(url_for('upcoming_flight', search_result=search_result))
+
+    return render_template('index.html', form_upcoming_flight=form_upcoming_flight, session=session)
 
 @app.route('/about')
 def about():
@@ -192,8 +191,13 @@ def login_agent():
             session['email'] = email
             # add the user status to the session
             session['status'] = 'agent'
+            flash(f'You have successfully logged in as {email}!', 'success')
 
             return redirect(url_for('home'))  # Change later
+
+        else:  # handle the case when the password is wrong
+            flash('Wrong password. Please enter the password again.', 'danger')
+
     return render_template('login_agent.html', title='Login as Agent', form=form)
 
 
@@ -217,4 +221,23 @@ def login_airline_staff():
             session['status'] = 'airline_staff'
 
             return redirect(url_for('home'))  # also change here later
+
+        else:  # handle the case when the password is wrong
+            flash('Wrong password. Please enter the password again.', 'danger')
+
     return render_template('login_airline_staff.html', title='Login as Airline Staff', form=form)
+
+
+@app.route('/logout')
+def logout():
+    session.pop('email', None)
+    session.pop('user_name', None)
+    session.pop('status', None)
+    return redirect(url_for('home'))
+
+
+@app.route('/upcoming_flight/<search_result>', methods=['GET', 'POST'])
+def upcoming_flight(search_result):
+    print(search_result)
+    return render_template('upcoming_flight.html', search_result=search_result)
+
