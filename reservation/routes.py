@@ -1,6 +1,7 @@
 from flask import render_template, request, url_for, redirect, session, flash
 from reservation import app, conn, bcrypt
 import reservation.forms as forms
+import json
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home', methods=['GET', 'POST'])
@@ -18,12 +19,11 @@ def home():
         cursor.execute(query_upcoming_flight)
         search_result = cursor.fetchall()
         cursor.close()
-
-        print(search_result)
-        return redirect(url_for('upcoming_flight', search_result=search_result))
+        return redirect(url_for('upcoming_flight', search_result=json.dumps(search_result, default=str)))
 
     form_flight_status = forms.PublicSearchFlightStatusForm()
     return render_template('index.html', form_upcoming_flight=form_upcoming_flight, form_flight_status=form_flight_status)
+
 
 @app.route('/about')
 def about():
@@ -32,7 +32,8 @@ def about():
 # Define route for searching upcoming flight
 @app.route('/upcoming_flight/<search_result>', methods=['GET', 'POST'])
 def upcoming_flight(search_result):
-    print(search_result)
+    search_result = json.loads(search_result)
+    # print(type(search_result[0]))
     return render_template('upcoming_flight.html', search_result=search_result)
 
 

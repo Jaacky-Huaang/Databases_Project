@@ -42,7 +42,7 @@
                     {% endfor %}
                 </div>
             {% else %}
-                {{ form_upcoming_flight.departure_time(class="form-control") }}
+                {{ form_upcoming_flight.departure_time(class="form-control", placeholder="YYYY-MM-DD") }}
             {% endif %}
         </div>
 
@@ -56,11 +56,13 @@
                     {% endfor %}
                 </div>
             {% else %}
-                {{ form_upcoming_flight.arrival_time(class="form-control") }}
+                {{ form_upcoming_flight.arrival_time(class="form-control", placeholder="YYYY-MM-DD") }}
             {% endif %}
         </div>
 
-        <div class="spacer"></div>
+        <small class="text-muted">* Leave blank to search for all</small>
+
+
         <div class="form-group">
             {{ form_upcoming_flight.submit(class="btn btn-primary") }}
         </div>
