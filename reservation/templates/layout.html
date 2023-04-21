@@ -109,7 +109,7 @@
               {% if session['status'] == 'customer' %}
                 <ul class="navbar-nav">
                   <li class="nav-item">
-                    <a class="nav-link active" href="#">{{ session['email'] }}</a>
+                    <a class="nav-link active text-decoration-underline" href="{{ url_for('dashboard_customer') }}">{{ session['email'] }}</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
@@ -118,7 +118,7 @@
               {% elif session['status'] == 'agent' %}
                 <ul class="navbar-nav">
                   <li class="nav-item">
-                    <a class="nav-link active" href="#">{{ session['email'] }}</a>
+                    <a class="nav-link active text-decoration-underline" href="{{ url_for('dashboard_agent') }}"">{{ session['email'] }}</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
@@ -127,7 +127,7 @@
               {% elif session['status'] == 'airline_staff' %}
                 <ul class="navbar-nav">
                   <li class="nav-item">
-                    <a class="nav-link active" href="#">{{ session['user_name'] }}</a>
+                    <a class="nav-link active text-decoration-underline" href="#">{{ session['user_name'] }}</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>

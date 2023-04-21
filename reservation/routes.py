@@ -259,4 +259,11 @@ def logout():
     return redirect(url_for('home'))
 
 
+@app.route('/dashboard_customer')
+def dashboard_customer():
+    return render_template('dashboard_customer.html')
 
+
+@app.route('/dashboard_agent')
+def dashboard_agent():
+    return render_template('dashboard_agent.html')
