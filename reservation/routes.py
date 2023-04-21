@@ -177,7 +177,7 @@ def login_customer():
         data = cursor.fetchone()
         cursor.close()
 
-        if data and bcrypt.check_password_hash(data[2], password):
+        if data and bcrypt.check_password_hash(data['password'], password):
             # add the customer email to the session
             session['email'] = email
             # add the user status to the session
@@ -205,7 +205,7 @@ def login_agent():
         data = cursor.fetchone()
         cursor.close()
 
-        if data and bcrypt.check_password_hash(data[1], password):
+        if data and bcrypt.check_password_hash(data['password'], password):
             # add the agent email to the session
             session['email'] = email
             # add the user status to the session
@@ -234,7 +234,7 @@ def login_airline_staff():
         data = cursor.fetchone()
         cursor.close()
 
-        if data and bcrypt.check_password_hash(data[1], password):
+        if data and bcrypt.check_password_hash(data['password'], password):
             # add the staff user name to the session
             session['user_name'] = user_name
             # add the user status to the session
