@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block headlines %}
 
-    <div class="bg-light top-50 rounded">
+    <div class="bg-light top-50 rounded" id="carousel_headline">
         <div>
             <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
               <div class="carousel-indicators">
@@ -11,7 +11,7 @@
               </div>
               <div class="carousel-inner rounded">
                 <div class="carousel-item active">
-                  <a href={{ url_for("home") }}>
+                  <a href=#upcoming_flight>
                     <img class="d-block w-100" src="https://mir-s3-cdn-cf.behance.net/project_modules/2800_opt_1/45c87728764453.55d18cc5400b9.jpg" alt="First slide" width="100%" height="400" style="object-fit:cover; filter: brightness(90%)">
                   </a>
 
@@ -55,7 +55,7 @@
 
 {% block content %}
 
-    <form class="row g-3" method="POST" action="">
+    <form class="row g-3" method="POST" action="" id="upcoming_flight">
         {{ form_upcoming_flight.hidden_tag() }}
         <legend class="border-bottom mb-4">Search for upcoming flights</legend>
         <div class="col-md-3">
@@ -128,7 +128,7 @@
 {% endblock content %}
 
 {% block extra_content %}
-    <div class="bg-light p-5 rounded">
+    <div class="bg-light p-5 rounded" id="flight_status">
         <div class="col-sm-10 mx-auto">
             <div>
                 <legend class="border-bottom mb-4">Flight Status BillBoard</legend>
