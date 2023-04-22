@@ -12,23 +12,29 @@ delete from Airline;
 insert into Airline values("CE");
 insert into Airline values("JA");
 
--- insert into AirlineStuff values("a",)
 
 insert into Airport values("JFK", "NYC");
 insert into Airport values("PVG", "SH");
--- insert into Customer values("123@123.com","Alice","123456",
---                         "5","Century Avenue","Shanghai","China",
---                         "123333123","EL12312","2029-3-10","China",
---                         "2000-01-01");
--- insert into Customer values("567@123.com","Bob","123321",
---                         "2","Yangsi Road","Shanghai","China",
---                         "123111123","EL87992","2029-3-10","China",
---                         "2001-01-09");
--- insert into Booking_agent values("890@gmail.com", "909090","19-0000");
+insert into Customer values("123@123.com","Alice","$2b$12$QH7HxpFhSs1G7m5/s7tHK.nsTsztKZj8MjDWW1rtgHHKwp3HQd7qC",
+                        "5","Century Avenue","Shanghai","China",
+                        "123333123","EL12312","2029-3-10","China",
+                        "2000-01-01");
+insert into Customer values("567@123.com","Bob","$2b$12$QH7HxpFhSs1G7m5/s7tHK.nsTsztKZj8MjDWW1rtgHHKwp3HQd7qC",
+                        "2","Yangsi Road","Shanghai","China",
+                        "123111123","EL87992","2029-3-10","China",
+                        "2001-01-09");
+insert into Booking_agent values("890@gmail.com",
+                         "$2b$12$QH7HxpFhSs1G7m5/s7tHK.nsTsztKZj8MjDWW1rtgHHKwp3HQd7qC",
+                         "190000");
 insert into Airplane values("CE", "1","89");
 insert into Airplane values("CE", "2","89");
--- insert into AirlineStuff values("Jack Goodman", "098908","Jack",
---                             "Goodman","1988-02-07","CE");
+insert into Airline_Staff values("Jack Goodman", "$2b$12$QH7HxpFhSs1G7m5/s7tHK.nsTsztKZj8MjDWW1rtgHHKwp3HQd7qC",
+                            "Jack",
+                            "Goodman","1988-02-07","CE");
+insert into Airline_Staff values("John", "$2b$12$QH7HxpFhSs1G7m5/s7tHK.nsTsztKZj8MjDWW1rtgHHKwp3HQd7qC",
+                            "John",
+                            "Goodman","1981-06-08","CE");
+
 insert into Flight values("CE","906677","JFK","2023-01-01 00:00:02","PVG",
                         "2023-01-01 00:15:02","660","in_progress",
                         "1");
@@ -46,5 +52,14 @@ insert into Ticket values("13","CE","903377");
 insert into Ticket values("21","CE","901177");
 insert into Ticket values("22","CE","901177");
 insert into Ticket values("23","CE","901177");
--- insert into purchases values("1-1","123@123.com",null,"2022-12-01");
--- insert into purchases values("1-3","567@123.com","890@gmail.com","2022-12-01");
+
+
+insert into purchases values("11","123@123.com",null,"2022-12-01");
+insert into purchases values("13","567@123.com","890@gmail.com","2022-12-01");
+
+
+insert into booking_agent_work_for values("890@gmail.com","CE");
+insert into booking_agent_work_for values("890@gmail.com","JA");
+insert into permission values("Jack Goodman","Admin");
+-- insert into permission values("Jack Goodman","Operator");
+insert into permission values("John","Operator");
