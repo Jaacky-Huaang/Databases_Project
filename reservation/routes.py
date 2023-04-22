@@ -2,6 +2,8 @@ from flask import render_template, request, url_for, redirect, session, flash
 from reservation import app, conn, bcrypt
 import reservation.forms as forms
 import json
+import datetime
+from dateutil.relativedelta import relativedelta
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home', methods=['GET', 'POST'])
@@ -260,7 +262,7 @@ def logout():
     return redirect(url_for('home'))
 
 
-@app.route('/dashboard_customer')
+@app.route('/dashboard_customer', methods=['GET', 'POST'])
 def dashboard_customer():
     # display purchased flight info
     cursor = conn.cursor()
@@ -270,7 +272,35 @@ def dashboard_customer():
     cursor.close()
 
     print(purchased_flights)
-    return render_template('dashboard_customer.html', purchased_flights=purchased_flights)
+
+    # track customer spending
+    form_customer_spending = forms.CustomerSpendingForm()
+    start_date = datetime.date.today() - relativedelta(years=1) if form_customer_spending.start_date.data==None else form_customer_spending.start_date.data
+    end_date = datetime.date.today() if form_customer_spending.end_date.data==None else form_customer_spending.end_date.data
+
+    cursor = conn.cursor()
+    query = f"SELECT YEAR(purchase_date) as year, MONTH(purchase_date) as month, SUM(price) AS total_spending FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE customer_email = '{session['email']}' AND purchase_date BETWEEN '{start_date}' AND '{end_date}' GROUP BY year, month"
+    cursor.execute(query)
+    customer_spending = cursor.fetchall()
+    cursor.close()
+
+    print(customer_spending)
+
+    spending_date_dic = {}
+    for row in customer_spending:
+        spending_date_dic[str(row['year']) + '-' + str(row['month'])] = float(row['total_spending'])
+
+    date_list = []
+    spending_list = []
+    while start_date <= end_date:
+        date_list.append(str(start_date.year) + '-' + str(start_date.month))
+        if str(start_date.year) + '-' + str(start_date.month) in spending_date_dic:
+            spending_list.append(spending_date_dic[str(start_date.year) + '-' + str(start_date.month)])
+        else:
+            spending_list.append(0)
+        start_date += relativedelta(months=1)
+
+    return render_template('dashboard_customer.html', purchased_flights=purchased_flights, form_customer_spending=form_customer_spending, date_list=json.dumps(date_list), spending_list=json.dumps(spending_list))
 
 
 @app.route('/dashboard_agent')

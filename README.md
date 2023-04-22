@@ -8,6 +8,7 @@
 * flask
 * flask-wtf
 * flask-bcrypt
+* python-dateutil
 
 ### Start the server
 1. Create the database

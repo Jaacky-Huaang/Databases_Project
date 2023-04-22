@@ -85,3 +85,9 @@ class PublicSearchFlightStatusForm(FlaskForm):
     arrival_time = StringField('Arrival Time', validators=[])
 
     submit = SubmitField('Search')
+
+class CustomerSpendingForm(FlaskForm):
+    start_date = DateField('Start Date', validators=[])
+    end_date = DateField('End Date', validators=[])
+
+    submit = SubmitField('Search')

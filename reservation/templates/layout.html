@@ -9,6 +9,8 @@
      <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/navbars/">
      <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/cheatsheet/">
 
+
+
     {% if title %}
         <title>Air Ticket Reservation System - {{ title }}</title>
     {% else %}
@@ -109,6 +111,9 @@
             {% if 'status' in session %}
               {% if session['status'] == 'customer' %}
                 <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link">Welcome customer: </a>
+                  </li>
                   <li class="nav-item">
                     <a class="nav-link active text-decoration-underline" href="{{ url_for('dashboard_customer') }}">{{ session['email'] }}</a>
                   </li>
