@@ -36,12 +36,12 @@
 * https://www.skyscanner.com.hk/?&associateID=SEM_GGF_19370_00062
 
 ## File Structure
-*Last Update: 2023.4.20*
+*Last Update: 2023.4.22*
 ```
 ├── Project_3.pdf
 ├── README.md
 ├── Solution_ProjectPart2_create_tables_Fall_2021_v1.sql
-├── img
+├── insert.sql
 ├── reservation
 │   ├── __init__.py
 │   ├── forms.py
@@ -66,6 +66,8 @@
 │   │   └── signin.css
 │   └── templates
 │       ├── about.html
+│       ├── dashboard_agent.html
+│       ├── dashboard_customer.html
 │       ├── index.html
 │       ├── layout.html
 │       ├── login.html
