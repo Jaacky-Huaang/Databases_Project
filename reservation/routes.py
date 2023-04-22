@@ -182,6 +182,7 @@ def login_customer():
             session['email'] = email
             # add the user status to the session
             session['status'] = 'customer'
+            flash(f'You have successfully logged in as {email}!', 'success')
 
             return redirect(url_for('home'))  # Change later
         elif not data:  # handle the case when the email does not exist
@@ -261,7 +262,15 @@ def logout():
 
 @app.route('/dashboard_customer')
 def dashboard_customer():
-    return render_template('dashboard_customer.html')
+    # display purchased flight info
+    cursor = conn.cursor()
+    query = f"SELECT * FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE customer_email = '{session['email']}'"
+    cursor.execute(query)
+    purchased_flights = cursor.fetchall()
+    cursor.close()
+
+    print(purchased_flights)
+    return render_template('dashboard_customer.html', purchased_flights=purchased_flights)
 
 
 @app.route('/dashboard_agent')
