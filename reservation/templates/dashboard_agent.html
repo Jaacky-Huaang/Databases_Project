@@ -1,9 +1,26 @@
 {% extends "layout.html" %}
 {% block content %}
+    <div class="column">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Welcome, {{ session['email'] }}</h5>
+                <p class="card-text">You are logged in as a booking agent.</p>
+                <a href="{{ url_for('logout') }}" class="btn btn-primary">Logout</a>
+            </div>
+        </div>
+    </div>
+    <div class="column">
+        <div class="card">
+            <div class="card-body">
+                <p class="card-text">Good</p>
+            </div>
+        </div>
+    </div>
 
 {% endblock content %}
 
 
 {% block extra_content %}
+
 
 {% endblock extra_content %}
