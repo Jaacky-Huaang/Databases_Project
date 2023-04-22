@@ -99,10 +99,10 @@ test1
 - [x] register
 
 ### customer
-- [*] purchased flight info (specify optionally) **Haven't done the optional yet**
+- [x] purchased flight info (specify optionally) **Haven't done the optional yet**
 - [ ] purchase ticket (as long as there is room (capacity and ticket))
-- [*] search for flight
-- [*] track spending
+- [x] search for flight
+- [x] track spending
 - [ ] logout
 ### agent
 - [ ] purchased flight info (specify optionally) 
