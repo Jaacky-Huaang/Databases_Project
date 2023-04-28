@@ -143,7 +143,7 @@ def register_airline_staff():
         airline_name = form.airline_name.data
 
         cursor = conn.cursor()
-        query_find_user_name = "SELECT user_name FROM airline_staff WHERE user_name = '{}'"
+        query_find_user_name = "SELECT username FROM airline_staff WHERE username = '{}'"
         cursor.execute(query_find_user_name.format(user_name))
         dup_user_names = cursor.fetchall()
         if len(dup_user_names) > 0:
@@ -232,13 +232,13 @@ def login_airline_staff():
         password = form.password.data
 
         cursor = conn.cursor()
-        query = "SELECT * FROM airline_staff WHERE user_name = '{}'"
+        query = "SELECT * FROM airline_staff WHERE username = '{}'"
         cursor.execute(query.format(user_name))
         data = cursor.fetchone()
         cursor.close()
 
         if data and bcrypt.check_password_hash(data['password'], password):
-            # add the staff user name to the session
+            # add the staff username to the session
             session['user_name'] = user_name
             # add the user status to the session
             session['status'] = 'airline_staff'
@@ -306,3 +306,11 @@ def dashboard_customer():
 @app.route('/dashboard_agent')
 def dashboard_agent():
     return render_template('dashboard_agent.html')
+
+@app.route('/dashboard_airline_staff')
+def dashboard_airline_staff():
+    return render_template('dashboard_airline_staff.html')
+
+@app.route('/create_flight', methods=['GET', 'POST'])
+def create_flight():
+    return render_template('create_flight.html')

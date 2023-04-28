@@ -207,6 +207,15 @@
                         {% endfor %}
                 </table>
 
+                {% if session['status'] == 'airline_staff' %}
+
+                    <small>* Operation For Airline Staff Only</small>
+                    <div class="space"></div>
+                    <div>
+                        <button class="btn btn-warning" href="{{ url_for('create_flight') }}">Create Flight</button>
+                    </div>
+                {% endif %}
+
             </div>
         </div>
     </div>
