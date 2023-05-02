@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div>
+        <a class="text-decoration-none" href="{{ url_for('frequent_customers') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+            </svg>
+            <div class="d-inline">Back to frequent customers</div>
+        </a>
+    </div>
+    <div class="space"></div>
+    <legend class="border-bottom">Tickets of {{ session['airline'] }} Bought by {{ customer_email }}</legend>
+    {% for flight in tickets %}
+    <div class="space"></div>
+    <div class="card">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="https://i.pinimg.com/564x/8a/52/da/8a52da7573738ca48432ed20be59ba78.jpg" class="d-block rounded-start" width="100%" height="100%" style="object-fit:cover">
+            </div>
+            <div class="col-md-8">
+                <div class="card-header">
+                    Flight Status: {{ flight.status }}
+                </div>
+                <div class="bg-light mx-auto p-4">
+                <div class="card-body">
+                    <h5 class="card-title">Flight Number: {{ flight.flight_num }} {{ flight.airline_name }} Airline</h5>
+                </div>
+                <ul class="list-group list-group-flush rounded" style="font-family:'Courier New' ">
+                    <li class="list-group-item">Departure: {{ flight.departure_airport }} {{ flight.departure_time }}</li>
+                    <li class="list-group-item">Arrival: {{ flight.arrival_airport }} {{ flight.arrival_time }}</li>
+                    <li class="list-group-item">Price: {{ flight.price }}</li>
+                    <li class="list-group-item">Booking Agent: {{ flight.booking_agent_id }}</li>
+                </ul>
+                </div>
+                <div class="card-footer text-muted">
+                    Purchase Date: {{ flight.purchase_date }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% endfor %}
+
+{% endblock content %}

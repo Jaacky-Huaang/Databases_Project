@@ -89,7 +89,7 @@ body {
 .btn-toggle:hover,
 .btn-toggle:focus {
   color: rgba(0, 0, 0, .85);
-  background-color: #d2f4ea;
+  background-color: #cde8f4;
 }
 
 .btn-toggle::before {
@@ -114,7 +114,7 @@ body {
 }
 .btn-toggle-nav a:hover,
 .btn-toggle-nav a:focus {
-  background-color: #d2f4ea;
+  background-color: #cde8f4;
 }
 
 .scrollarea {

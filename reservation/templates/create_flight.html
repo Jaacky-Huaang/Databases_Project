@@ -1,5 +1,128 @@
-{% extends "layout.html %}
+{% extends "layout.html" %}
 
 {% block content %}
 
+<div class="content-section" id="search_flight">
+    <div class="bd-example-snippet bd-code-snippet"><div class="bd-example">
+    <a class="text-decoration-none" href="{{ url_for('dashboard_airline_staff') }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+            </svg>
+            <div class="d-inline">Back to airline staff dashboard</div>
+        </a>
+    <div class="space"></div>
+    <form class="row g-3" method="POST" action="">
+        {{ create_flight_form.hidden_tag() }}
+        <legend class="border-bottom mb-4">Create A New Flight For {{ session['airline'] }} Airline</legend>
+        <div class="col-md-3">
+            <label class="form-label">{{ create_flight_form.flight_num.label(class="form-control-label") }}</label>
+            {% if create_flight_form.flight_num.errors %}
+                {{ create_flight_form.flight_num(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in create_flight_form.flight_num.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ create_flight_form.flight_num(class="form-control") }}
+            {% endif %}
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">{{ create_flight_form.airplane_id.label(class="form-control-label") }}</label>
+            {% if create_flight_form.airplane_id.errors %}
+                {{ create_flight_form.airplane_id(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in create_flight_form.airplane_id.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ create_flight_form.airplane_id(class="form-control") }}
+            {% endif %}
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">{{ create_flight_form.price.label(class="form-control-label") }}</label>
+            {% if create_flight_form.price.errors %}
+                {{ create_flight_form.price(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in create_flight_form.price.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ create_flight_form.price(class="form-control") }}
+            {% endif %}
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">{{ create_flight_form.status.label(class="form-control-label") }}</label>
+            {% if create_flight_form.status.errors %}
+                {{ create_flight_form.status(class="form-select is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in create_flight_form.status.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ create_flight_form.status(class="form-select") }}
+            {% endif %}
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">{{ create_flight_form.departure_airport.label(class="form-control-label") }}</label>
+            {% if create_flight_form.departure_airport.errors %}
+                {{ create_flight_form.departure_airport(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in create_flight_form.departure_airport.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ create_flight_form.departure_airport(class="form-control") }}
+            {% endif %}
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">{{ create_flight_form.departure_time.label(class="form-control-label") }}</label>
+            {% if create_flight_form.departure_time.errors %}
+                {{ create_flight_form.departure_time(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in create_flight_form.departure_time.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ create_flight_form.departure_time(class="form-control") }}
+            {% endif %}
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">{{ create_flight_form.arrival_airport.label(class="form-control-label") }}</label>
+            {% if create_flight_form.arrival_airport.errors %}
+                {{ create_flight_form.arrival_airport(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in create_flight_form.arrival_airport.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ create_flight_form.arrival_airport(class="form-control") }}
+            {% endif %}
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">{{ create_flight_form.arrival_time.label(class="form-control-label") }}</label>
+            {% if create_flight_form.arrival_time.errors %}
+                {{ create_flight_form.arrival_time(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in create_flight_form.arrival_time.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ create_flight_form.arrival_time(class="form-control") }}
+            {% endif %}
+        </div>
+        <div class="col-md-3">
+            <div class="space"></div>
+            <button class="btn btn-warning" type="submit">Create Flight</button>
+        </div>
+    </form>
+    </div></div>
+</div>
 {% endblock content %}
