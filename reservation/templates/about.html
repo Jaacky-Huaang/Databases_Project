@@ -1,9 +1,51 @@
 {% extends "layout.html" %}
+
+{% block headlines %}
+<div class="shadow bg-light top-50 rounded" id="carousel_headline">
+    <div class="carousel-inner rounded">
+        <div class="carousel-item active">
+            <img class="d-block" style="object-fit: cover; filter: brightness(90%)" width="100%" height="200px" src="https://mir-s3-cdn-cf.behance.net/project_modules/fs/71e739111105813.5ffc17f7d7a18.png">
+            <div class="carousel-caption d-none d-md-block">
+                <legend>About This Project</legend>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="space"></div>
+{% endblock headlines %}
+
 {% block content %}
     <div>
-        <legend>About</legend>
+        <legend class="border-bottom">Basic Info</legend>
+        <div class="space"></div>
         <p>
-            This is a database project for CSCI-SHU-213 Database Systems at NYU Shanghai.
+            This is the final project for CSCI-SHU-213 Database Systems at NYU Shanghai.
         </p>
+        <p class="fw-bold">Contributors</p>
+        <p>Yuanhe Guo (Ricercar): <a href="mailto: yg2709@gmail.com" class="link-secondary">yg2709@gmail.com</a></p>
+        <p>Jinhong Xia (Jason): <a href="mailto: jx2314@gmail.com" class="link-secondary">yx2314@gmail.com</a></p>
+
+        <p class="fw-bold">Github Page</p>
+        <a href="https://github.com/RicercarG/CSCI-SHU-213-Database-Final-Project" class="link-secondary">CSCI-SHU-213-Database-Final-Project</a>
+
+
    </div>
+{% endblock %}
+
+{% block extra_content %}
+<div class="bg-light p-5 rounded">
+    <div class="col-sm-10 mx-auto">
+        <legend class="border-bottom">References</legend>
+        <div class="space"></div>
+        <p class="fw-bold">Video Tutorials</p>
+        <p><a href="https://youtube.com/playlist?list=PL-osiE80TeTs4UjLw5MM6OjgkjFeUxCYH" class="link-secondary">Flask Tutorials</a></p>
+
+        <p class="fw-bold">Illustration Source</p>
+        <p><a href="https://www.behance.net/gallery/28764453/Safegate" class="link-secondary">Behance-Safegate</a></p>
+        <p><a href="https://www.behance.net/gallery/111105813/coding?tracking_source=search_projects%7Cillustration+for+coding" class="link-secondary">Behance-coding</a></p>
+
+        <p class="fw-bold">Web Structure</p>
+        <p><a href="https://getbootstrap.com/docs/5.3/getting-started/introduction/" class="link-secondary">Bootstrap 5.1</a></p>
+    </div>
+</div>
 {% endblock %}
