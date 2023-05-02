@@ -314,3 +314,49 @@ def dashboard_airline_staff():
 @app.route('/create_flight', methods=['GET', 'POST'])
 def create_flight():
     return render_template('create_flight.html')
+
+
+@app.route('/purchase', methods=['GET', 'POST'])
+def purchase():
+    form = forms.Purchase()
+    if form.validate_on_submit():
+        flight_number = form.flight_number.data
+        customer = form.customer.data
+        agent = form.agent.data
+        if agent == "0":
+            agent = None
+        cursor = conn.cursor()
+        query_find_avil_ticket = "SELECT * FROM ticket AS t WHERE flight_num = '{}' and not exists \
+                                        (SELECT * FROM purchases AS p WHERE p.ticket_id = t.ticket_id)"
+        cursor.execute(query_find_avil_ticket.format(flight_number))
+        found = cursor.fetchall()
+
+
+        # flash(f'Purchasing Ticket from {flight_number}  {found}!', 'success')
+        if len(found) == 0:
+            flash('ticket not found', 'danger')
+            cursor.close()
+        else:
+            airline_name = found[0]["airline_name"]
+            flight_num = found[0]["flight_num"]
+            ticket_id = found[0]["ticket_id"]
+
+            #make sure agent correct
+            cursor = conn.cursor()
+            query_find_airline = "SELECT * FROM booking_agent natural JOIN booking_agent_work_for WHERE booking_agent_id = '{}' and airline_name = '{}' "
+            cursor.execute(query_find_airline.format(agent,airline_name))
+            work_for = cursor.fetchall()
+            if len(work_for) == 0:
+                flash("Agent_ID doesn't exist, please consult with your agent","danger")
+
+            else:
+
+                date = datetime.date.today()
+                query = "INSERT INTO purchases VALUES ('{}', '{}', '{}', '{}')"
+                cursor.execute(query.format(ticket_id, session["email"], agent, date))
+                conn.commit()
+                flash(f'User {session["email"]}Purchased Ticket {ticket_id} from {flight_num} at {airline_name} !', 'success')
+                cursor.close()
+
+
+    return render_template('purchase.html',form = form)

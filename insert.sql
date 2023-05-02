@@ -1,4 +1,6 @@
 
+delete from booking_agent_work_for;
+delete from permission;
 delete from purchases;
 delete from Airline_Staff;
 delete from Customer;
@@ -55,7 +57,7 @@ insert into Ticket values("23","CE","901177");
 
 
 insert into purchases values("11","123@123.com",null,"2022-12-01");
-insert into purchases values("13","567@123.com","890@gmail.com","2022-12-01");
+insert into purchases values("13","567@123.com","190000","2022-12-01");
 
 
 insert into booking_agent_work_for values("890@gmail.com","CE");

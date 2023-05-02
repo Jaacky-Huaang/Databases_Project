@@ -91,3 +91,11 @@ class CustomerSpendingForm(FlaskForm):
     end_date = DateField('End Date', validators=[])
 
     submit = SubmitField('Search')
+
+
+class Purchase(FlaskForm):
+    flight_number = IntegerField('Flight Number', validators=[DataRequired()])
+    customer = StringField('Customer_Email', validators=[DataRequired(), Email(), Length(min=1, max=50)])
+    agent = StringField('Agent_ID', validators=[])
+
+    submit = SubmitField('Purchase')

@@ -148,4 +148,5 @@ CREATE TABLE `purchases` (
   PRIMARY KEY(`ticket_id`, `customer_email`),
   FOREIGN KEY(`ticket_id`) REFERENCES `ticket`(`ticket_id`),
   FOREIGN KEY(`customer_email`) REFERENCES `customer`(`email`)
+  FOREIGN KEY(`booking_agent_id`) REFERENCES `booking_agent`(`booking_agent_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

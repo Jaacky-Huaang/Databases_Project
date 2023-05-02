@@ -87,7 +87,7 @@ test1
 
 ## Notes
 * Change the password to varchar(60) to handle the hash password
-
+* Add foreign key constraint to agent in purchases table
 
 ## Check List
 ### public search
