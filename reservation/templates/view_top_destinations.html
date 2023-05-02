@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div>
+        <legend>View Top Destinations in the Past Month</legend>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Destination</th>
+                    <th scope="col">Number of Tickets</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for destination in top_destinations_past_month %}
+                    <tr>
+                        <td>{{ destination.destination }}</td>
+                        <td>{{ destination.num_tickets }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+   </div>
+{% endblock content %}
+
+{% block extra_content %}
+<div class="bg-light p-5 rounded">
+    <div class="col-sm-10 mx-auto">
+        <legend>View Top Destinations in the Past Year</legend>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Destination</th>
+                    <th scope="col">Number of Tickets</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for destination in top_destinations_past_year %}
+                    <tr>
+                        <td>{{ destination.destination }}</td>
+                        <td>{{ destination.num_tickets }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock extra_content %}

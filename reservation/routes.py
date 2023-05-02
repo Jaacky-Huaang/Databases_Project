@@ -238,10 +238,29 @@ def login_airline_staff():
         cursor.close()
 
         if data and bcrypt.check_password_hash(data['password'], password):
+            flash(f'You have successfully logged in as {user_name}!', 'success')
             # add the staff username to the session
             session['user_name'] = user_name
             # add the user status to the session
             session['status'] = 'airline_staff'
+
+            # add the permission type and airline of the staff
+            cursor = conn.cursor()
+            query = "SELECT permission_type FROM permission WHERE username = '{}'"
+            cursor.execute(query.format(user_name))
+            permission = cursor.fetchall()
+
+            query = "SELECT airline_name FROM airline_staff WHERE username = '{}'"
+            cursor.execute(query.format(user_name))
+            airline = cursor.fetchone()
+            cursor.close()
+
+            if 'permission_type' not in session:
+                session['permission_type'] = []
+            for p in permission:
+                session['permission_type'].append(p['permission_type'])
+
+            session['airline'] = airline['airline_name']
 
             return redirect(url_for('home'))  # also change here later
 
@@ -258,6 +277,7 @@ def logout():
     session.pop('email', None)
     session.pop('user_name', None)
     session.pop('status', None)
+    session.pop('permission_type', None)
     flash('You have successfully logged out!', 'secondary')
     return redirect(url_for('home'))
 
@@ -307,10 +327,410 @@ def dashboard_customer():
 def dashboard_agent():
     return render_template('dashboard_agent.html')
 
-@app.route('/dashboard_airline_staff')
+
+@app.route('/dashboard_airline_staff', methods=['GET', 'POST'])
 def dashboard_airline_staff():
-    return render_template('dashboard_airline_staff.html')
+    airline_staff_search_form = forms.AirlineStaffSearchForm()
+    add_airplane_form = forms.AddAirplaneForm()
+    add_airport_form = forms.AddAirportForm()
+    change_flight_status_form = forms.ChangeFlightStatusForm()
+    grant_new_permission_form = forms.GrantNewPermissionForm()
+    add_booking_agent_to_airline_form = forms.AddBookingAgentToAirlineForm()
+
+    # handle the search flight form
+    departure_place = '' if airline_staff_search_form.departure_place.data==None else airline_staff_search_form.departure_place.data
+    arrival_place = '' if airline_staff_search_form.arrival_place.data==None else airline_staff_search_form.arrival_place.data
+    start_time = datetime.date.today() if airline_staff_search_form.start_time.data==None else airline_staff_search_form.start_time.data
+    end_time = datetime.date.today() + relativedelta(days=30) if airline_staff_search_form.end_time.data==None else airline_staff_search_form.end_time.data
+
+    cursor = conn.cursor()
+    query = f"SELECT * FROM flight F LEFT JOIN airport A1 ON F.departure_airport = A1.airport_name LEFT JOIN airport A2 ON F.arrival_airport = A2.airport_name WHERE F.airline_name = '{session['airline']}' AND (F.departure_airport LIKE '%{departure_place}%' OR A1.airport_city LIKE '%{departure_place}%') AND (F.arrival_airport LIKE '%{arrival_place}%' OR A2.airport_city LIKE '%{arrival_place}%') AND (F.departure_time BETWEEN '{start_time}' AND '{end_time}' OR F.arrival_time BETWEEN '{start_time}' AND '{end_time}')"
+    cursor.execute(query)
+    flights = cursor.fetchall()
+    cursor.close()
+
+    # handle the add airplane form
+    if add_airplane_form.identifier.data == 'add_airplane' and add_airplane_form.validate_on_submit():
+        airplane_id = add_airplane_form.airplane_id.data
+        seats = add_airplane_form.seats.data
+
+        # check whether the airplane exists
+        cursor = conn.cursor()
+        query = "SELECT * FROM airplane WHERE airplane_id = '{}'"
+        cursor.execute(query.format(airplane_id))
+        data = cursor.fetchone()
+        cursor.close()
+        if data:
+            flash('The airplane already exists!', 'danger')
+        else:
+            # add the airplane to the database
+            cursor = conn.cursor()
+            query = "INSERT INTO airplane VALUES ('{}', '{}', '{}')"
+            cursor.execute(query.format(session['airline'], airplane_id, seats))
+            conn.commit()
+            cursor.close()
+            flash('You have successfully added a new airplane!', 'success')
+            return redirect(url_for('dashboard_airline_staff'))
+
+    # handle the add airport form
+    if add_airport_form.identifier.data == 'add_airport' and add_airport_form.validate_on_submit():
+        airport_name = add_airport_form.airport_name.data
+        airport_city = add_airport_form.airport_city.data
+        print('True')
+        # check whether the airport exists
+        cursor = conn.cursor()
+        query = "SELECT * FROM airport WHERE airport_name = '{}'"
+        cursor.execute(query.format(airport_name))
+        data = cursor.fetchone()
+        cursor.close()
+        if data:
+            flash('The airport already exists!', 'danger')
+        else:
+            # add the airport to the database
+            cursor = conn.cursor()
+            query = "INSERT INTO airport VALUES ('{}', '{}')"
+            cursor.execute(query.format(airport_name, airport_city))
+            conn.commit()
+            cursor.close()
+            flash('You have successfully added a new airport!', 'success')
+            return redirect(url_for('dashboard_airline_staff'))
+
+    # handle the change flight status form
+    if change_flight_status_form.identifier.data == 'change_flight_status' and change_flight_status_form.validate_on_submit():
+        flight_num = change_flight_status_form.flight_num.data
+        status = change_flight_status_form.status.data
+
+        if status not in ['upcoming', 'delayed', 'canceled']:
+            flash('No new status is assigned!', 'danger')
+            return redirect(url_for('dashboard_airline_staff'))
+        # check whether the flight exists
+        cursor = conn.cursor()
+        query = "SELECT * FROM flight WHERE flight_num = '{}'"
+        cursor.execute(query.format(flight_num))
+        data = cursor.fetchone()
+        cursor.close()
+        if not data:
+            flash('The flight does not exist!', 'danger')
+        else:
+            # change the status of the flight
+            cursor = conn.cursor()
+            query = "UPDATE flight SET status = '{}' WHERE flight_num = '{}'"
+            cursor.execute(query.format(status, flight_num))
+            conn.commit()
+            cursor.close()
+            flash('You have successfully changed the status of the flight!', 'success')
+            return redirect(url_for('dashboard_airline_staff'))
+
+    # handle the grant new permission form
+    if grant_new_permission_form.identifier.data == 'grant_new_permission' and grant_new_permission_form.validate_on_submit():
+        email = grant_new_permission_form.email.data
+        permission_type = grant_new_permission_form.permission_type.data
+
+        # check whether the email exists
+        cursor = conn.cursor()
+        query = "SELECT * FROM airline_staff WHERE username = '{}'"
+        cursor.execute(query.format(email))
+        data = cursor.fetchone()
+        cursor.close()
+        if not data:
+            flash('The email does not exist!', 'danger')
+            return redirect(url_for('dashboard_airline_staff'))
+        else:
+            # check whether the email has already been granted the permission
+            cursor = conn.cursor()
+            query = "SELECT * FROM user_permissions WHERE username = '{}' AND permission_type = '{}'"
+            cursor.execute(query.format(email, permission_type))
+            data = cursor.fetchone()
+            cursor.close()
+            if data:
+                flash('The email has already been granted the permission!', 'danger')
+                return redirect(url_for('dashboard_airline_staff'))
+            else:
+                # grant the permission to the email
+                cursor = conn.cursor()
+                query = "INSERT INTO user_permissions VALUES ('{}', '{}')"
+                cursor.execute(query.format(email, permission_type))
+                conn.commit()
+                cursor.close()
+                flash('You have successfully granted the permission!', 'success')
+                return redirect(url_for('dashboard_airline_staff'))
+
+    # handle the add booking agent to airline form
+    if add_booking_agent_to_airline_form.identifier.data == 'add_booking_agent_to_airline' and add_booking_agent_to_airline_form.validate_on_submit():
+        agent_email = add_booking_agent_to_airline_form.email.data
+
+        # check whether the email of the booking agent exists
+        cursor = conn.cursor()
+        query = "SELECT * FROM booking_agent WHERE email = '{}'"
+        cursor.execute(query.format(agent_email))
+        data = cursor.fetchone()
+        cursor.close()
+        if not data:
+            flash('The booking agent does not exist!', 'danger')
+            return redirect(url_for('dashboard_airline_staff'))
+        else:
+            # check whether the email has already been added to the airline
+            cursor = conn.cursor()
+            query = "SELECT * FROM booking_agent_work_for WHERE email = '{}' AND airline_name = '{}'"
+            cursor.execute(query.format(agent_email, session['airline']))
+            data = cursor.fetchone()
+            cursor.close()
+            if data:
+                flash(f"The booking agent has already been added to {session['airline']} airline!", 'danger')
+                return redirect(url_for('dashboard_airline_staff'))
+            else:
+                # grant the permission to the email
+                cursor = conn.cursor()
+                query = "INSERT INTO booking_agent_work_for VALUES ('{}', '{}')"
+                cursor.execute(query.format(agent_email, session['airline']))
+                conn.commit()
+                cursor.close()
+                flash(f'You have successfully added booking agent {agent_email} to your airline!', 'success')
+                return redirect(url_for('dashboard_airline_staff'))
+
+    return render_template('dashboard_airline_staff.html', add_airplane_form=add_airplane_form, add_airport_form=add_airport_form, airline_staff_search_form=airline_staff_search_form, flights=flights, change_flight_status_form=change_flight_status_form, grant_new_permission_form=grant_new_permission_form, add_booking_agent_to_airline_form=add_booking_agent_to_airline_form)
+
+@app.route('/view_customer/<flight_num>', methods=['GET', 'POST'])
+def view_customer(flight_num):
+    cursor = conn.cursor()
+    query = f"SELECT * FROM ticket T NATURAL JOIN purchases P LEFT JOIN customer C ON P.customer_email=C.email WHERE T.flight_num = '{flight_num}'"
+    cursor.execute(query)
+    customers = cursor.fetchall()
+    cursor.close()
+
+    return render_template('view_customer.html', flight_num=flight_num, customers=customers)
+
 
 @app.route('/create_flight', methods=['GET', 'POST'])
 def create_flight():
-    return render_template('create_flight.html')
+
+    # handle illegal access
+    if 'permission_type' not in session:
+        flash('Please login as an airline staff first!', 'danger')
+        return redirect(url_for('login'))
+    elif 'Admin' not in session['permission_type']:
+        flash('You are not allowed to access this page!', 'danger')
+        return redirect(url_for('dashboard_airline_staff'))
+
+    create_flight_form = forms.CreateFlightForm()
+    if create_flight_form.validate_on_submit():
+        flight_num = create_flight_form.flight_num.data
+        departure_airport = create_flight_form.departure_airport.data
+        departure_time = create_flight_form.departure_time.data
+        arrival_airport = create_flight_form.arrival_airport.data
+        arrival_time = create_flight_form.arrival_time.data
+        price = create_flight_form.price.data
+        status = create_flight_form.status.data
+        airplane_id = create_flight_form.airplane_id.data
+
+        # check whether the flight exists
+        cursor = conn.cursor()
+        query = "SELECT * FROM flight WHERE flight_num = '{}'"
+        cursor.execute(query.format(flight_num))
+        data = cursor.fetchone()
+        cursor.close()
+        if data:
+            flash('The flight already exists!', 'danger')
+        else:
+            # add the flight to the database
+            cursor = conn.cursor()
+            query = "INSERT INTO flight VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')"
+            cursor.execute(query.format(session['airline'], flight_num, departure_airport, departure_time, arrival_airport, arrival_time, price, status, airplane_id))
+            conn.commit()
+            cursor.close()
+            flash('You have successfully added a new flight!', 'success')
+            return redirect(url_for('dashboard_airline_staff'))
+
+    return render_template('create_flight.html', create_flight_form=create_flight_form)
+
+@app.route('/view_all_booking_agents', methods=['GET', 'POST'])
+def view_all_booking_agents():
+    # get top 5 booking agents based on number of tickets sales for the past month in this airline
+    cursor = conn.cursor()
+    query = f"SELECT booking_agent_id, COUNT(*) AS num_tickets FROM purchases NATURAL JOIN ticket WHERE airline_name = '{session['airline']}' AND purchase_date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH ) AND booking_agent_id IS NOT NULL GROUP BY booking_agent_id ORDER BY num_tickets DESC LIMIT 5"
+    cursor.execute(query)
+    top_5_agents_past_month = cursor.fetchall()
+    cursor.close()
+    # covert result to list
+    temp_dic = {'booking_agent_id': [], 'num_tickets': []}
+    for i in range(5):
+        try:
+            agent = top_5_agents_past_month[i]
+            temp_dic['booking_agent_id'].append(agent['booking_agent_id'])
+            temp_dic['num_tickets'].append(agent['num_tickets'])
+        except:
+            temp_dic['booking_agent_id'].append("Empty")
+            temp_dic['num_tickets'].append(0)
+    top_5_agents_past_month = temp_dic
+    print(top_5_agents_past_month)
+
+    # get top 5 booking agents based on number of tickets sales for the past year in this airline
+    cursor = conn.cursor()
+    query = f"SELECT booking_agent_id, COUNT(*) AS num_tickets FROM purchases NATURAL JOIN ticket WHERE airline_name = '{session['airline']}' AND purchase_date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR ) AND booking_agent_id IS NOT NULL GROUP BY booking_agent_id ORDER BY num_tickets DESC LIMIT 5"
+    cursor.execute(query)
+    top_5_agents_past_year = cursor.fetchall()
+    cursor.close()
+    # convert result to list
+    temp_dic = {'booking_agent_id': [], 'num_tickets': []}
+    for i in range(5):
+        try:
+            agent = top_5_agents_past_year[i]
+            temp_dic['booking_agent_id'].append(f"Agent ID: {agent['booking_agent_id']}")
+            temp_dic['num_tickets'].append(agent['num_tickets'])
+        except:
+            temp_dic['booking_agent_id'].append("Empty")
+            temp_dic['num_tickets'].append(0)
+    top_5_agents_past_year = temp_dic
+    print(top_5_agents_past_year)
+
+    # get top 5 booking agents based on commission for the past month in this airline
+    cursor = conn.cursor()
+    query = f"SELECT booking_agent_id, SUM(price) AS commission FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE airline_name = '{session['airline']}' AND purchase_date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR ) AND booking_agent_id IS NOT NULL GROUP BY booking_agent_id ORDER BY commission DESC LIMIT 5"
+    cursor.execute(query)
+    top_5_agents_commission_past_year = cursor.fetchall()
+    cursor.close()
+    # convert result to list
+    temp_dic = {'booking_agent_id': [], 'commission': []}
+    for i in range(5):
+        try:
+            agent = top_5_agents_commission_past_year[i]
+            temp_dic['booking_agent_id'].append(f"Agent ID: {agent['booking_agent_id']}")
+            temp_dic['commission'].append(int(agent['commission']))
+        except:
+            temp_dic['booking_agent_id'].append("Empty")
+            temp_dic['commission'].append(0)
+    top_5_agents_commission_past_year = temp_dic
+    print(top_5_agents_commission_past_year)
+
+    # get all booking agents in this airline
+    cursor = conn.cursor()
+    query = f"SELECT * FROM booking_agent NATURAL JOIN booking_agent_work_for WHERE airline_name = '{session['airline']}'"
+    cursor.execute(query)
+    booking_agents = cursor.fetchall()
+    cursor.close()
+    print(booking_agents)
+
+    return render_template('view_all_booking_agents.html', top_5_agents_past_month=json.dumps(top_5_agents_past_month), top_5_agents_past_year=json.dumps(top_5_agents_past_year), top_5_agents_commission_past_year=json.dumps(top_5_agents_commission_past_year), booking_agents=booking_agents)
+
+@app.route('/frequent_customers', methods=['GET', 'POST'])
+def frequent_customers():
+    # get customers sorted by number of tickets purchased in the past year
+    # only count for this airline
+    cursor = conn.cursor()
+    query = f"SELECT customer_email, COUNT(*) AS num_tickets FROM purchases NATURAL JOIN ticket WHERE airline_name = '{session['airline']}' AND purchase_date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR ) GROUP BY customer_email ORDER BY num_tickets DESC"
+    cursor.execute(query)
+    customers = cursor.fetchall()
+    cursor.close()
+    print(customers)
+    return render_template('frequent_customers.html', customers=customers)
+
+
+@app.route('/view_customer_tickets/<customer_email>', methods=['GET', 'POST'])
+def view_customer_tickets(customer_email):
+    # get all tickets purchased by this customer
+    cursor = conn.cursor()
+    query = f"SELECT * FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE customer_email = '{customer_email}' AND airline_name = '{session['airline']}'"
+    cursor.execute(query)
+    tickets = cursor.fetchall()
+    cursor.close()
+    print(tickets)
+    return render_template('view_customer_tickets.html', tickets=tickets, customer_email=customer_email)
+
+
+@app.route('/view_reports', methods=['GET', 'POST'])
+def view_reports():
+    form_view_ticket_reports = forms.ViewTicketReportsForm()
+    # Total amounts of ticket sold based on range of dates
+    # Month wise tickets sold in a bar chart
+    start_date = datetime.date.today() - relativedelta(years=1) if form_view_ticket_reports.start_date.data == None else form_view_ticket_reports.start_date.data
+    end_date = datetime.date.today() if form_view_ticket_reports.end_date.data == None else form_view_ticket_reports.end_date.data
+    cursor = conn.cursor()
+    query = f"SELECT YEAR(purchase_date) AS year, MONTH(purchase_date) AS month, COUNT(*) AS num_tickets FROM purchases NATURAL JOIN ticket WHERE airline_name = '{session['airline']}' AND purchase_date >= '{start_date}' AND purchase_date <= '{end_date}' GROUP BY year, month"
+    cursor.execute(query)
+    tickets_report = cursor.fetchall()
+    cursor.close()
+
+    # convert result to list
+    temp_dic = {'year-month': [], 'num_tickets': []}
+    while start_date <= end_date:
+        temp_dic['year-month'].append(f"{start_date.year}-{start_date.month}")
+        data_exits = False
+        for ticket in tickets_report:
+            if ticket['year'] == start_date.year and ticket['month'] == start_date.month:
+                temp_dic['num_tickets'].append(ticket['num_tickets'])
+                data_exits = True
+                break
+        if not data_exits:
+            temp_dic['num_tickets'].append(0)
+        start_date += relativedelta(months=1)
+
+    tickets_report = temp_dic
+    return render_template('view_reports.html', form_view_ticket_reports=form_view_ticket_reports, tickets_report=json.dumps(tickets_report))
+
+
+@app.route('/view_compare_revenue', methods=['GET', 'POST'])
+def view_compare_revenue():
+    # showing total amount of revenue earned from direct sales (when customer bought tickets without using a booking agent)
+    # and total amount of revenue earned from indirect sales (when customer bought tickets using booking agents) in the last month and last year
+
+    # get total revenue from direct sales in the past month
+    cursor = conn.cursor()
+    query = f"SELECT SUM(price) AS revenue FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE airline_name = '{session['airline']}' AND purchase_date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH ) AND booking_agent_id IS NULL"
+    cursor.execute(query)
+    direct_sales_past_month = cursor.fetchone()['revenue']
+    if direct_sales_past_month is None:
+        direct_sales_past_month = 0
+    cursor.close()
+    print(direct_sales_past_month)
+
+    # get total revenue from direct sales in the past year
+    cursor = conn.cursor()
+    query = f"SELECT SUM(price) AS revenue FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE airline_name = '{session['airline']}' AND purchase_date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR ) AND booking_agent_id IS NULL"
+    cursor.execute(query)
+    direct_sales_past_year = cursor.fetchone()['revenue']
+    if direct_sales_past_year is None:
+        direct_sales_past_year = 0
+    cursor.close()
+    print(direct_sales_past_year)
+
+    # get total revenue from indirect sales in the past month
+    cursor = conn.cursor()
+    query = f"SELECT SUM(price) AS revenue FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE airline_name = '{session['airline']}' AND purchase_date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH ) AND booking_agent_id IS NOT NULL"
+    cursor.execute(query)
+    indirect_sales_past_month = cursor.fetchone()['revenue']
+    if indirect_sales_past_month is None:
+        indirect_sales_past_month = 0
+    cursor.close()
+    print(indirect_sales_past_month)
+
+    # get total revenue from indirect sales in the past year
+    cursor = conn.cursor()
+    query = f"SELECT SUM(price) AS revenue FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE airline_name = '{session['airline']}' AND purchase_date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR ) AND booking_agent_id IS NOT NULL"
+    cursor.execute(query)
+    indirect_sales_past_year = cursor.fetchone()['revenue']
+    if indirect_sales_past_year is None:
+        indirect_sales_past_year = 0
+    cursor.close()
+    print(indirect_sales_past_year)
+
+    return render_template('view_compare_revenue.html', direct_sales_revenue_past_month=direct_sales_past_month, direct_sales_revenue_past_year=direct_sales_past_year, indirect_sales_revenue_past_month=indirect_sales_past_month, indirect_sales_revenue_past_year=indirect_sales_past_year)
+
+@app.route('/view_top_destinations', methods=['GET', 'POST'])
+def view_top_destinations():
+    # get top 3 destinations in the past month
+    cursor = conn.cursor()
+    query = f"SELECT airport_name AS destination, COUNT(*) AS num_tickets FROM purchases NATURAL JOIN ticket NATURAL JOIN flight JOIN airport ON flight.arrival_airport = airport.airport_name WHERE airline_name = '{session['airline']}' AND purchase_date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH ) GROUP BY destination ORDER BY num_tickets DESC LIMIT 3"
+    cursor.execute(query)
+    top_destinations_past_month = cursor.fetchall()
+    cursor.close()
+    print(top_destinations_past_month)
+
+    # get top 3 destinations in the past year
+    cursor = conn.cursor()
+    query = f"SELECT airport_name AS destination, COUNT(*) AS num_tickets FROM purchases NATURAL JOIN ticket NATURAL JOIN flight JOIN airport ON flight.arrival_airport = airport.airport_name WHERE airline_name = '{session['airline']}' AND purchase_date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR ) GROUP BY destination ORDER BY num_tickets DESC LIMIT 3"
+    cursor.execute(query)
+    top_destinations_past_year = cursor.fetchall()
+    cursor.close()
+    print(top_destinations_past_year)
+
+    return render_template('view_top_destinations.html', top_destinations_past_month=top_destinations_past_month, top_destinations_past_year=top_destinations_past_year)

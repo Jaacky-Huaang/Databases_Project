@@ -112,22 +112,22 @@ test1
 - [ ] top customer
 - [ ] logout
 ### airline stuff
-- [ ] view flights
-- [ ] create flights
-- [ ] change status of flight
-- [ ] add airplane
-- [ ] add airport
-- [ ] view all booking agents
-- [ ] view frequent customers
-- [ ] view tickets reports
-- [ ] comparison of revenue
-- [ ] top destination
-- [ ] grand permissions(only for "Admin") to other stuffs
-- [ ] add new booking agent(only for "Admin") to its airline
+- [x] view flights
+- [x] create flights
+- [x] change status of flight
+- [x] add airplane
+- [x] add airport
+- [x] view all booking agents
+- [x] view frequent customers
+- [x] view tickets reports
+- [x] comparison of revenue
+- [x] top destination
+- [x] grand permissions(only for "Admin") to other stuffs
+- [x] add new booking agent(only for "Admin") to its airline
 
 ### permission
 #### admin
-- [ ] add new airplane to its airline
-- [ ] add new airplanes and new flight
+- [x] add new airplane to its airline
+- [x] add new airplanes and new flight
 #### operator
-- [ ] set in progress flight's status
+- [x] set in progress flight's status

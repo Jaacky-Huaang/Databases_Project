@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div>
+        <div class="space"></div>
+        <legend>View Customer of Flight {{ flight_num }}</legend>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Customer Email</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Passport Expiration</th>
+                    <th scope="col">Passport Country</th>
+                    <th scope="col">Date of Birth</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for customer in customers %}
+                    <tr>
+                        <td>{{ customer.customer_email }}</td>
+                        <td>{{ customer.name }}</td>
+                        <td>{{ customer.passport_expiration }}</td>
+                        <td>{{ customer.passport_country }}</td>
+                        <td>{{ customer.date_of_birth }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+   </div>
+{% endblock content %}

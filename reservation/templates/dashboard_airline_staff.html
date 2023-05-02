@@ -1,0 +1,296 @@
+{% extends "layout.html" %}
+{% block headlines %}
+<div class="shadow bg-light top-50 rounded" id="carousel_headline">
+    <div class="carousel-inner rounded">
+        <div class="carousel-item active">
+            <img class="d-block" style="object-fit: cover; filter: brightness(90%)" width="100%" height="200px" src="https://mir-s3-cdn-cf.behance.net/project_modules/2800_opt_1/1856f828764453.55d18bc88c8fd.jpg">
+            <div class="carousel-caption d-none d-md-block">
+                <legend>Airline Staff Operations</legend>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="space"></div>
+
+{% endblock headlines %}
+
+{% block content %}
+<div class="content-section" id="search_flight">
+    <div class="bd-example-snippet bd-code-snippet"><div class="bd-example">
+    <form class="row g-3" method="POST" action="">
+        {{ airline_staff_search_form.hidden_tag() }}
+        {{ airline_staff_search_form.identifier(hidden=True, value="airline_staff_search") }}
+        <legend class="border-bottom mb-4">Flights Operated by {{ session['airline'] }} Airline</legend>
+        <div class="col-md-3">
+            <label class="form-label">{{ airline_staff_search_form.departure_place.label(class="form-control-label") }}</label>
+            {{ airline_staff_search_form.departure_place(class="form-control") }}
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">{{ airline_staff_search_form.arrival_place.label(class="form-control-label") }}</label>
+            {{ airline_staff_search_form.arrival_place(class="form-control") }}
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">{{ airline_staff_search_form.start_time.label(class="form-control-label") }}</label>
+            {{ airline_staff_search_form.start_time(class="form-control") }}
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">{{ airline_staff_search_form.end_time.label(class="form-control-label") }}</label>
+            {{ airline_staff_search_form.end_time(class="form-control") }}
+        </div>
+        <div class="col-md-2">
+            <label class="form-label"><br></label>
+            <div class="form-group">
+                {{ airline_staff_search_form.submit(class="btn btn-warning") }}
+            </div>
+        </div>
+    </form>
+    <div class="space"></div>
+    <small class="text-muted">* Leave blank for showing upcoming flights for the next 30 days by default</small>
+    <div class="space"></div>
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Flight<br> Number</th>
+                <th scope="col">Departure<br> Airport</th>
+                <th scope="col">Arrival<br> Airport</th>
+                <th scope="col">Departure<br> Time</th>
+                <th scope="col">Arrival<br> Time</th>
+                <th scope="col">Flight<br> Status</th>
+                <th scope="col">Airplane<br> ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for flight in flights %}
+            <tr>
+                <td><a class="text-decoration-none" href="{{ url_for("view_customer", flight_num=flight.flight_num) }}">{{ flight.flight_num }}</a></td>
+                <td>{{ flight.departure_airport }}</td>
+                <td>{{ flight.arrival_airport }}</td>
+                <td>{{ flight.departure_time }}</td>
+                <td>{{ flight.arrival_time }}</td>
+                <td>{{ flight.status }}</td>
+                <td>{{ flight.airplane_id }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+    <small class="text-muted">* Click the flight number to see all customers on that flight</small>
+    <form>
+        {% if 'permission_type' in session %}
+            {% if 'Admin' in session['permission_type'] %}
+                <div class="space"></div>
+                <button class="btn btn-outline-warning" formaction="{{ url_for('create_flight') }}">Create A New Flight</button>
+            {% endif %}
+        {% endif %}
+    </form>
+
+    <div class="space"></div>
+    {% if 'permission_type' in session %}
+        {% if 'Operator' in session['permission_type'] %}
+            <form class="row g-3" method="POST" action="" id="change_flight_status">
+                {{ change_flight_status_form.hidden_tag() }}
+                {{ change_flight_status_form.identifier(hidden=True, value="change_flight_status") }}
+                <div class="col-md-3">
+                    <label class="form-label">{{ change_flight_status_form.flight_num.label(class="form-control-label") }}</label>
+                    {{ change_flight_status_form.flight_num(class="form-control") }}
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ change_flight_status_form.status.label(class="form-control-label") }}</label>
+                    {{ change_flight_status_form.status(type="select", class="form-select") }}
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label"><br></label>
+                    <div class="form-group">
+                        {{ change_flight_status_form.submit(class="btn btn-warning") }}
+                    </div>
+                </div>
+            </form>
+            <div class="space"></div>
+            <small class="text-muted">* You have the operator permission and are able to change the flight status</small>
+        {% endif %}
+    {% endif %}
+    </div></div>
+</div>
+
+{% endblock content %}
+
+{% block extra_content %}
+
+{% if 'Admin' in session['permission_type'] %}
+    <div class="bg-light p-5 rounded">
+        <div class="col-sm-10 mx-auto">
+            <div class="content-section" id="add_airplane">
+                <div class="bd-example-snippet bd-code-snippet"><div class="bd-example">
+                <form class="row g-3" method="POST" action="">
+                    {{ add_airplane_form.hidden_tag() }}
+                    {{ add_airplane_form.identifier(hidden=True, value="add_airplane") }}
+                    <legend class="border-bottom mb-4">Add Airplane to {{ session['airline'] }} Airline</legend>
+                    <div class="col-md-4">
+                        <label class="form-label">{{ add_airplane_form.airplane_id.label(class="form-control-label") }}</label>
+                        {% if add_airplane_form.airplane_id.errors %}
+                            {{ add_airplane_form.airplane_id(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in add_airplane_form.airplane_id.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ add_airplane_form.airplane_id(class="form-control") }}
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">{{ add_airplane_form.seats.label(class="form-control-label") }}</label>
+                        {% if add_airplane_form.seats.errors %}
+                            {{ add_airplane_form.seats(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in add_airplane_form.seats.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ add_airplane_form.seats(class="form-control") }}
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label"><br></label>
+                        <div>
+                            <button class="btn btn-warning" type="submit">Add</button>
+                        </div>
+
+                    </div>
+                </form>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="space"></div>
+
+    <div class="bg-light p-5 rounded" id="add_airport">
+        <div class="col-sm-10 mx-auto">
+            <div class="content-section">
+                <div class="bd-example-snippet bd-code-snippet"><div class="bd-example">
+                <form class="row g-3" method="POST" action="">
+                    {{ add_airport_form.hidden_tag() }}
+                    {{ add_airport_form.identifier(hidden=True, value="add_airport") }}
+                    <legend class="border-bottom mb-4">Add Airport</legend>
+                        <div class="col-md-4">
+                            <label class="form-label">{{ add_airport_form.airport_name.label(class="form-control-label") }}</label>
+                            {% if add_airport_form.airport_name.errors %}
+                                {{ add_airport_form.airport_name(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in add_airport_form.airport_name.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ add_airport_form.airport_name(class="form-control") }}
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">{{ add_airport_form.airport_city.label(class="form-control-label") }}</label>
+                            {% if add_airport_form.airport_city.errors %}
+                                {{ add_airport_form.airport_city(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in add_airport_form.airport_city.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ add_airport_form.airport_city(class="form-control") }}
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><br></label>
+                            <div>
+                                <button class="btn btn-warning" type="submit">Add</button>
+                            </div>
+                        </div>
+                </form>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="space"></div>
+    <div class="bg-light p-5 rounded" id="grant_new_permission">
+        <div class="col-sm-10 mx-auto">
+            <form class="row g-3" method="POST" action="">
+                {{ grant_new_permission_form.hidden_tag() }}
+                {{ grant_new_permission_form.identifier(hidden=True, value="grant_new_permission") }}
+                <legend class="border-bottom mb-4">Grant New Permission to Other Staffs</legend>
+                <div class="col-md-4">
+                    <label class="form-label">{{ grant_new_permission_form.email.label(class="form-control-label") }}</label>
+                    {% if grant_new_permission_form.email.errors %}
+                        {{ grant_new_permission_form.email(class="form-control is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in grant_new_permission_form.email.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ grant_new_permission_form.email(class="form-control") }}
+                    {% endif %}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ grant_new_permission_form.permission.label(class="form-control-label") }}</label>
+                    {% if grant_new_permission_form.permission.errors %}
+                        {{ grant_new_permission_form.permission(class="form-select is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in grant_new_permission_form.permission.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ grant_new_permission_form.permission(class="form-select") }}
+                    {% endif %}
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label"><br></label>
+                    <div>
+                        <button class="btn btn-warning" type="submit">Grant Permission</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="space"></div>
+    <div class="bg-light p-5 rounded" id="add_booking_agent_to_airline">
+        <div class="col-sm-10 mx-auto">
+            <form class="row g-3" method="POST" action="">
+                {{ add_booking_agent_to_airline_form.hidden_tag() }}
+                {{ add_booking_agent_to_airline_form.identifier(hidden=True, value="add_booking_agent_to_airline") }}
+                <legend class="border-bottom mb-4">Add Booking Agent to Airline</legend>
+                <div class="col-md-4">
+                <label class="form-label">{{ add_booking_agent_to_airline_form.email.label(class="form-control-label") }}</label>
+                    {% if add_booking_agent_to_airline_form.email.errors %}
+                        {{ add_booking_agent_to_airline_form.email(class="form-control is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in add_booking_agent_to_airline_form.email.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ add_booking_agent_to_airline_form.email(class="form-control") }}
+                    {% endif %}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Airline</label>
+                    <div class="form-control text-muted bg-light">{{ session['airline'] }}</div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label"><br></label>
+                    <div>
+                        <button class="btn btn-warning" type="submit">Add Booking Agent</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+{% endif %}
+
+{% endblock extra_content %}
