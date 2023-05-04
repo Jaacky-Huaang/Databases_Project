@@ -222,6 +222,7 @@ def login_agent():
             session['email'] = email
             # add the user status to the session
             session['status'] = 'agent'
+            session['agent_id'] = data['booking_agent_id']
             flash(f'You have successfully logged in as {email}!', 'success')
 
             return redirect(url_for('home'))  # Change later
@@ -286,6 +287,8 @@ def logout():
     session.pop('email', None)
     session.pop('user_name', None)
     session.pop('status', None)
+    session.pop('agent_id', None)
+    session.pop('airline', None)
     session.pop('permission_type', None)
     flash('You have successfully logged out!', 'secondary')
     return redirect(url_for('home'))
@@ -332,9 +335,45 @@ def dashboard_customer():
     return render_template('dashboard_customer.html', purchased_flights=purchased_flights, form_customer_spending=form_customer_spending, date_list=json.dumps(date_list), spending_list=json.dumps(spending_list))
 
 
-@app.route('/dashboard_agent')
+@app.route('/dashboard_agent', methods=['GET', 'POST'])
 def dashboard_agent():
-    return render_template('dashboard_agent.html')
+    # display purchased flight info
+    cursor = conn.cursor()
+    query = f"SELECT * FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE booking_agent_id = '{session['agent_id']}'"
+    cursor.execute(query)
+    purchased_flights = cursor.fetchall()
+    cursor.close()
+    print(purchased_flights)
+
+    # track customer spending
+    form_customer_spending = forms.CustomerSpendingForm()
+    start_date = datetime.date.today() - relativedelta(years=1) if form_customer_spending.start_date.data==None else form_customer_spending.start_date.data
+    end_date = datetime.date.today() if form_customer_spending.end_date.data==None else form_customer_spending.end_date.data
+
+    cursor = conn.cursor()
+    query = f"SELECT YEAR(purchase_date) as year, MONTH(purchase_date) as month, SUM(price) * 0.1 AS total_spending FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE booking_agent_id = '{session['agent_id']}' AND purchase_date BETWEEN '{start_date}' AND '{end_date}' GROUP BY year, month"
+    cursor.execute(query)
+    customer_spending = cursor.fetchall()
+    cursor.close()
+
+    print(customer_spending)
+
+    spending_date_dic = {}
+    for row in customer_spending:
+        spending_date_dic[str(row['year']) + '-' + str(row['month'])] = float(row['total_spending'])
+
+    date_list = []
+    spending_list = []
+    while start_date <= end_date:
+        date_list.append(str(start_date.year) + '-'  + str(start_date.month))
+        if str(start_date.year) + '-' + str(start_date.month) in spending_date_dic:
+            spending_list.append(spending_date_dic[str(start_date.year) + '-' + str(start_date.month)])
+        else:
+            spending_list.append(0)
+        start_date += relativedelta(months=1)
+
+    return render_template('dashboard_agent.html', purchased_flights=purchased_flights, form_customer_spending=form_customer_spending, date_list=json.dumps(date_list), spending_list=json.dumps(spending_list))
+
 
 
 @app.route('/dashboard_airline_staff', methods=['GET', 'POST'])
@@ -744,6 +783,50 @@ def view_top_destinations():
 
     return render_template('view_top_destinations.html', top_destinations_past_month=top_destinations_past_month, top_destinations_past_year=top_destinations_past_year)
 
+@app.route('/view_all_customers', methods=['GET', 'POST'])
+def view_all_customers():
+
+    # get top 5 customers based on number of tickets sales for the past 6 months
+    cursor = conn.cursor()
+    query = f"SELECT customer_email, COUNT(*) AS num_tickets FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE booking_agent_id = '{session['agent_id']}' AND purchase_date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH )ORDER BY num_tickets DESC LIMIT 5"
+    cursor.execute(query)
+    top_5_customers_past_month = cursor.fetchall()
+    cursor.close()
+    # covert result to list
+    temp_dic = {'customer_email': [], 'num_tickets': []}
+    for i in range(5):
+        try:
+            cust = top_5_customers_past_month[i]
+            temp_dic['customer_email'].append(cust['customer_email'])
+            temp_dic['num_tickets'].append(cust['num_tickets'])
+        except:
+            temp_dic['customer_email'].append("Empty")
+            temp_dic['num_tickets'].append(0)
+    top_5_customers_past_month = temp_dic
+    print(top_5_customers_past_month)
+
+    # get top 5 customers based on commission for the past year
+    cursor = conn.cursor()
+    query = f"SELECT customer_email, SUM(price) * 0.1 AS commission FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE booking_agent_id = '{session['agent_id']}' AND purchase_date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR ) ORDER BY commission DESC LIMIT 5"
+    cursor.execute(query)
+    top_5_commissions_past_year = cursor.fetchall()
+    cursor.close()
+    # convert result to list
+    temp_dic = {'customer_email': [], 'commission': []}
+    for i in range(5):
+        try:
+            cust = top_5_commissions_past_year[i]
+            temp_dic['customer_email'].append(cust['customer_email'])
+            temp_dic['commission'].append(int(cust['commission']))
+        except:
+            temp_dic['customer_email'].append("Empty")
+            temp_dic['commission'].append(0)
+    top_5_commissions_past_year = temp_dic
+    print(top_5_commissions_past_year)
+
+
+    return render_template('view_all_customers.html', top_5_customers_past_month=json.dumps(top_5_customers_past_month), top_5_commissions_past_year=json.dumps(top_5_commissions_past_year))
+
 
 @app.route('/purchase/<flight_num>', methods=['GET', 'POST'])
 def purchase(flight_num):
@@ -790,13 +873,34 @@ def purchase(flight_num):
     cursor.close()
     print("hello?")
     if form.validate_on_submit():
+        
+        #updating seat info
+        cursor = conn.cursor()
+        query = f"SELECT count(ticket_id) as leftt\
+                    FROM (ticket AS t natural join flight)\
+                    where flight_num = '{flight_num}' and \
+                    not exists(SELECT *\
+                        FROM purchases as p\
+                        WHERE p.ticket_id = t.ticket_id)"
+        cursor.execute(query)
+        left = cursor.fetchone()
+        cursor.close()
+        
+        cursor = conn.cursor()
+        query = f"SELECT count(ticket_id) as alll\
+                FROM ticket AS t natural join flight\
+                where flight_num = '{flight_num}'\
+                group by flight_num;"
+        cursor.execute(query)
+        all = cursor.fetchone()
+        cursor.close()
         print("submittingggggg")
         if session['status'] == 'customer':
             form.customer.data = customer = session['email']
-            agent = form.agent.data
+            agent = None
         else:
             customer = form.customer.data
-            form.agent.data = agent = session['email']
+            form.agent.data = agent = session['agent_id']
 
         if agent == "":
             agent = None
@@ -829,7 +933,7 @@ def purchase(flight_num):
             cus = cursor.fetchall()
 
             if agent is not None and len(work_for) == 0:
-                flash("Agent_ID doesn't exist, please consult with your agent","danger")
+                flash("You are not working for this airline!","danger")
 
             else:
                 if len(cus) == 0:
@@ -837,10 +941,11 @@ def purchase(flight_num):
                 else:
                     date = datetime.date.today()
                     query = "INSERT INTO purchases VALUES ('{}', '{}', '{}', '{}')"
-                    cursor.execute(query.format(ticket_id, session["email"], agent, date))
+                    cursor.execute(query.format(ticket_id, customer, agent, date))
                     conn.commit()
-                    flash(f'User {session["email"]}Purchased Ticket {ticket_id} from {flight_num} at {airline_name} !', 'success')
+                    flash(f'User {session["email"]} Purchased Ticket {ticket_id} from {flight_num} at {airline_name} !', 'success')
                     cursor.close()
+                    return redirect(url_for('home'))
 
     if status == 'customer':
         return render_template('customer_purchase.html',form = form,flight = flight,left = left,all = all)

@@ -100,16 +100,18 @@ test1
 
 ### customer
 - [x] purchased flight info (specify optionally) **Haven't done the optional yet**
-- [ ] purchase ticket (as long as there is room (capacity and ticket))
+    bug: purchase each time when refresh page
+    do the form group need action? (to refresh probably)
+- [x] purchase ticket (as long as there is room (capacity and ticket))
 - [x] search for flight
 - [x] track spending
 - [ ] logout
 ### agent
-- [ ] purchased flight info (specify optionally) 
-- [ ] purchase ticket (only for its airline)
-- [ ] search for flight
-- [ ] commission spending
-- [ ] top customer
+- [x] purchased flight info (specify optionally) same
+- [x] purchase ticket (only for its airline)
+- [x] search for flight
+- [ ] commission spending same
+- [x] top customer same
 - [ ] logout
 ### airline stuff
 - [x] view flights

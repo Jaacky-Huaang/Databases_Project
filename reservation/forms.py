@@ -106,6 +106,20 @@ class PurchaseAgen(FlaskForm):
     agent = StringField('Agent_ID', validators=[])
     submit = SubmitField('Purchase')
 
+
+class AgentSpendingForm(FlaskForm):
+    start_date = DateField('Start Date', validators=[])
+    end_date = DateField('End Date', validators=[])
+
+    submit = SubmitField('Search')
+
+class ViewTicketReportsForm(FlaskForm):
+    identifier = StringField('Identifier')
+    start_date = DateField('Start Date', validators=[])
+    end_date = DateField('End Date', validators=[])
+
+    submit = SubmitField('View Reports')
+
 class CreateFlightForm(FlaskForm):
     # airline_name = StringField('Airline Name', validators=[DataRequired(), Length(min=1, max=50)])
     flight_num = IntegerField('Flight Number', validators=[DataRequired()])

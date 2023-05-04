@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div>
+    <legend class="mb-4">Top 5 Customers of Agent {{ session['agent_id'] }} </legend>
+    <nav>
+        <div class="nav nav-tabs mb-3" id="nav-tab" role="tablist">
+            <button class="nav-link active" id="last-month-sales-tab" data-bs-toggle="tab" data-bs-target="#last-month-sales" type="button" role="tab" aria-controls="nav-last-month-sales" aria-selected="true">Based on Sales Last 6 Months</button>
+            <button class="nav-link" id="last-year-commission-tab" data-bs-toggle="tab" data-bs-target="#last-year-commission" type="button" role="tab" aria-controls="last-year-commission" aria-selected="false">Based on Commission Last Year</button>
+        </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="last-month-sales" role="tabpanel" aria-labelledby="last-month-sales-tab">
+            <canvas class="my-4 w-100" id="top5CustomersLastMonth" width="900" height="380"></canvas>
+        </div>
+        <div class="tab-pane fade" id="last-year-commission" role="tabpanel" aria-labelledby="last-year-commission-tab">
+            <canvas class="my-4 w-100" id="top5CommissionsLastYear" width="900" height="380"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  const ctx1 = document.getElementById('top5CustomersLastMonth');
+    let top_5_customers_past_month = JSON.parse({{ top_5_customers_past_month | tojson }});
+
+  new Chart(ctx1, {
+    type: 'bar',
+    data: {
+      labels: top_5_customers_past_month['customer_email'],
+      datasets: [{
+        label: 'number of tickets sold',
+        data: top_5_customers_past_month['num_tickets'],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
+
+<script>
+  const ctx2 = document.getElementById('top5CommissionsLastYear');
+    let top_5_commissions_past_year = JSON.parse({{ top_5_commissions_past_year | tojson }});
+
+  new Chart(ctx2, {
+    type: 'bar',
+    data: {
+      labels: top_5_commissions_past_year['customer_email'],
+      datasets: [{
+        label: 'number of tickets sold',
+        data: top_5_commissions_past_year['commission'],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
+
+{% endblock content %}
+

@@ -116,6 +116,19 @@
         </li>
         {% endif %}
 
+        {% if session['status'] == 'agent' %}
+        <li class="mb-1">
+          <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="true">
+            Statistics
+          </button>
+          <div class="collapse show" id="dashboard-collapse">
+            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1">
+              <li><a href="{{ url_for('view_all_customers') }}" class="link-dark d-inline-flex text-decoration-none rounded">Top Customers</a></li>
+            </ul>
+          </div>
+        </li>
+        {% endif %}
+
         <li class="border-top my-3"></li>
         <li class="mb-1">
           <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#account-collapse" aria-expanded="true">
@@ -128,7 +141,11 @@
                 <li><a href="/dashboard_customer#purchased_flights" class="link-dark d-inline-flex text-decoration-none rounded">Purchased Flights</a></li>
                 <li><a href="/dashboard_customer#spending_dashboard" class="link-dark d-inline-flex text-decoration-none rounded">Spending Dashboard</a></li>
                 <li><a href="{{ url_for('logout') }}" class="link-secondary d-inline-flex text-decoration-none rounded">Log out</a></li>
-              {% elif session['status'] == 'booking_agent' %}
+              {% elif session['status'] == 'agent' %}
+                <li><a href="/dashboard_agent#" class="link-dark d-inline-flex text-decoration-none rounded">Agent {{ session['email'] }}</a></li>
+                <li><a href="/dashboard_agent#purchased_flights" class="link-dark d-inline-flex text-decoration-none rounded">Purchased Flights</a></li>
+                <li><a href="/dashboard_agent#commission_dashboard" class="link-dark d-inline-flex text-decoration-none rounded">Commission Dashboard</a></li>
+                <li><a href="{{ url_for('logout') }}" class="link-secondary d-inline-flex text-decoration-none rounded">Log out</a></li>
               {% elif session['status'] == 'airline_staff' %}
                 <li><a href="/dashboard_airline_staff#" class="link-dark d-inline-flex text-decoration-none rounded">Airline Staff</a></li>
                 <li><a href="/dashboard_airline_staff#search_flight" class="link-dark d-inline-flex text-decoration-none rounded">Flights Operated</a></li>
