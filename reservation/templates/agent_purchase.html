@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+{% block content %}
+
+
+<legend class="border-bottom mb-4">Purchase Flight</legend>
+
+<div class="tab-content" id="nav-tabContent">
+    <div class="shadow card">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img src="https://i.pinimg.com/564x/8a/52/da/8a52da7573738ca48432ed20be59ba78.jpg" class="d-block rounded-start" width="100%" height="100%" style="object-fit:cover">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-header">
+                        Flight Status: {{ flight.status }}
+                    </div>
+                    <div class="bg-light mx-auto p-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Flight Number: {{ flight.flight_num }} {{ flight.airline_name }} Airline</h5>
+                    </div>
+                    <ul class="list-group list-group-flush rounded" style="font-family:'Courier New' ">
+                        <li class="list-group-item">Departure: {{ flight.departure_airport }} {{ flight.departure_time }}</li>
+                        <li class="list-group-item">Arrival: {{ flight.arrival_airport }} {{ flight.arrival_time }}</li>
+                        <li class="list-group-item">Price: {{ flight.price }}</li>
+                        <li class="list-group-item">Seats: {{ left.leftt }} / {{all.alll}}</li>
+                    </ul>
+                    </div>
+                
+                </div>
+
+            </div>
+        </div>
+        <div class = "space"></div>
+</div>
+
+
+
+    <div class="content-section">
+        <div class="bd-example-snippet bd-code-snippet"><div class="bd-example">
+        <form class="row g-3" method="POST" action="">
+            {%if status == "agent"%}
+                {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        {{ form.customer.label(class="form-control-label") }}
+                        {% if form.customer.errors %}
+                            {{ form.customer(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.customer.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.customer(class="form-control") }}
+                        {% endif %}
+                    </div> 
+            {%endif%}
+
+            <div class="spacer"></div>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+            <small class="text-muted ml-2">
+                <a href="#">Forgot Password?</a>
+            </small>
+        </form>
+    </div>
+    <div class="border-top pt-3">
+        <small class="text-muted">
+            Need An Account? <a class="ml-2" href="{{ url_for('register') }}">Sign Up Now</a>
+        </small>
+    </div>
+{% endblock content %}

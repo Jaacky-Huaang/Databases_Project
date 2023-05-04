@@ -46,9 +46,18 @@ def about():
 # Define route for searching upcoming flight
 @app.route('/upcoming_flight/<search_result>', methods=['GET', 'POST'])
 def upcoming_flight(search_result):
+    if 'status' not in session:
+        status = 'public'
+    else:
+        if session['status'] == 'customer':
+            status = 'customer'
+        elif session['status'] == 'agent':
+            status = 'agent'
+        else:
+            status = 'staff'
     search_result = json.loads(search_result)
     # print(type(search_result[0]))
-    return render_template('upcoming_flight.html', search_result=search_result)
+    return render_template('upcoming_flight.html', search_result=search_result,status = status)
 
 
 
@@ -736,23 +745,68 @@ def view_top_destinations():
     return render_template('view_top_destinations.html', top_destinations_past_month=top_destinations_past_month, top_destinations_past_year=top_destinations_past_year)
 
 
-@app.route('/purchase', methods=['GET', 'POST'])
-def purchase():
-    form = forms.Purchase()
+@app.route('/purchase/<flight_num>', methods=['GET', 'POST'])
+def purchase(flight_num):
+    if 'status' not in session:
+        return redirect(url_for('home'))
+    else:
+        if session['status'] == 'customer':
+            status = 'customer'
+            form = forms.PurchaseCus()
+        elif session['status'] == 'agent':
+            status = 'agent'
+            form = forms.PurchaseAgen()
+        else:
+            return redirect(url_for('home'))
+    print(form)
+    #get flight info
+    cursor = conn.cursor()
+    query = f"SELECT * FROM ticket NATURAL JOIN flight WHERE flight_num = '{flight_num}'"
+    cursor.execute(query)
+    flight = cursor.fetchone()
+    cursor.close()
+
+    #get status
+
+    #get seat info
+    cursor = conn.cursor()
+    query = f"SELECT count(ticket_id) as leftt\
+                FROM (ticket AS t natural join flight)\
+                where flight_num = '{flight_num}' and \
+                not exists(SELECT *\
+                    FROM purchases as p\
+                    WHERE p.ticket_id = t.ticket_id)"
+    cursor.execute(query)
+    left = cursor.fetchone()
+    cursor.close()
+    
+    cursor = conn.cursor()
+    query = f"SELECT count(ticket_id) as alll\
+            FROM ticket AS t natural join flight\
+            where flight_num = '{flight_num}'\
+            group by flight_num;"
+    cursor.execute(query)
+    all = cursor.fetchone()
+    cursor.close()
+    print("hello?")
     if form.validate_on_submit():
-        flight_number = form.flight_number.data
-        customer = form.customer.data
-        agent = form.agent.data
-        if agent == "0":
+        print("submittingggggg")
+        if session['status'] == 'customer':
+            form.customer.data = customer = session['email']
+            agent = form.agent.data
+        else:
+            customer = form.customer.data
+            form.agent.data = agent = session['email']
+
+        if agent == "":
             agent = None
         cursor = conn.cursor()
         query_find_avil_ticket = "SELECT * FROM ticket AS t WHERE flight_num = '{}' and not exists \
                                         (SELECT * FROM purchases AS p WHERE p.ticket_id = t.ticket_id)"
-        cursor.execute(query_find_avil_ticket.format(flight_number))
+        cursor.execute(query_find_avil_ticket.format(flight_num))
         found = cursor.fetchall()
 
-
-        # flash(f'Purchasing Ticket from {flight_number}  {found}!', 'success')
+        # flash(f'Purchasing Ticket from {flight_num}  {found}!', 'success')
         if len(found) == 0:
             flash('ticket not found', 'danger')
             cursor.close()
@@ -762,21 +816,46 @@ def purchase():
             ticket_id = found[0]["ticket_id"]
 
             #make sure agent correct
+            if agent is not None:
+                cursor = conn.cursor()
+                query_find_airline = "SELECT * FROM booking_agent natural JOIN booking_agent_work_for WHERE booking_agent_id = '{}' and airline_name = '{}' "
+                cursor.execute(query_find_airline.format(agent,airline_name))
+                work_for = cursor.fetchall()
+
+            #make sure customer correct
             cursor = conn.cursor()
-            query_find_airline = "SELECT * FROM booking_agent natural JOIN booking_agent_work_for WHERE booking_agent_id = '{}' and airline_name = '{}' "
-            cursor.execute(query_find_airline.format(agent,airline_name))
-            work_for = cursor.fetchall()
-            if len(work_for) == 0:
+            query_find_airline = "SELECT * FROM customer WHERE email = '{}'"
+            cursor.execute(query_find_airline.format(customer))
+            cus = cursor.fetchall()
+
+            if agent is not None and len(work_for) == 0:
                 flash("Agent_ID doesn't exist, please consult with your agent","danger")
 
             else:
+                if len(cus) == 0:
+                    flash("Customer_ID incorrect","danger")
+                else:
+                    date = datetime.date.today()
+                    query = "INSERT INTO purchases VALUES ('{}', '{}', '{}', '{}')"
+                    cursor.execute(query.format(ticket_id, session["email"], agent, date))
+                    conn.commit()
+                    flash(f'User {session["email"]}Purchased Ticket {ticket_id} from {flight_num} at {airline_name} !', 'success')
+                    cursor.close()
 
-                date = datetime.date.today()
-                query = "INSERT INTO purchases VALUES ('{}', '{}', '{}', '{}')"
-                cursor.execute(query.format(ticket_id, session["email"], agent, date))
-                conn.commit()
-                flash(f'User {session["email"]}Purchased Ticket {ticket_id} from {flight_num} at {airline_name} !', 'success')
-                cursor.close()
+    if status == 'customer':
+        return render_template('customer_purchase.html',form = form,flight = flight,status = status,left = left,all = all)
+    elif status == 'agent':
+        return render_template('customer_purchase.html',form = form,flight = flight,status = status,left = left,all = all)
 
 
-    return render_template('purchase.html',form = form)
+
+# @app.route('/view_customer_tickets/<customer_email>', methods=['GET', 'POST'])
+# def view_customer_tickets(customer_email):
+#     # get all tickets purchased by this customer
+#     cursor = conn.cursor()
+#     query = f"SELECT * FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE customer_email = '{customer_email}' AND airline_name = '{session['airline']}'"
+#     cursor.execute(query)
+#     tickets = cursor.fetchall()
+#     cursor.close()
+#     print(tickets)
+#     return render_template('view_customer_tickets.html', tickets=tickets, customer_email=customer_email)

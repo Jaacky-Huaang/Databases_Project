@@ -19,6 +19,9 @@
                     <th scope="col">Arrival<br> Airport</th>
                     <th scope="col">Arrival<br> Time</th>
                     <th scope="col">Ticket<br> Price</th>
+                    {% if status == "agent" or status == "customer"%}
+                        <th scope="col">Purchase<br> It</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -31,6 +34,15 @@
                         <td>{{ flight.arrival_airport }}</td>
                         <td>{{ flight.arrival_time }}</td>
                         <td>{{ flight.price }}</td>
+                        {% if status == "customer" %}
+                            <td><a class="text-decoration-none" href="{{ url_for("purchase", flight_num=flight.flight_num) }}">BUY</a></td>
+                        {% elif status == "public" %}
+                            <td><a class="text-decoration-none" href="{{ url_for("login") }}">BUY</a></td>
+                        {% elif status == "agent" %}
+                            <td><a class="text-decoration-none" href="{{ url_for("purchase", flight_num=flight.flight_num) }}">BUY</a></td>
+                        {% else %}
+                            <!-- <td><a class="text-decoration-none" href="{{ url_for("purchase", flight_num=flight.flight_num) }}">BUY</a></td> -->
+                        {% endif %}
                     </tr>
                 {% endfor %}
             </tbody>

@@ -93,11 +93,17 @@ class CustomerSpendingForm(FlaskForm):
     submit = SubmitField('Search')
 
 
-class Purchase(FlaskForm):
-    flight_number = IntegerField('Flight Number', validators=[DataRequired()])
-    customer = StringField('Customer_Email', validators=[DataRequired(), Email(), Length(min=1, max=50)])
+class PurchaseCus(FlaskForm):
+    # flight_number = IntegerField('Flight Number', validators=[DataRequired()])
     agent = StringField('Agent_ID', validators=[])
+    # customer = StringField('Customer_Email', validators=[])
+    submit = SubmitField('Purchase')
 
+
+class PurchaseAgen(FlaskForm):
+    # flight_number = IntegerField('Flight Number', validators=[DataRequired()])
+    customer = StringField('Customer_Email', validators=[])
+    # agent = StringField('Agent_ID', validators=[])
     submit = SubmitField('Purchase')
 
 class CreateFlightForm(FlaskForm):
