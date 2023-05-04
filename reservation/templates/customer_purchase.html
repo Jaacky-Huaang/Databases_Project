@@ -3,7 +3,7 @@
 
 
 <legend class="border-bottom mb-4">Purchase Flight</legend>
-<!-- 
+
 <div class="tab-content" id="nav-tabContent">
     <div class="shadow card">
             <div class="row g-0">
@@ -32,15 +32,28 @@
         </div>
         <div class = "space"></div>
 </div>
- -->
+
 
 
     <div class="content-section">
         <div class="bd-example-snippet bd-code-snippet"><div class="bd-example">
         <form class="row g-3" method="POST" action="">
 
-            {%if status == "customer"%}
                 <div class="form-group">
+                {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        {{ form.customer.label(class="form-control-label") }}
+                        {% if form.customer.errors %}
+                            {{ form.customer(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.customer.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.customer(class="form-control") }}
+                        {% endif %}
+
                     {{ form.agent.label(class="form-control-label") }}
                     {% if form.agent.errors %}
                         {{ form.agent(class="form-control is-invalid") }}
@@ -53,7 +66,6 @@
                         {{ form.agent(class="form-control") }}
                     {% endif %}
                 </div> 
-            {%endif%}
 
             <div class="spacer"></div>
             <div class="form-group">

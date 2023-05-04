@@ -96,14 +96,14 @@ class CustomerSpendingForm(FlaskForm):
 class PurchaseCus(FlaskForm):
     # flight_number = IntegerField('Flight Number', validators=[DataRequired()])
     agent = StringField('Agent_ID', validators=[])
-    # customer = StringField('Customer_Email', validators=[])
+    customer = StringField('Customer_Email', validators=[])
     submit = SubmitField('Purchase')
 
 
 class PurchaseAgen(FlaskForm):
     # flight_number = IntegerField('Flight Number', validators=[DataRequired()])
     customer = StringField('Customer_Email', validators=[])
-    # agent = StringField('Agent_ID', validators=[])
+    agent = StringField('Agent_ID', validators=[])
     submit = SubmitField('Purchase')
 
 class CreateFlightForm(FlaskForm):

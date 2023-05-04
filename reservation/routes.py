@@ -843,9 +843,9 @@ def purchase(flight_num):
                     cursor.close()
 
     if status == 'customer':
-        return render_template('customer_purchase.html',form = form,flight = flight,status = status,left = left,all = all)
+        return render_template('customer_purchase.html',form = form,flight = flight,left = left,all = all)
     elif status == 'agent':
-        return render_template('customer_purchase.html',form = form,flight = flight,status = status,left = left,all = all)
+        return render_template('customer_purchase.html',form = form,flight = flight,left = left,all = all)
 
 
 
