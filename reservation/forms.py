@@ -102,7 +102,7 @@ class PurchaseCus(FlaskForm):
 
 class PurchaseAgen(FlaskForm):
     # flight_number = IntegerField('Flight Number', validators=[DataRequired()])
-    customer = StringField('Customer_Email', validators=[])
+    customer = StringField('Customer_Email', validators=[DataRequired(), Email(), Length(min=1, max=50)])
     agent = StringField('Agent_ID', validators=[])
     submit = SubmitField('Purchase')
 
@@ -173,6 +173,15 @@ class ViewTicketReportsForm(FlaskForm):
     end_date = DateField('End Date', validators=[])
 
     submit = SubmitField('View Reports')
+
+
+class ViewCommissionsForm(FlaskForm):
+    identifier = StringField('Identifier')
+    start_date = DateField('Start Date', validators=[])
+    end_date = DateField('End Date', validators=[])
+
+    submit = SubmitField('View Reports')
+
 
 class GrantNewPermissionForm(FlaskForm):
     identifier = StringField('Identifier')

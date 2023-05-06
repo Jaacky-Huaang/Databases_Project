@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div>
+    <legend class="border-bottom mb-4">Total Amounts of Ticket Sold by {{ session['agent_id'] }}</legend>
+    <form class="row g-3" method="POST" action="">
+        {{ form_view_commissions_reports.hidden_tag() }}
+        <div class="col-md-3">
+            <label class="form-label">{{ form_view_commissions_reports.start_date.label(class="form-control-label") }}</label>
+            {% if form_view_commissions_reports.start_date.errors %}
+                {{ form_view_commissions_reports.start_date(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form_view_commissions_reports.start_date.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form_view_commissions_reports.start_date(class="form-control") }}
+            {% endif %}
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">{{ form_view_commissions_reports.end_date.label(class="form-control-label") }}</label>
+            {% if form_view_commissions_reports.end_date.errors %}
+                {{ form_view_commissions_reports.end_date(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form_view_commissions_reports.end_date.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form_view_commissions_reports.end_date(class="form-control") }}
+            {% endif %}
+        </div>
+        <div class="col-md-3">
+            <label class="form-label"><br></label>
+            <div>
+                <button type="submit" class="btn btn-outline-secondary">Apply Date Range</button>
+            </div>
+        </div>
+    </form>
+    <div class="space"></div>
+</div>
+
+
+<div>
+    <legend class="border-bottom mb-4">Statistics</legend>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Commissions<br> Sum</th>
+                <th scope="col">Ticket<br> Num</th>
+                <th scope="col">Average<br> Commission</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ commissions_sum }}</td>
+                <td>{{ ticket_num }}</td>
+                <td>{{ commissions_avg }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock content %}

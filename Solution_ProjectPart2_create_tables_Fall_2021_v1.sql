@@ -143,10 +143,9 @@ CREATE TABLE `ticket` (
 CREATE TABLE `purchases` (
   `ticket_id` int(11) NOT NULL,
   `customer_email` varchar(50) NOT NULL,
-  `booking_agent_id` int(11),
+  `booking_agent_id` int(11) NULL,
   `purchase_date` date NOT NULL,
   PRIMARY KEY(`ticket_id`, `customer_email`),
   FOREIGN KEY(`ticket_id`) REFERENCES `ticket`(`ticket_id`),
   FOREIGN KEY(`customer_email`) REFERENCES `customer`(`email`)
-  FOREIGN KEY(`booking_agent_id`) REFERENCES `booking_agent`(`booking_agent_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

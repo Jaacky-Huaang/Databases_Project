@@ -827,6 +827,34 @@ def view_all_customers():
 
     return render_template('view_all_customers.html', top_5_customers_past_month=json.dumps(top_5_customers_past_month), top_5_commissions_past_year=json.dumps(top_5_commissions_past_year))
 
+@app.route('/view_commissions', methods=['GET', 'POST'])
+def view_commissions():
+    form_view_commissions_reports = forms.ViewCommissionsForm()
+    # Total amounts of ticket sold based on range of dates
+    # Month wise tickets sold in a bar chart
+    start_date = datetime.date.today() - relativedelta(month=1) if form_view_commissions_reports.start_date.data == None else form_view_commissions_reports.start_date.data
+    end_date = datetime.date.today() if form_view_commissions_reports.end_date.data == None else form_view_commissions_reports.end_date.data
+    cursor = conn.cursor()
+    query = f"SELECT COUNT(*) AS num_tickets FROM purchases NATURAL JOIN ticket WHERE booking_agent_id = '{session['agent_id']}' AND purchase_date >= '{start_date}' AND purchase_date <= '{end_date}' "
+    cursor.execute(query)
+    ticket_num = cursor.fetchone()['num_tickets']
+    cursor.close()
+
+    cursor = conn.cursor()
+    query = f"SELECT SUM(price)*0.1 AS sum_commissions FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE booking_agent_id = '{session['agent_id']}' AND purchase_date >= '{start_date}' AND purchase_date <= '{end_date}' "
+    cursor.execute(query)
+    commissions_sum = cursor.fetchone()['sum_commissions']
+    cursor.close()
+
+    try:
+        commissions_avg = float(commissions_sum)/float(ticket_num)
+    except:
+        commissions_avg = None
+        commissions_sum = 0
+
+    print(ticket_num,commissions_sum, commissions_avg)
+    return render_template('view_commissions.html', form_view_commissions_reports=form_view_commissions_reports, ticket_num = ticket_num,commissions_sum = commissions_sum, commissions_avg = commissions_avg)
+
 
 @app.route('/purchase/<flight_num>', methods=['GET', 'POST'])
 def purchase(flight_num):
@@ -902,8 +930,6 @@ def purchase(flight_num):
             customer = form.customer.data
             form.agent.data = agent = session['agent_id']
 
-        if agent == "":
-            agent = None
         cursor = conn.cursor()
         query_find_avil_ticket = "SELECT * FROM ticket AS t WHERE flight_num = '{}' and not exists \
                                         (SELECT * FROM purchases AS p WHERE p.ticket_id = t.ticket_id)"
@@ -939,9 +965,13 @@ def purchase(flight_num):
                 if len(cus) == 0:
                     flash("Customer_ID incorrect","danger")
                 else:
+
                     date = datetime.date.today()
-                    query = "INSERT INTO purchases VALUES ('{}', '{}', '{}', '{}')"
-                    cursor.execute(query.format(ticket_id, customer, agent, date))
+                    if agent is None:
+                        query = f"INSERT INTO purchases VALUES ('{ticket_id}', '{customer}', NULL, '{date}')"
+                    else:
+                        query = f"INSERT INTO purchases VALUES ('{ticket_id}', '{customer}', '{agent}', '{date}')"
+                    cursor.execute(query)
                     conn.commit()
                     flash(f'User {session["email"]} Purchased Ticket {ticket_id} from {flight_num} at {airline_name} !', 'success')
                     cursor.close()

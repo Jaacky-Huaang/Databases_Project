@@ -105,17 +105,17 @@ test1
 - [x] purchase ticket (as long as there is room (capacity and ticket))
 - [x] search for flight
 - [x] track spending
-- [ ] logout
+- [x] logout
 ### agent
 - [x] purchased flight info (specify optionally) same
 - [x] purchase ticket (only for its airline)
 - [x] search for flight
-- [ ] commission spending same
+- [x] commission spending same
 - [x] top customer same
-- [ ] logout
+- [x] logout
 ### airline stuff
 - [x] view flights
-- [x] create flights
+- [x] create flights (check the seat and number of ticket)
 - [x] change status of flight
 - [x] add airplane
 - [x] add airport
@@ -133,3 +133,21 @@ test1
 - [x] add new airplanes and new flight
 #### operator
 - [x] set in progress flight's status
+
+
+
+### Extra Point
+vague search
+GUI
+Side Bar
+Session Block
+WTform validation and Animation
+Bar chart and Pie chart
+Ways to specify a date
+Ticket VFX
+
+### inprovement
+
+logic with flight status
+the label of view all agent
+purchase with agent 0
