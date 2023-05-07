@@ -11,11 +11,11 @@
 * python-dateutil
 
 ### Start the server
-0. Install the required packages and start XAMPP on your local machine
-1. Create the database using ``Solution_ProjectPart2_create_tables_Fall_2021_v1.sql``
+1. Run ``pip install required package.txt`` to install the required packages, and start XAMPP on your local machine
+    1. Create the database called ``ticket_reservation`` using ``Solution_ProjectPart2_create_tables_Fall_2021_v1.sql``
 2. Insert data using ``insert.sql``
 3. Run the python file in terminal with``python3 run.py``
-4. Go to ``http://127.0.0.1:5000`` in your browser
+4. Go to ``http://127.0.0.1:5000`` in your browser (we set the port to be 5000 by default)
 
 ## Resources
 ### A Simple Flask Tutorial by Corey Schafer
@@ -97,9 +97,22 @@
 └── run.py
 ```
 
-## Notes
+## Change Log
 * Change the password to varchar(60) to handle the hash password
 * Add foreign key constraint to agent in purchases table
+
+## Team Work Plan
+### Jinhong Xia
+* Create the database and make up testing data
+* Outline all required works into a checklist, and test all functions
+* Code functions for ticket purchasing
+* Code functions for booking agent
+### Yuanhe Guo
+* Build up the file structure
+* Design the basic layout
+* Code functions for public search
+* Code functions for customer (except ticket purchasing)
+* Code functions for airline staff
 
 ## Function Check List
 ### public search
@@ -149,16 +162,17 @@
 
 ## Extra Points
 ### SQL:
-* Vague Search
+* Vague Search using LIKE query
 * Use date operations to specify a date
 
-### GUI:
+### UI Design:
 * Bootstrap5 API
-* Side Bar
-* Flash message in flask
-* UI and animation for form validation
+* Collapsible Side Bar
+* Flash messages with flask
+* Warnings for form validation
 * Specially designed homepage with carousels
 * Specially designed user interface for Tickets
+* Banners with illustrations from behance
 * Bar chart and Pie chart with chart.js
 
 ### Others:
