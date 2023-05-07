@@ -10,9 +10,10 @@
 * flask-bcrypt
 * python-dateutil
 
+Run ``pip install required package.txt`` to install the required packages, and start XAMPP server on your local machine
+
 ### Start the server
-1. Run ``pip install required package.txt`` to install the required packages, and start XAMPP on your local machine
-    1. Create the database called ``ticket_reservation`` using ``Solution_ProjectPart2_create_tables_Fall_2021_v1.sql``
+1. Create the database called ``ticket_reservation`` using ``Solution_ProjectPart2_create_tables_Fall_2021_v1.sql``
 2. Insert data using ``insert.sql``
 3. Run the python file in terminal with``python3 run.py``
 4. Go to ``http://127.0.0.1:5000`` in your browser (we set the port to be 5000 by default)
