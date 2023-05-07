@@ -11,8 +11,11 @@
 * python-dateutil
 
 ### Start the server
-1. Create the database
-2. Run the python file ``python3 run.py``
+0. Install the required packages and start XAMPP on your local machine
+1. Create the database using ``Solution_ProjectPart2_create_tables_Fall_2021_v1.sql``
+2. Insert data using ``insert.sql``
+3. Run the python file in terminal with``python3 run.py``
+4. Go to ``http://127.0.0.1:5000`` in your browser
 
 ## Resources
 ### A Simple Flask Tutorial by Corey Schafer
@@ -36,15 +39,17 @@
 * https://www.skyscanner.com.hk/?&associateID=SEM_GGF_19370_00062
 
 ## File Structure
-*Last Update: 2023.4.22*
+*Last Update: 2023.5.7*
 ```
 ├── Project_3.pdf
 ├── README.md
 ├── Solution_ProjectPart2_create_tables_Fall_2021_v1.sql
 ├── insert.sql
+├── required package.txt
 ├── reservation
 │   ├── __init__.py
 │   ├── forms.py
+│   ├── query.sql
 │   ├── routes.py
 │   ├── static
 │   │   ├── assets
@@ -60,14 +65,16 @@
 │   │   │       └── js
 │   │   │           ├── bootstrap.bundle.min.js
 │   │   │           └── bootstrap.bundle.min.js.map
-│   │   ├── login.css
-│   │   ├── main.css
-│   │   ├── navbar.css
-│   │   └── signin.css
+│   │   └── main.css
 │   └── templates
 │       ├── about.html
+│       ├── agent_purchase.html
+│       ├── create_flight.html
+│       ├── customer_purchase.html
 │       ├── dashboard_agent.html
+│       ├── dashboard_airline_staff.html
 │       ├── dashboard_customer.html
+│       ├── frequent_customers.html
 │       ├── index.html
 │       ├── layout.html
 │       ├── login.html
@@ -78,18 +85,23 @@
 │       ├── register_agent.html
 │       ├── register_airline_staff.html
 │       ├── register_customer.html
-│       └── upcoming_flight.html
+│       ├── upcoming_flight.html
+│       ├── view_all_booking_agents.html
+│       ├── view_all_customers.html
+│       ├── view_commissions.html
+│       ├── view_compare_revenue.html
+│       ├── view_customer.html
+│       ├── view_customer_tickets.html
+│       ├── view_reports.html
+│       └── view_top_destinations.html
 └── run.py
 ```
-
-## testing merge
-test1
 
 ## Notes
 * Change the password to varchar(60) to handle the hash password
 * Add foreign key constraint to agent in purchases table
 
-## Check List
+## Function Check List
 ### public search
 - [x] upcoming flight, city/airport, date
 - [x] flights status flight number, arrival/departure date
@@ -135,19 +147,23 @@ test1
 - [x] set in progress flight's status
 
 
+## Extra Points
+### SQL:
+* Vague Search
+* Use date operations to specify a date
 
-### Extra Point
-vague search
-GUI
-Side Bar
-Session Block
-WTform validation and Animation
-Bar chart and Pie chart
-Ways to specify a date
-Ticket VFX
+### GUI:
+* Bootstrap5 API
+* Side Bar
+* Flash message in flask
+* UI and animation for form validation
+* Specially designed homepage with carousels
+* Specially designed user interface for Tickets
+* Bar chart and Pie chart with chart.js
 
-### inprovement
-
-logic with flight status
-the label of view all agent
-purchase with agent 0
+### Others:
+* Block direct access to pages that require login using Session
+* Use WTForm to validate form
+* Use a base template to avoid code duplication
+* Use the encryption and decryption functions from flask-bcrypt to protect the password
+* Structure files as a package for better organization
