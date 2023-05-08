@@ -603,7 +603,7 @@ def create_flight():
             cursor.close()
             print("capacity: ", capacity)
 
-            for i in range(1, int(capacity['seats'])+1-20):
+            for i in range(1, int(capacity['seats'])+1):
                 # add tickets to the flight
                 cursor = conn.cursor()
                 query = "INSERT INTO ticket VALUES ('{}', '{}', '{}')"
@@ -813,7 +813,7 @@ def view_all_customers():
 
     # get top 5 customers based on number of tickets sales for the past 6 months
     cursor = conn.cursor()
-    query = f"SELECT customer_email, COUNT(*) AS num_tickets FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE booking_agent_id = '{session['agent_id']}' AND purchase_date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH )ORDER BY num_tickets DESC LIMIT 5"
+    query = f"SELECT customer_email, COUNT(*) AS num_tickets FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE booking_agent_id = '{session['agent_id']}' AND purchase_date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH ) GROUP BY customer_email ORDER BY num_tickets DESC LIMIT 5 "
     cursor.execute(query)
     top_5_customers_past_month = cursor.fetchall()
     cursor.close()
@@ -832,7 +832,7 @@ def view_all_customers():
 
     # get top 5 customers based on commission for the past year
     cursor = conn.cursor()
-    query = f"SELECT customer_email, SUM(price) * 0.1 AS commission FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE booking_agent_id = '{session['agent_id']}' AND purchase_date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR ) ORDER BY commission DESC LIMIT 5"
+    query = f"SELECT customer_email, SUM(price) * 0.1 AS commission FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE booking_agent_id = '{session['agent_id']}' AND purchase_date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR ) GROUP BY customer_email ORDER BY commission DESC LIMIT 5"
     cursor.execute(query)
     top_5_commissions_past_year = cursor.fetchall()
     cursor.close()
@@ -976,6 +976,8 @@ def purchase(flight_num):
                 query_find_airline = "SELECT * FROM booking_agent natural JOIN booking_agent_work_for WHERE booking_agent_id = '{}' and airline_name = '{}' "
                 cursor.execute(query_find_airline.format(agent,airline_name))
                 work_for = cursor.fetchall()
+
+                print(work_for)
 
             #make sure customer correct
             cursor = conn.cursor()
