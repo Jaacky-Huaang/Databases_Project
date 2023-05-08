@@ -586,6 +586,31 @@ def create_flight():
             cursor.execute(query.format(session['airline'], flight_num, departure_airport, departure_time, arrival_airport, arrival_time, price, status, airplane_id))
             conn.commit()
             cursor.close()
+
+            # check the existing ticket id:
+            cursor = conn.cursor()
+            query = "SELECT MAX(ticket_id) FROM ticket"
+            cursor.execute(query)
+            latest_id = cursor.fetchone()
+            cursor.close()
+            print("latest_id: ", latest_id)
+
+            # check the capacity of the flight
+            cursor = conn.cursor()
+            query = "SELECT seats FROM airplane WHERE airplane_id = '{}'"
+            cursor.execute(query.format(airplane_id))
+            capacity = cursor.fetchone()
+            cursor.close()
+            print("capacity: ", capacity)
+
+            for i in range(1, int(capacity['seats'])+1-20):
+                # add tickets to the flight
+                cursor = conn.cursor()
+                query = "INSERT INTO ticket VALUES ('{}', '{}', '{}')"
+                cursor.execute(query.format(int(latest_id['MAX(ticket_id)'])+i, session['airline'], flight_num))
+                conn.commit()
+                cursor.close()
+
             flash('You have successfully added a new flight!', 'success')
             return redirect(url_for('dashboard_airline_staff'))
 
