@@ -39,7 +39,7 @@ Run ``pip install required package.txt`` to install the required packages, and s
 * https://www.cathaypacific.com/cx/en_HK.html
 * https://www.skyscanner.com.hk/?&associateID=SEM_GGF_19370_00062
 
-## Interface Design Examples
+## Examples of Our Interface
 * Home page
 
 ![homepage.png](example_interface%2Fhomepage.png)
