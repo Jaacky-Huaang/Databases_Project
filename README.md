@@ -39,6 +39,24 @@ Run ``pip install required package.txt`` to install the required packages, and s
 * https://www.cathaypacific.com/cx/en_HK.html
 * https://www.skyscanner.com.hk/?&associateID=SEM_GGF_19370_00062
 
+## Interface Design Examples
+* Home page
+
+![homepage.png](example_interface%2Fhomepage.png)
+
+* Customer register
+
+![register.png](example_interface%2Fregister.png)
+
+* Purchased tickets
+
+![ticket.png](example_interface%2Fticket.png)
+
+* Top booking agents
+
+![agent.png](example_interface%2Fagent.png)
+
+
 ## File Structure
 *Last Update: 2023.5.7*
 ```
