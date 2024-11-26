@@ -1,268 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="generator" content="Hugo 0.104.2">
     <!-- Bootstrap CSS -->
-     <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/navbars/">
-     <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/cheatsheet/">
-
-
-
+    <link href="../static/assets/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Roboto', sans-serif !important; /* Consistent font */
+            background-color: #f0f8ff; /* Light blue background */
+        }
+        .navbar {
+            background-color: #007bff; /* Bootstrap primary blue */
+            color: white;
+        }
+        .navbar-brand, .nav-link {
+            color: white !important; /* White text for better contrast */
+            padding-left: 20px; /* Adds padding to the left of the brand */
+            padding-right: 20px; /* Adds padding to the right of the brand */
+        }
+        .nav-link {
+            padding-left: 15px; /* Adds padding to the left of each link */
+            padding-right: 15px; /* Adds padding to the right of each link */
+        }
+        .nav-link:hover, .navbar-brand:hover {
+            opacity: 0.8; /* Slight fade effect on hover */
+        }
+        .dropdown-menu {
+            background-color: #007bff; /* Consistent dropdown background */
+        }
+        .dropdown-item {
+            color: white; /* White text for dropdown */
+        }
+        .dropdown-item:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+        .container-fluid {
+            padding: 0; /* No padding for full width usage */
+        }
+        main {
+            padding: 20px;
+            color: #333; /* Dark grey text for readability */
+        }
+        .nav-item {
+            margin: 0 10px; /* Spacing between nav items */
+        }
+        .navbar-toggler {
+            border-color: rgba(255,255,255,0.1); /* Toggler icon */
+        }
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba(255, 255, 255, 0.5)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+        }
+    </style>
+    <!-- Custom styles for this template -->
+    <link type="text/css" href="{{ url_for('static', filename='main.css') }}" rel="stylesheet">
     {% if title %}
         <title>Air Ticket Reservation System - {{ title }}</title>
     {% else %}
         <title>Air Ticket Reservation System</title>
     {% endif %}
-
-
-    <link href="../static/assets/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <style>
-      .bd-placeholder-img {
-        font-size: 1.125rem;
-        text-anchor: middle;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        user-select: none;
-      }
-
-      @media (min-width: 768px) {
-        .bd-placeholder-img-lg {
-          font-size: 3.5rem;
-        }
-      }
-
-      .b-example-divider {
-        height: 3rem;
-        background-color: rgba(0, 0, 0, .1);
-        border: solid rgba(0, 0, 0, .15);
-        border-width: 1px 0;
-        box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
-      }
-
-      .b-example-vr {
-        flex-shrink: 0;
-        width: 1.5rem;
-        height: 100vh;
-      }
-
-      .bi {
-        vertical-align: -.125em;
-        fill: currentColor;
-      }
-
-      .nav-scroller {
-        position: relative;
-        z-index: 2;
-        height: 2.75rem;
-        overflow-y: hidden;
-      }
-
-      .nav-scroller .nav {
-        display: flex;
-        flex-wrap: nowrap;
-        padding-bottom: 1rem;
-        margin-top: -1px;
-        overflow-x: auto;
-        text-align: center;
-        white-space: nowrap;
-        -webkit-overflow-scrolling: touch;
-      }
-
-    </style>
-
-    <!-- Custom styles for this template -->
-    <link type="text/css" href="{{ url_for('static', filename='main.css') }}" rel="stylesheet">
-  </head>
+</head>
 <body>
-<div class="container-fluid mx-auto">
-  <div class="d-flex row g-0">
-    <div class="border col-md-3 bg-white p-4 overflow-auto fixed-top" style="height: 100%; width: 20%">
-      <a href="/" class="d-flex align-items-center mb-3 p-3 link-dark text-decoration-none border-bottom">
-        <span class="fs-5 fw-semibold">CSCI-SHU 213<br>Database Final Project</span>
-      </a>
-      <ul class="list-unstyled ps-0">
-        <li class="mb-1">
-          <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">
-            Public Search
-          </button>
-          <div class="collapse show" id="home-collapse">
-            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1">
-              <li><a href="/" class="link-dark d-inline-flex text-decoration-none rounded">Home</a></li>
-              <li><a href="{{ url_for('about') }}" class="link-dark d-inline-flex text-decoration-none rounded">About</a></li>
-              <li><a href="/#upcoming_flight" class="link-dark d-inline-flex text-decoration-none rounded">Upcoming Flight</a></li>
-              <li><a href="/#flight_status" class="link-dark d-inline-flex text-decoration-none rounded">Flight Status</a></li>
+<div class="container-fluid">
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="/">Air Ticket Reservation System</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('about') }}">About</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Flights
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li><a class="dropdown-item" href="/#upcoming_flight">Upcoming Flights</a></li>
+                        <li><a class="dropdown-item" href="/#flight_status">Flight Status</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Account
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        {% if session['status'] == 'customer' %}
+                            <li><a class="dropdown-item" href="/dashboard_customer">Customer Dashboard</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">Log out</a></li>
+                        {% elif session['status'] == 'agent' %}
+                            <li><a class="dropdown-item" href="/dashboard_agent">Agent Dashboard</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">Log out</a></li>
+                        {% elif session['status'] == 'airline_staff' %}
+                            <li><a class="dropdown-item" href="/dashboard_airline_staff">Airline Staff Dashboard</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">Log out</a></li>
+                        {% else %}
+                            <li><a class="dropdown-item" href="{{ url_for('login') }}">Login</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('register') }}">Register</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
             </ul>
-          </div>
-        </li>
-
-        {% if session['status'] == 'airline_staff' %}
-        <li class="mb-1">
-          <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="true">
-            Statistics
-          </button>
-          <div class="collapse show" id="dashboard-collapse">
-            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1">
-              <li><a href="{{ url_for('view_all_booking_agents') }}" class="link-dark d-inline-flex text-decoration-none rounded">All Booking Agents</a></li>
-              <li><a href="{{ url_for('frequent_customers') }}" class="link-dark d-inline-flex text-decoration-none rounded">Frequent Customers</a></li>
-              <li><a href="{{ url_for('view_reports') }}" class="link-dark d-inline-flex text-decoration-none rounded">Ticket Reports</a></li>
-              <li><a href="{{ url_for('view_compare_revenue') }}" class="link-dark d-inline-flex text-decoration-none rounded">Revenue Comparison</a></li>
-              <li><a href="{{ url_for('view_top_destinations') }}" class="link-dark d-inline-flex text-decoration-none rounded">Top Destinations</a></li>
-            </ul>
-          </div>
-        </li>
-        {% endif %}
-
-        {% if session['status'] == 'agent' %}
-        <li class="mb-1">
-          <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="true">
-            Statistics
-          </button>
-          <div class="collapse show" id="dashboard-collapse">
-            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1">
-              <li><a href="{{ url_for('view_all_customers') }}" class="link-dark d-inline-flex text-decoration-none rounded">Top Customers</a></li>
-              <li><a href="{{ url_for('view_commissions') }}" class="link-dark d-inline-flex text-decoration-none rounded">My Commission</a></li>
-            </ul>
-          </div>
-        </li>
-        {% endif %}
-
-        <li class="border-top my-3"></li>
-        <li class="mb-1">
-          <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#account-collapse" aria-expanded="true">
-            Account
-          </button>
-          <div class="collapse show" id="account-collapse">
-            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1">
-              {% if session['status'] == 'customer' %}
-                <li><a href="/dashboard_customer#" class="link-dark d-inline-flex text-decoration-none rounded">Customer {{ session['email'] }}</a></li>
-                <li><a href="/dashboard_customer#purchased_flights" class="link-dark d-inline-flex text-decoration-none rounded">Purchased Flights</a></li>
-                <li><a href="/dashboard_customer#spending_dashboard" class="link-dark d-inline-flex text-decoration-none rounded">Spending Dashboard</a></li>
-                <li><a href="{{ url_for('logout') }}" class="link-secondary d-inline-flex text-decoration-none rounded">Log out</a></li>
-              {% elif session['status'] == 'agent' %}
-                <li><a href="/dashboard_agent#" class="link-dark d-inline-flex text-decoration-none rounded">Agent {{ session['email'] }}</a></li>
-                <li><a href="/dashboard_agent#purchased_flights" class="link-dark d-inline-flex text-decoration-none rounded">Purchased Flights</a></li>
-                <li><a href="/dashboard_agent#commission_dashboard" class="link-dark d-inline-flex text-decoration-none rounded">Commission Dashboard</a></li>
-                <li><a href="{{ url_for('logout') }}" class="link-secondary d-inline-flex text-decoration-none rounded">Log out</a></li>
-              {% elif session['status'] == 'airline_staff' %}
-                <li><a href="/dashboard_airline_staff#" class="link-dark d-inline-flex text-decoration-none rounded">Airline Staff</a></li>
-                <li><a href="/dashboard_airline_staff#search_flight" class="link-dark d-inline-flex text-decoration-none rounded">Flights Operated</a></li>
-                {% if 'Admin' in session['permission_type'] %}
-                  <li><a href="/dashboard_airline_staff#add_airplane" class="link-dark d-inline-flex text-decoration-none rounded">Add Airplane</a></li>
-                  <li><a href="/dashboard_airline_staff#add_airport" class="link-dark d-inline-flex text-decoration-none rounded">Add Airport</a></li>
-                  <li><a href="/dashboard_airline_staff#grant_new_permission" class="link-dark d-inline-flex text-decoration-none rounded">Grant Permission</a></li>
-                  <li><a href="/dashboard_airline_staff#add_booking_agent_to_airline" class="link-dark d-inline-flex text-decoration-none rounded">Add Booking Agent</a></li>
-                {% elif 'Operator' in session['permission_type'] %}
-                  <li><a href="/dashboard_airline_staff#change_flight_status" class="link-dark d-inline-flex text-decoration-none rounded">Change Flight Status</a></li>
-                {% endif %}
-                <li><a href="{{ url_for('logout') }}" class="link-secondary d-inline-flex text-decoration-none rounded">Log out</a></li>
-              {% else %}
-                <li><a href="{{ url_for('login') }}" class="link-dark d-inline-flex text-decoration-none rounded">Login</a></li>
-                <li><a href="{{ url_for('register') }}" class="link-dark d-inline-flex text-decoration-none rounded">Register</a></li>
-              {% endif %}
-            </ul>
-          </div>
-        </li>
-      </ul>
-    </div>
-
-
-    <main class="col-md-9 ms-sm-auto p-4" style="width: 80%">
-      <div class="container">
-        <div>
-          {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-              {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">
-                  {{ message }}
-                </div>
-              {% endfor %}
-            {% endif %}
-          {% endwith %}
         </div>
-
-        <div>
-          {% block headlines %}{% endblock %}
+    </nav>
+    <main>
+        <div class="container">
+            {% block headlines %}{% endblock %}
+            {% block content %}{% endblock %}
+            {% block extra_content %}{% endblock %}
         </div>
-
-        <div>
-          <div class="bg-light p-5 rounded">
-            <div class="col-sm-10 mx-auto">
-              {% block content %}{% endblock %}
-            </div>
-          </div>
-          <div class="space"></div>
-          {% block extra_content %}{% endblock %}
-        </div>
-        <div class="space"></div>
-        <nav class="navbar navbar-expand-lg bg-light rounded " aria-label="Eleventh navbar example">
-          <div class="container-fluid">
-            <div class="collapse navbar-collapse justify-content-end" id="navbarsExample09">
-
-              {% if 'status' in session %}
-                {% if session['status'] == 'customer' %}
-                  <ul class="navbar-nav">
-                    <li class="nav-item">
-                      <a class="nav-link">Logged in as customer: </a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link active text-decoration-underline" href="{{ url_for('dashboard_customer') }}">{{ session['email'] }}</a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
-                    </li>
-                  </ul>
-                {% elif session['status'] == 'agent' %}
-                  <ul class="navbar-nav">
-                    <li class="nav-item">
-                      <a class="nav-link">Logged in as agent: </a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link active text-decoration-underline" href="{{ url_for('dashboard_agent') }}"">{{ session['email'] }}</a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
-                    </li>
-                  </ul>
-                {% elif session['status'] == 'airline_staff' %}
-                  <ul class="navbar-nav">
-                    <li class="nav-item">
-                      <a class="nav-link">Logged in as {{ session['permission_type'] }}: </a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link active text-decoration-underline" href="{{ url_for('dashboard_airline_staff') }}">{{ session['user_name'] }}</a>
-                    </li>
-                    <li class="nav-item">
-
-                      <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
-                    </li>
-                  </ul>
-                {% endif %}
-              {% else %}
-                <ul class="navbar-nav">
-                  <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('login') }}">Login</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('register') }}">Register</a>
-                  </li>
-                </ul>
-              {% endif %}
-            </div>
-          </div>
-        </nav>
-      </div>
-
     </main>
-  </div>
-</div>
-
-
-      <script src="../static/assets/dist/js/bootstrap.bundle.min.js"></script>
-
-
+    <script src="../static/assets/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

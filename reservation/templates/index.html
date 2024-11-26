@@ -3,57 +3,6 @@
 
     <H2>Air Ticket Reservation System</H2>
     <small>Search for your desired flight</small>
-    <div class="space"></div>
-    <div class="shadow bg-light top-50 rounded"  id="carousel_headline">
-        <div>
-            <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
-              <div class="carousel-indicators">
-                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
-              </div>
-              <div class="carousel-inner rounded">
-                <div class="carousel-item active">
-                  <a href=#upcoming_flight>
-                    <img class="d-block w-100" src="https://mir-s3-cdn-cf.behance.net/project_modules/2800_opt_1/45c87728764453.55d18cc5400b9.jpg" alt="First slide" width="100%" height="400" style="object-fit:cover; filter: brightness(90%)">
-                  </a>
-
-                  <div class="carousel-caption d-none d-md-block">
-                      <h5>Welcome to check this out</h5>
-                      <p>This is our solution for the database final project.</p>
-                  </div>
-                </div>
-                <div class="carousel-item">
-                  <a href={{ url_for("register") }}>
-                    <img class="d-block w-100" src="https://mir-s3-cdn-cf.behance.net/project_modules/2800_opt_1/ffe2d528764453.55d18cc554247.jpg" alt="Second slide" width="100%" height="400" style="object-fit:cover; filter: brightness(90%)">
-                  </a>
-                  <div class="carousel-caption d-none d-md-block">
-                    <h5>Become a member today</h5>
-                    <p>You can register as customer, booking agent or airline staff.</p>
-                  </div>
-                </div>
-                <div class="carousel-item">
-                  <a href={{ url_for("about") }}>
-                    <img class="d-block w-100" src="https://mir-s3-cdn-cf.behance.net/project_modules/2800_opt_1/ffd65c28764453.55d18bc886f50.jpg" alt="Third slide" width="100%" height="400" style="object-fit:cover; filter: brightness(90%)">
-                  </a>
-                  <div class="carousel-caption d-none d-md-block">
-                    <h5>Learn more about our project</h5>
-                    <p>Take a look at who we are and how we made this.</p>
-                  </div>
-                </div>
-              </div>
-              <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions"  data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-              </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions"  data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-              </button>
-            </div>
-        </div>
-    </div>
-    <div class="space"></div>
 {% endblock headlines %}
 
 {% block content %}
