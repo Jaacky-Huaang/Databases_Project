@@ -5,6 +5,9 @@
         <form class="row g-3" method="POST" action="">
           {{ form.hidden_tag() }}
           <legend class="border-bottom mb-4">{{ title }}</legend>
+
+          <!-- 个人信息部分 -->
+        <h4>Account Setup</h4>
           <div class="col-md-4">
             <label class="form-label">{{ form.email.label(class="form-control-label") }}</label>
                 {% if form.email.errors %}
@@ -18,6 +21,33 @@
                     {{ form.email(class="form-control") }}
                 {% endif %}
           </div>
+          <div class="col-md-6">
+            <label class="form-label">{{ form.password.label(class="form-control-label") }}</label>
+            {% if form.password.errors %}
+                {{ form.password(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.password.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.password(class="form-control") }}
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">{{ form.confirm_password.label(class="form-control-label") }}</label>
+            {% if form.confirm_password.errors %}
+                {{ form.confirm_password(class="form-control is-invalid") }}
+                <div="invalid-feedback">
+                    {% for error in form.confirm_password.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.confirm_password(class="form-control") }}
+            {% endif %}
+        </div>
+        <h4>Personal Information</h4>
           <div class="col-md-4">
             <label class="form-label">{{ form.name.label(class="form-control-label") }}</label>
                 {% if form.name.errors %}
@@ -44,38 +74,25 @@
                     {{ form.date_of_birth(class="form-control") }}
                 {% endif %}
             </div>
-          <div class="col-md-6">
-              <label class="form-label">{{ form.password.label(class="form-control-label") }}</label>
-              {% if form.password.errors %}
-                  {{ form.password(class="form-control is-invalid") }}
-                  <div class="invalid-feedback">
-                      {% for error in form.password.errors %}
-                          {{ error }}
-                      {% endfor %}
-                  </div>
-              {% else %}
-                  {{ form.password(class="form-control") }}
-              {% endif %}
-          </div>
-
-          <div class="col-md-6">
-              <label class="form-label">{{ form.confirm_password.label(class="form-control-label") }}</label>
-              {% if form.confirm_password.errors %}
-                  {{ form.confirm_password(class="form-control is-invalid") }}
-                  <div class="invalid-feedback">
-                      {% for error in form.confirm_password.errors %}
-                          <span>{{ error }}</span>
-                      {% endfor %}
-                  </div>
-              {% else %}
-                  {{ form.confirm_password(class="form-control") }}
-              {% endif %}
-          </div>
+            <div class="col-md-4">
+                <label class="form-label">{{ form.state.label(class="form-control-label") }}</label>
+                {% if form.state.errors %}
+                    {{ form.state(class="form-control is-invalid") }}
+                    <div="invalid-feedback">
+                        {% for error in form.state.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.state(class="form-control") }}
+                {% endif %}
+              </div>
+          <!-- 地址信息部分 -->
           <div class="col-md-4">
                 <label class="form-label">{{ form.building_number.label(class="form-control-label") }}</label>
                 {% if form.building_number.errors %}
                     {{ form.building_number(class="form-control is-invalid") }}
-                    <div class="invalid-feedback">
+                    <div="invalid-feedback">
                         {% for error in form.building_number.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
@@ -88,7 +105,7 @@
               <label class="form-label">{{ form.street.label(class="form-control-label") }}</label>
               {% if form.street.errors %}
                   {{ form.street(class="form-control is-invalid") }}
-                  <div class="invalid-feedback">
+                  <div="invalid-feedback">
                       {% for error in form.street.errors %}
                           <span>{{ error }}</span>
                       {% endfor %}
@@ -101,7 +118,7 @@
               <label class="form-label">{{ form.city.label(class="form-control-label") }}</label>
               {% if form.city.errors %}
                   {{ form.city(class="form-control is-invalid") }}
-                  <div class="invalid-feedback">
+                  <div="invalid-feedback">
                       {% for error in form.city.errors %}
                           <span>{{ error }}</span>
                       {% endfor %}
@@ -110,40 +127,15 @@
                   {{ form.city(class="form-control") }}
               {% endif %}
           </div>
-          <div class="col-md-4">
-              <label class="form-label">{{ form.state.label(class="form-control-label") }}</label>
-              {% if form.state.errors %}
-                  {{ form.state(class="form-control is-invalid") }}
-                  <div class="invalid-feedback">
-                      {% for error in form.state.errors %}
-                          <span>{{ error }}</span>
-                      {% endfor %}
-                  </div>
-              {% else %}
-                  {{ form.state(class="form-control") }}
-              {% endif %}
-            </div>
-            <div class="col-md-8">
-                <label class="form-label">{{ form.phone_number.label(class="form-control-label") }}</label>
-                {% if form.phone_number.errors %}
-                    {{ form.phone_number(class="form-control is-invalid") }}
-                    <div class="invalid-feedback">
-                        {% for error in form.street.errors %}
-                            <span>{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    {{ form.phone_number(class="form-control") }}
-                {% endif %}
-            </div>
+
             <div class="col-md-4">
                 <label class="form-label">{{ form.passport_number.label(class="form-control-label") }}</label>
                 {% if form.passport_number.errors %}
                     {{ form.passport_number(class="form-control is-invalid") }}
-                    <div class="invalid-feedback">
-                        {% for error in form.passport_number.errors %}
-                            <span>{{ error }}</span>
-                        {% endfor %}
+                    <div="invalid-feedback">
+                    {% for error in form.passport_number.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
                     </div>
                 {% else %}
                     {{ form.passport_number(class="form-control") }}
@@ -153,10 +145,10 @@
                 <label class="form-label">{{ form.passport_expiration.label(class="form-control-label") }}</label>
                 {% if form.passport_expiration.errors %}
                     {{ form.passport_expiration(class="form-control is-invalid") }}
-                    <div class="invalid-feedback">
-                        {% for error in form.passport_expiration.errors %}
-                            <span>{{ error }}</span>
-                        {% endfor %}
+                    <div="invalid-feedback">
+                    {% for error in form.passport_expiration.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
                     </div>
                 {% else %}
                     {{ form.passport_expiration(class="form-control") }}
@@ -166,20 +158,32 @@
                 <label class="form-label">{{ form.passport_country.label(class="form-control-label") }}</label>
                 {% if form.passport_country.errors %}
                     {{ form.passport_country(class="form-control is-invalid") }}
-                    <div class="invalid-feedback">
-                        {% for error in form.passport_country.errors %}
-                            <span>{{ error }}</span>
-                        {% endfor %}
+                    <div="invalid-feedback">
+                    {% for error in form.passport_country.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
                     </div>
                 {% else %}
                     {{ form.passport_country(class="form-control") }}
                 {% endif %}
             </div>
-
-            <div class="space"></div>
-          <div class="col-12">
-            <button class="btn btn-primary" type="submit">Submit form</button>
-          </div>
+            <!-- 联系方式部分 -->
+            <div class="col-md-8">
+                <label class="form-label">{{ form.phone_number.label(class="form-control-label") }}</label>
+                {% if form.phone_number.errors %}
+                    {{ form.phone_number(class="form-control is-invalid") }}
+                    <div="invalid-feedback">
+                    {% for error in form.phone_number.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.phone_number(class="form-control") }}
+                {% endif %}
+            </div>
+            <div class="col-12">
+                <button class="btn btn-primary" type="submit">Sign Up!</button>
+            </div>
         </form>
         </div></div>
 

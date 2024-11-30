@@ -5,8 +5,20 @@
         <form class="row g-3" method="POST" action="">
           {{ form.hidden_tag() }}
           <legend class="border-bottom mb-4">{{ title }}</legend>
-
-          <div class="col-md-4">
+          <div class="col-md-12">
+            <label class="form-label">{{ form.airline_name.label(class="form-control-label") }}</label>
+            {% if form.airline_name.errors %}
+                {{ form.airline_name(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.airline_name.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.airline_name(class="form-control") }}
+            {% endif %}
+      </div>
+          <div class="col-md-3">
             <label class="form-label">{{ form.first_name.label(class="form-control-label") }}</label>
                 {% if form.first_name.errors %}
                     {{ form.first_name(class="form-control is-invalid") }}
@@ -19,7 +31,7 @@
                     {{ form.first_name(class="form-control") }}
                 {% endif %}
           </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
             <label class="form-label">{{ form.last_name.label(class="form-control-label") }}</label>
                 {% if form.last_name.errors %}
                     {{ form.last_name(class="form-control is-invalid") }}
@@ -32,20 +44,7 @@
                     {{ form.last_name(class="form-control") }}
                 {% endif %}
           </div>
-            <div class="col-md-4">
-                <label class="form-label">{{ form.date_of_birth.label(class="form-control-label") }}</label>
-                {% if form.date_of_birth.errors %}
-                    {{ form.date_of_birth(class="form-control is-invalid") }}
-                    <div class="invalid-feedback">
-                        {% for error in form.date_of_birth.errors %}
-                            <span>{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    {{ form.date_of_birth(class="form-control") }}
-                {% endif %}
-            </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
             <label class="form-label">{{ form.user_name.label(class="form-control-label") }}</label>
                 {% if form.user_name.errors %}
                     {{ form.user_name(class="form-control is-invalid") }}
@@ -58,7 +57,21 @@
                     {{ form.user_name(class="form-control") }}
                 {% endif %}
           </div>
-          <div class="col-md-4">
+            <div class="col-md-3">
+                <label class="form-label">{{ form.date_of_birth.label(class="form-control-label") }}</label>
+                {% if form.date_of_birth.errors %}
+                    {{ form.date_of_birth(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.date_of_birth.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.date_of_birth(class="form-control") }}
+                {% endif %}
+            </div>
+          
+          <div class="col-md-6">
               <label class="form-label">{{ form.password.label(class="form-control-label") }}</label>
               {% if form.password.errors %}
                   {{ form.password(class="form-control is-invalid") }}
@@ -72,7 +85,7 @@
               {% endif %}
           </div>
 
-          <div class="col-md-4">
+          <div class="col-md-6">
               <label class="form-label">{{ form.confirm_password.label(class="form-control-label") }}</label>
               {% if form.confirm_password.errors %}
                   {{ form.confirm_password(class="form-control is-invalid") }}
@@ -85,19 +98,7 @@
                   {{ form.confirm_password(class="form-control") }}
               {% endif %}
           </div>
-          <div class="col-md-12">
-                <label class="form-label">{{ form.airline_name.label(class="form-control-label") }}</label>
-                {% if form.airline_name.errors %}
-                    {{ form.airline_name(class="form-control is-invalid") }}
-                    <div class="invalid-feedback">
-                        {% for error in form.airline_name.errors %}
-                            <span>{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    {{ form.airline_name(class="form-control") }}
-                {% endif %}
-          </div>
+          
 
             <div class="space"></div>
           <div class="col-12">
