@@ -1,124 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="generator" content="Hugo 0.104.2">
-    <!-- Bootstrap CSS -->
-    <link href="../static/assets/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            font-family: 'Roboto', sans-serif !important; /* Consistent font */
-            background-color: #f0f8ff; /* Light blue background */
-        }
-        .navbar {
-            background-color: #007bff; /* Bootstrap primary blue */
-            color: white;
-        }
-        .navbar-brand, .nav-link {
-            color: white !important; /* White text for better contrast */
-            padding-left: 20px; /* Adds padding to the left of the brand */
-            padding-right: 20px; /* Adds padding to the right of the brand */
-        }
-        .nav-link {
-            padding-left: 15px; /* Adds padding to the left of each link */
-            padding-right: 15px; /* Adds padding to the right of each link */
-        }
-        .nav-link:hover, .navbar-brand:hover {
-            opacity: 0.8; /* Slight fade effect on hover */
-        }
-        .dropdown-menu {
-            background-color: #007bff; /* Consistent dropdown background */
-        }
-        .dropdown-item {
-            color: white; /* White text for dropdown */
-        }
-        .dropdown-item:hover {
-            background-color: #0056b3; /* Darker blue on hover */
-        }
-        .container-fluid {
-            padding: 0; /* No padding for full width usage */
-        }
-        main {
-            padding: 20px;
-            color: #333; /* Dark grey text for readability */
-        }
-        .nav-item {
-            margin: 0 10px; /* Spacing between nav items */
-        }
-        .navbar-toggler {
-            border-color: rgba(255,255,255,0.1); /* Toggler icon */
-        }
-        .navbar-toggler-icon {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba(255, 255, 255, 0.5)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
-        }
-    </style>
-    <!-- Custom styles for this template -->
-    <link type="text/css" href="{{ url_for('static', filename='main.css') }}" rel="stylesheet">
-    {% if title %}
-        <title>Air Ticket Reservation System - {{ title }}</title>
-    {% else %}
-        <title>Air Ticket Reservation System</title>
-    {% endif %}
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  {% if title %}
+    <title>Air Ticket Reservation System - {{ title }}</title>
+  {% else %}
+    <title>Air Ticket Reservation System</title>
+  {% endif %}
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom styles -->
+  <style>
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+    .navbar {
+      background-color: #007bff;
+    }
+    .navbar-nav .nav-link {
+      color: #fff !important;
+    }
+    .navbar-nav .nav-link:hover {
+      background-color: #0056b3;
+      color: #fff !important;
+    }
+    .footer {
+      margin-top: 20px;
+      padding: 20px 0;
+      background-color: #f8f9fa;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-<div class="container-fluid">
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <a class="navbar-brand" href="/">Air Ticket Reservation System</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavDropdown">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('about') }}">About</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Flights
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <li><a class="dropdown-item" href="/#upcoming_flight">Upcoming Flights</a></li>
-                        <li><a class="dropdown-item" href="/#flight_status">Flight Status</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Account
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        {% if session['status'] == 'customer' %}
-                            <li><a class="dropdown-item" href="/dashboard_customer">Customer Dashboard</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">Log out</a></li>
-                        {% elif session['status'] == 'agent' %}
-                            <li><a class="dropdown-item" href="/dashboard_agent">Agent Dashboard</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">Log out</a></li>
-                        {% elif session['status'] == 'airline_staff' %}
-                            <li><a class="dropdown-item" href="/dashboard_airline_staff">Airline Staff Dashboard</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">Log out</a></li>
-                        {% else %}
-                            <li><a class="dropdown-item" href="{{ url_for('login') }}">Login</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('register') }}">Register</a></li>
-                        {% endif %}
-                    </ul>
-                </li>
+
+<nav class="navbar navbar-expand-lg navbar-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">Air Ticket Reservation System</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <!-- Navigation links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <!-- Public Links -->
+        <li class="nav-item">
+          <a class="nav-link" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('about') }}">About</a>
+        </li>
+        <!-- Conditional Links Based on User Session -->
+        {% if session.get('status') == 'customer' %}
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard_customer#purchased_flights">Purchased Flights</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard_customer#spending_dashboard">Spending Dashboard</a>
+          </li>
+        {% elif session.get('status') == 'agent' %}
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard_agent#purchased_flights">Purchased Flights</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard_agent#commission_dashboard">Commission Dashboard</a>
+          </li>
+        {% elif session.get('status') == 'airline_staff' %}
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard_airline_staff#search_flight">Flights Operated</a>
+          </li>
+          {% if 'Admin' in session.get('permission_type', []) %}
+            <li class="nav-item">
+              <a class="nav-link" href="/dashboard_airline_staff#add_airplane">Add Airplane</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/dashboard_airline_staff#add_airport">Add Airport</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/dashboard_airline_staff#grant_new_permission">Grant Permission</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/dashboard_airline_staff#add_booking_agent_to_airline">Add Booking Agent</a>
+            </li>
+          {% elif 'Operator' in session.get('permission_type', []) %}
+            <li class="nav-item">
+              <a class="nav-link" href="/dashboard_airline_staff#change_flight_status">Change Flight Status</a>
+            </li>
+          {% endif %}
+        {% endif %}
+        <!-- Statistics Links -->
+        {% if session.get('status') == 'airline_staff' %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="statisticsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Statistics
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="statisticsDropdown">
+              <li><a class="dropdown-item" href="{{ url_for('view_all_booking_agents') }}">All Booking Agents</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('frequent_customers') }}">Frequent Customers</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('view_reports') }}">Ticket Reports</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('view_compare_revenue') }}">Revenue Comparison</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('view_top_destinations') }}">Top Destinations</a></li>
             </ul>
+          </li>
+        {% elif session.get('status') == 'agent' %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="statisticsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Statistics
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="statisticsDropdown">
+              <li><a class="dropdown-item" href="{{ url_for('view_all_customers') }}">Top Customers</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('view_commissions') }}">My Commission</a></li>
+            </ul>
+          </li>
+        {% endif %}
+      </ul>
+      <!-- Right Side of Navbar -->
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        {% if session.get('status') %}
+          {% if session['status'] == 'customer' %}
+            <li class="nav-item">
+              <a class="nav-link">Customer: {{ session['email'] }}</a>
+            </li>
+          {% elif session['status'] == 'agent' %}
+            <li class="nav-item">
+              <a class="nav-link">Agent: {{ session['email'] }}</a>
+            </li>
+          {% elif session['status'] == 'airline_staff' %}
+            <li class="nav-item">
+              <a class="nav-link">Staff: {{ session['user_name'] }}</a>
+            </li>
+          {% endif %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-4">
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+          {{ message }}
         </div>
-    </nav>
-    <main>
-        <div class="container">
-            {% block headlines %}{% endblock %}
-            {% block content %}{% endblock %}
-            {% block extra_content %}{% endblock %}
-        </div>
-    </main>
-    <script src="../static/assets/dist/js/bootstrap.bundle.min.js"></script>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <!-- Page Headlines -->
+  <div>
+    {% block headlines %}{% endblock %}
+  </div>
+
+  <!-- Main Content -->
+  <div>
+    {% block content %}{% endblock %}
+  </div>
+
+  <!-- Extra Content -->
+  <div>
+    {% block extra_content %}{% endblock %}
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <span class="text-muted">© 2023 Air Ticket Reservation System</span>
+  </div>
+</footer>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

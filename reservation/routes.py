@@ -38,7 +38,7 @@ def home():
 
     return render_template('index.html', form_upcoming_flight=form_upcoming_flight, form_flight_status=form_flight_status, status_search_result=status_search_result)
 
-
+#可以删/改 
 @app.route('/about')
 def about():
     return render_template('about.html')
@@ -115,8 +115,9 @@ def register_agent():
         booking_agent_id = form.booking_agent_id.data
 
         cursor = conn.cursor()
+        # check for duplicate
         query_find_email = "SELECT email FROM booking_agent WHERE email = '{}'"
-        cursor.execute(query_find_email.format(email))
+        cursor.execute(query_find_email.forhmat(email))
         dup_emails = cursor.fetchall()
         query_find_agent_id = "SELECT booking_agent_id FROM booking_agent WHERE booking_agent_id = '{}'"
         cursor.execute(query_find_agent_id.format(booking_agent_id))

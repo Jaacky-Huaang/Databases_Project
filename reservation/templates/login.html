@@ -1,17 +1,32 @@
 {% extends "layout.html" %}
 {% block content %}
-    <div class="content-section">
-        <div class="row g-3">
-            <legend class="border-bottom mb-4">Welcome</legend>
-            <div class="col-12">
-                    <a href="{{ url_for('login_customer') }}" class="btn btn-outline-primary">Login as a customer</a>
+    <div class="content">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="card">
+                    <img src="{{ url_for('static', filename='images/customer.png') }}" class="card-img-top" alt="Card Image 1">
+                    <div class="card-body">
+                        <a href="{{ url_for('login_customer') }}" class="btn btn-outline-primary">Login as a customer</a>
+                    </div>
+                </div>
             </div>
-            <div class="col-12">
-                    <a href="{{ url_for('login_agent') }}" class="btn btn-outline-primary">Login as an agent</a>
+            <div class="col-sm-4">
+                <div class="card">
+                    <img src="{{ url_for('static', filename='images/agent.png') }}" class="card-img-top" alt="Card Image 2">
+                    <div class="card-body">
+                        <a href="{{ url_for('login_agent') }}" class="btn btn-outline-primary">Login as an agent</a>
+                    </div>
+                </div>
             </div>
-            <div class="col-12">
-                    <a href="{{ url_for('login_airline_staff') }}" class="btn btn-outline-primary">Login as an airline staff</a>
+            <div class="col-sm-4">
+                <div class="card">
+                    <img src="{{ url_for('static', filename='images/staff.png') }}" class="card-img-top" alt="Card Image 3">
+                    <div class="card-body">
+                        <a href="{{ url_for('login_airline_staff') }}" class="btn btn-outline-primary">Login as an airline staff</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
 {% endblock %}

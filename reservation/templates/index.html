@@ -1,169 +1,150 @@
 {% extends "layout.html" %}
-{% block headlines %}
 
-    <H2>Air Ticket Reservation System</H2>
-    <small>Search for your desired flight</small>
-{% endblock headlines %}
+{% block headlines %} <h1>Welcome to the Flight Lookup Center!</h1>{% endblock headlines %}
 
-{% block content %}
-
-    <form class="row g-3" method="POST" action="" id="upcoming_flight">
-        {{ form_upcoming_flight.hidden_tag() }}
-        <legend class="border-bottom mb-4">Search for upcoming flights</legend>
-        <div class="col-md-3">
-            {{ form_upcoming_flight.departure_place.label(class="form-control-label") }}
-            {% if form_upcoming_flight.departure_place.errors %}
-                {{ form_upcoming_flight.departure_place(class="form-control is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form_upcoming_flight.departure_place.errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-            {% else %}
-                {{ form_upcoming_flight.departure_place(class="form-control") }}
-            {% endif %}
-        </div>
-
-        <div class="col-md-3">
-            {{ form_upcoming_flight.arrival_place.label(class="form-control-label") }}
-            {% if form_upcoming_flight.arrival_place.errors %}
-                {{ form_upcoming_flight.arrival_place(class="form-control is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form_upcoming_flight.arrival_place.errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-            {% else %}
-                {{ form_upcoming_flight.arrival_place(class="form-control") }}
-            {% endif %}
-        </div>
-
-        <div class="col-md-3">
-            {{ form_upcoming_flight.departure_time.label(class="form-control-label") }}
-            {% if form_upcoming_flight.departure_time.errors %}
-                {{ form_upcoming_flight.departure_time(class="form-control is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form_upcoming_flight.departure_time.errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-            {% else %}
-                {{ form_upcoming_flight.departure_time(class="form-control", placeholder="YYYY-MM-DD") }}
-            {% endif %}
-        </div>
-
-        <div class="col-md-3">
-            {{ form_upcoming_flight.arrival_time.label(class="form-control-label") }}
-            {% if form_upcoming_flight.arrival_time.errors %}
-                {{ form_upcoming_flight.arrival_time(class="form-control is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form_upcoming_flight.arrival_time.errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-            {% else %}
-                {{ form_upcoming_flight.arrival_time(class="form-control", placeholder="YYYY-MM-DD") }}
-            {% endif %}
-        </div>
-
-        <small class="text-muted">* Leave blank to search for all</small>
-
-
-        <div class="form-group">
-            <div>
-                {{ form_upcoming_flight.submit(class="btn btn-primary", style="margin-right:10px") }}
+{% block content %} 
+<section id="search-flights"> 
+    <form method="POST" action="" id="upcoming_flight_form"> 
+        {{ form_upcoming_flight.hidden_tag() }} 
+        <fieldset> 
+            <legend>Find Upcoming Flights</legend>
+            <div class="form-group">
+                {{ form_upcoming_flight.departure_place.label(class="control-label") }}
+                {{ form_upcoming_flight.departure_place(class="form-control", placeholder="Enter Departure City") }}
+                {% if form_upcoming_flight.departure_place.errors %}
+                    <div class="text-danger">
+                        {% for error in form_upcoming_flight.departure_place.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
-        </div>
 
+            <div class="form-group">
+                {{ form_upcoming_flight.arrival_place.label(class="control-label") }}
+                {{ form_upcoming_flight.arrival_place(class="form-control", placeholder="Enter Arrival City") }}
+                {% if form_upcoming_flight.arrival_place.errors %}
+                    <div class="text-danger">
+                        {% for error in form_upcoming_flight.arrival_place.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form_upcoming_flight.departure_time.label(class="control-label") }}
+                {{ form_upcoming_flight.departure_time(class="form-control", placeholder="YYYY-MM-DD") }}
+                {% if form_upcoming_flight.departure_time.errors %}
+                    <div class="text-danger">
+                        {% for error in form_upcoming_flight.departure_time.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form_upcoming_flight.arrival_time.label(class="control-label") }}
+                {{ form_upcoming_flight.arrival_time(class="form-control", placeholder="YYYY-MM-DD") }}
+                {% if form_upcoming_flight.arrival_time.errors %}
+                    <div class="text-danger">
+                        {% for error in form_upcoming_flight.arrival_time.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <small class="form-text">Fields can be left blank to show all options</small>
+
+            <div class="form-group mt-3">
+                {{ form_upcoming_flight.submit(class="btn btn-primary") }}
+            </div>
+        </fieldset>
     </form>
-
-
-
+</section>
 {% endblock content %}
 
 {% block extra_content %}
-    <div class="bg-light p-5 rounded" id="flight_status">
-        <div class="col-sm-10 mx-auto">
-            <div>
-                <legend class="border-bottom mb-4">Flight Status BillBoard</legend>
+ <section id="flight-status" class="mt-5"> <div class="container"> 
+    <h2>Flight Status Board</h2> <form method="POST" action=""> 
+        {{ form_flight_status.hidden_tag() }} 
+        <div class="form-row"> 
+            <div class="form-group col-md-4"> 
+                {{ form_flight_status.flight_number.label(class="control-label") }} 
+                {{ form_flight_status.flight_number(class="form-control", placeholder="Flight Number") }} 
+                {% if form_flight_status.flight_number.errors %} 
+                <div class="text-danger"> 
+                    {% for error in form_flight_status.flight_number.errors %} 
+                    {{ error }} 
+                    {% endfor %} 
+                </div> 
+                {% endif %} 
+            </div> 
+            <div class="form-group col-md-4"> 
+                {{ form_flight_status.departure_time.label(class="control-label") }} 
+                {{ form_flight_status.departure_time(class="form-control", placeholder="Departure Date") }} 
+                {% if form_flight_status.departure_time.errors %} 
+                <div class="text-danger"> 
+                    {% for error in form_flight_status.departure_time.errors %} 
+                    {{ error }} 
+                    {% endfor %} 
+                </div> 
+                {% endif %} 
+            </div> 
+            <div class="form-group col-md-4"> 
+                {{ form_flight_status.arrival_time.label(class="control-label") }} 
+                {{ form_flight_status.arrival_time(class="form-control", placeholder="Arrival Date") }} 
+                {% if form_flight_status.arrival_time.errors %} 
+                <div class="text-danger"> 
+                    {% for error in form_flight_status.arrival_time.errors %} 
+                    {{ error }} 
+                    {% endfor %} 
+                </div> 
+                {% endif %} 
+            </div> 
+        </div> 
+        <div class="form-group mt-3"> 
+            <button type="submit" class="btn btn-primary">Check Flight Status</button> 
+        </div> 
+    </form>
 
-                <form class="row g-3" method="POST" action="">
-                    <div class="col-md-3">
-                        {{ form_flight_status.flight_number.label(class="form-control-label") }}
-                        {% if form_flight_status.flight_number.errors %}
-                            {{ form_flight_status.flight_number(class="form-control is-invalid") }}
-                            <div class="invalid-feedback">
-                                {% for error in form_flight_status.flight_number.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            {{ form_flight_status.flight_number(class="form-control") }}
-                        {% endif %}
-                    </div>
-
-                    <div class="col-md-3">
-                        {{ form_flight_status.departure_time.label(class="form-control-label") }}
-                        {% if form_flight_status.departure_time.errors %}
-                            {{ form_flight_status.departure_time(class="form-control is-invalid") }}
-                            <div class="invalid-feedback">
-                                {% for error in form_flight_status.departure_time.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            {{ form_flight_status.departure_time(class="form-control") }}
-                        {% endif %}
-                    </div>
-
-                    <div class="col-md-3">
-                        {{ form_flight_status.arrival_time.label(class="form-control-label") }}
-                        {% if form_flight_status.arrival_time.errors %}
-                            {{ form_flight_status.arrival_time(class="form-control is-invalid") }}
-                            <div class="invalid-feedback">
-                                {% for error in form_flight_status.arrival_time.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            {{ form_flight_status.arrival_time(class="form-control") }}
-                        {% endif %}
-                    </div>
-
-                    <div class="col-md-3">
-                        <label class="form-label"></label>
-                        <div>
-                            <a href="#flight_status">
-                                <button type="submit" class="btn btn-outline-secondary">Search Flight Status</button>
-                            </a>
-                        </div>
-                    </div>
-                </form>
-                <div class="space"></div>
-
-                <table class="table table-hover">
-                    <thead>
+        {% if status_search_result %}
+            <table class="table table-striped mt-4">
+                <thead>
+                    <tr>
+                        <th>Flight Number</th>
+                        <th>Departure Time</th>
+                        <th>Arrival Time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for flight in status_search_result %}
                         <tr>
-                            <th scope="col">Flight Number</th>
-                            <th scope="col">Departure Time</th>
-                            <th scope="col">Arrival Time</th>
-                            <th scope="col">Flight Status</th>
+                            <td>{{ flight.flight_num }}</td>
+                            <td>{{ flight.departure_time }}</td>
+                            <td>{{ flight.arrival_time }}</td>
+                            <td>{{ flight.status }}</td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {% for flight in status_search_result %}
-                            <tr>
-                                <td>{{ flight.flight_num }}</td>
-                                <td>{{ flight.departure_time }}</td>
-                                <td>{{ flight.arrival_time }}</td>
-                                <td>{{ flight.status }}</td>
-                            </tr>
-                        {% endfor %}
-                </table>
-
-
-            </div>
-        </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No flights found matching your criteria.</p>
+        {% endif %}
     </div>
-
+</section>
 {% endblock extra_content %}
+
+
+
+
+
+
+
+
+
+
+
