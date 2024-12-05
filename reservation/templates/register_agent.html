@@ -1,71 +1,74 @@
 {% extends "layout.html" %}
+
 {% block content %}
-    <div>
-        <div class="bd-example-snippet bd-code-snippet"><div class="bd-example">
-        <form class="row g-3" method="POST" action="">
-          {{ form.hidden_tag() }}
-          <legend class="border-bottom mb-4">{{ title }}</legend>
-          <div class="col-md-6">
-            <label class="form-label">{{ form.email.label(class="form-control-label") }}</label>
-                {% if form.email.errors %}
-                    {{ form.email(class="form-control is-invalid") }}
-                    <div class="invalid-feedback">
-                        {% for error in form.email.errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    {{ form.email(class="form-control") }}
-                {% endif %}
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">{{ form.booking_agent_id.label(class="form-control-label") }}</label>
-            {% if form.booking_agent_id.errors %}
-                {{ form.booking_agent_id(class="form-control is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.booking_agent_id.errors %}
-                        <span>{{ error }}</span>
-                    {% endfor %}
-                </div>
-            {% else %}
-                {{ form.booking_agent_id(class="form-control") }}
-            {% endif %}
+<div class="container py-5">
+    <!-- Form Section with a modern card design -->
+    <div class="card border-0 shadow">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">{{ title }}</h3>
         </div>
-          <div class="col-md-6">
-              <label class="form-label">{{ form.password.label(class="form-control-label") }}</label>
-              {% if form.password.errors %}
-                  {{ form.password(class="form-control is-invalid") }}
-                  <div class="invalid-feedback">
-                      {% for error in form.password.errors %}
-                          {{ error }}
-                      {% endfor %}
-                  </div>
-              {% else %}
-                  {{ form.password(class="form-control") }}
-              {% endif %}
-          </div>
+        <div class="card-body">
+            <form method="POST" action="" class="needs-validation" novalidate>
+                {{ form.hidden_tag() }}
 
-          <div class="col-md-6">
-              <label class="form-label">{{ form.confirm_password.label(class="form-control-label") }}</label>
-              {% if form.confirm_password.errors %}
-                  {{ form.confirm_password(class="form-control is-invalid") }}
-                  <div class="invalid-feedback">
-                      {% for error in form.confirm_password.errors %}
-                          <span>{{ error }}</span>
-                      {% endfor %}
-                  </div>
-              {% else %}
-                  {{ form.confirm_password(class="form-control") }}
-              {% endif %}
-          </div>
-            
+                <!-- Email Input with full width -->
+                <div class="mb-3">
+                    <label for="{{ form.email.id }}" class="form-label">{{ form.email.label.text }}</label>
+                    {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else "")) }}
+                    {% if form.email.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.email.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
 
-            <div class="space"></div>
-          <div class="col-12">
-            <button class="btn btn-primary" type="submit">Sign Up!</button>
-          </div>
-        </form>
-        </div></div>
+                <!-- Booking Agent ID Input with full width -->
+                <div class="mb-3">
+                    <label for="{{ form.booking_agent_id.id }}" class="form-label">{{ form.booking_agent_id.label.text }}</label>
+                    {{ form.booking_agent_id(class="form-control" + (" is-invalid" if form.booking_agent_id.errors else "")) }}
+                    {% if form.booking_agent_id.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.booking_agent_id.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
 
-      </div>
-{% endblock content %}
+                <!-- Password Input with full width -->
+                <div class="mb-3">
+                    <label for="{{ form.password.id }}" class="form-label">{{ form.password.label.text }}</label>
+                    {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else "")) }}
+                    {% if form.password.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.password.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Confirm Password Input with full width -->
+                <div class="mb-3">
+                    <label for="{{ form.confirm_password.id }}" class="form-label">{{ form.confirm_password.label.text }}</label>
+                    {{ form.confirm_password(class="form-control" + (" is-invalid" if form.confirm_password.errors else "")) }}
+                    {% if form.confirm_password.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.confirm_password.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary btn-lg" type="submit">Sign Up!</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
