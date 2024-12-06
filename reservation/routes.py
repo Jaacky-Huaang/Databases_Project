@@ -38,10 +38,6 @@ def home():
 
     return render_template('index.html', form_upcoming_flight=form_upcoming_flight, form_flight_status=form_flight_status, status_search_result=status_search_result)
 
-#可以删/改 
-@app.route('/about')
-def about():
-    return render_template('about.html')
 
 # Define route for searching upcoming flight
 @app.route('/upcoming_flight/<search_result>', methods=['GET', 'POST'])
@@ -291,7 +287,7 @@ def logout():
     session.pop('agent_id', None)
     session.pop('airline', None)
     session.pop('permission_type', None)
-    flash('You have successfully logged out!', 'secondary')
+    flash('You have successfully logged out!', 'info')
     return redirect(url_for('home'))
 
 
@@ -895,7 +891,6 @@ def purchase(flight_num):
             form = forms.PurchaseAgen()
         else:
             return redirect(url_for('home'))
-    print(form)
     #get flight info
     cursor = conn.cursor()
     query = f"SELECT * FROM ticket NATURAL JOIN flight WHERE flight_num = '{flight_num}'"
@@ -953,6 +948,7 @@ def purchase(flight_num):
             form.customer.data = customer = session['email']
             agent = None
         else:
+            print("in the agent")
             customer = form.customer.data
             form.agent.data = agent = session['agent_id']
 

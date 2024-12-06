@@ -1,51 +1,53 @@
 {% extends "layout.html" %}
+
 {% block content %}
-    <div>
-        <a class="text-decoration-none" href="{{ url_for('home') }}">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
-            </svg>
-            <div class="d-inline">Back to search</div>
-        </a>
-        <div class="space"></div>
-        <legend class="border-bottom mb-4">Upcoming Flights</legend>
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th scope="col">Airline<br> Name</th>
-                    <th scope="col">Flight<br> Number</th>
-                    <th scope="col">Departure<br> Airport</th>
-                    <th scope="col">Departure<br> Time</th>
-                    <th scope="col">Arrival<br> Airport</th>
-                    <th scope="col">Arrival<br> Time</th>
-                    <th scope="col">Ticket<br> Price</th>
-                    {% if status == "agent" or status == "customer"%}
-                        <th scope="col">Purchase<br> It</th>
-                    {% endif %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for flight in search_result %}
-                    <tr>
-                        <td>{{ flight.airline_name }}</td>
-                        <td>{{ flight.flight_num }}</td>
-                        <td>{{ flight.departure_airport }}</td>
-                        <td>{{ flight.departure_time }}</td>
-                        <td>{{ flight.arrival_airport }}</td>
-                        <td>{{ flight.arrival_time }}</td>
-                        <td>{{ flight.price }}</td>
-                        {% if status == "customer" %}
-                            <td><a class="text-decoration-none" href="{{ url_for("purchase", flight_num=flight.flight_num) }}">BUY</a></td>
-                        {% elif status == "public" %}
-                            <td><a class="text-decoration-none" href="{{ url_for("login") }}">BUY</a></td>
-                        {% elif status == "agent" %}
-                            <td><a class="text-decoration-none" href="{{ url_for("purchase", flight_num=flight.flight_num) }}">BUY</a></td>
-                        {% else %}
-                            <!-- <td><a class="text-decoration-none" href="{{ url_for("purchase", flight_num=flight.flight_num) }}">BUY</a></td> -->
-                        {% endif %}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+<div class="container py-5">
+    <div class="card border-0 shadow">
+        <div class="card-body">
+            <legend class="border-bottom mb-4">Upcoming Flights</legend>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Airline Name</th>
+                            <th scope="col">Flight Number</th>
+                            <th scope="col">Departure Airport</th>
+                            <th scope="col">Departure Time</th>
+                            <th scope="col">Arrival Airport</th>
+                            <th scope="col">Arrival Time</th>
+                            <th scope="col">Ticket Price</th>
+                            {% if status == "agent" or status == "customer" %}
+                                <th scope="col">Purchase</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for flight in search_result %}
+                        <tr>
+                            <td>{{ flight.airline_name }}</td>
+                            <td>{{ flight.flight_num }}</td>
+                            <td>{{ flight.departure_airport }}</td>
+                            <td>{{ flight.departure_time }}</td>
+                            <td>{{ flight.arrival_airport }}</td>
+                            <td>{{ flight.arrival_time }}</td>
+                            <td>${{ flight.price }}</td>
+                            {% if status == "customer" or status == "agent" %}
+                                <td><a class="btn btn-primary btn-sm" href="{{ url_for('purchase', flight_num=flight.flight_num) }}">Buy Ticket</a></td>
+                            {% elif status == "public" %}
+                                <td><a class="btn btn-secondary btn-sm" href="{{ url_for('login') }}">Log in to Buy</a></td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Back to Search Link at the bottom of the card -->
+        <div class="card-footer text-right">
+            <a class="btn btn-outline-secondary" href="{{ url_for('home') }}">
+                Back
+            </a>
+        </div>
     </div>
+</div>
 {% endblock content %}

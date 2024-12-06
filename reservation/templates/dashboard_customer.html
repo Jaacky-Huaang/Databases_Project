@@ -1,125 +1,130 @@
 {% extends "layout.html" %}
 
-{% block headlines %}
-<div class="shadow bg-light top-50 rounded" id="carousel_headline">
-    <div class="carousel-inner rounded">
-        <div class="carousel-item active">
-            <img class="d-block" style="object-fit: cover; filter: brightness(90%)" width="100%" height="200px" src="https://mir-s3-cdn-cf.behance.net/project_modules/max_3840/c977f855814081.59945218247c2.jpg">
-            <div class="carousel-caption d-none d-md-block">
-                <legend>Customer Info</legend>
-                <p>You can check your purchased flight and spending dashboard here.</p>
+{% block extra_content %}
+<div class="container mt-5">
+    <div class="p-5 bg-white rounded shadow" id="spending_dashboard">
+        <h3>Spending Analysis</h3>
+        <p class="text-muted">Track how much you have spent on flights within specified dates.</p>
+        <form class="row g-3" action="{{ url_for('dashboard_customer') }}" method="POST">
+            <div class="col-md-4">
+                <label for="start_date" class="form-label">Start Date</label>
+                <input type="date" class="form-control" id="start_date" name="start_date">
             </div>
+            <div class="col-md-4">
+                <label for="end_date" class="form-label">End Date</label>
+                <input type="date" class="form-control" id="end_date" name="end_date">
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary">Check Spending</button>
+            </div>
+            <div class="col-12">
+                <small class="text-muted">* Leave blank to view spending history from the past year.</small>
+            </div>
+        </form>
+        <div class="mt-4">
+            <canvas id="myChart" width="900" height="380"></canvas>
         </div>
     </div>
-</div>
-<div class="space"></div>
-
-{% endblock headlines %}
-
-{% block content %}
-<legend id="purchased_flights">Purchased Flights</legend>
-  <p>All of your purchased flights will be shown here.</p>
-  <div class="nav nav-tabs nav-fill bg-white rounded" id="nav-tab" role="tablist">
-    {% for flight in purchased_flights %}
-      <button class="nav-link text-black" id="nav-{{ flight.flight_num }}-tab" data-bs-toggle="tab" data-bs-target="#nav-{{ flight.flight_num }}" type="button" role="tab" aria-controls="nav-{{ flight.flight_num }}" aria-selected="true">{{ flight.flight_num }}</button>
-    {% endfor %}
-  </div>
-  <div class="space"></div>
-    {% for flight in purchased_flights %}
-        <div class="tab-content" id="nav-tabContent">
-        <div class="tab-pane fade" id="nav-{{ flight.flight_num }}" role="tabpanel" aria-labelledby="nav-{{ flight.flight_num }}-tab">
-            <div class="shadow card">
-                <div class="row g-0">
-                    <div class="col-md-4">
-                        <img src="https://i.pinimg.com/564x/8a/52/da/8a52da7573738ca48432ed20be59ba78.jpg" class="d-block rounded-start" width="100%" height="100%" style="object-fit:cover">
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card-header">
-                            Flight Status: {{ flight.status }}
-                        </div>
-                        <div class="bg-light mx-auto p-4">
-                        <div class="card-body">
-                            <h5 class="card-title">Flight Number: {{ flight.flight_num }} {{ flight.airline_name }} Airline</h5>
-                        </div>
-                        <ul class="list-group list-group-flush rounded" style="font-family:'Courier New' ">
-                            <li class="list-group-item">Departure: {{ flight.departure_airport }} {{ flight.departure_time }}</li>
-                            <li class="list-group-item">Arrival: {{ flight.arrival_airport }} {{ flight.arrival_time }}</li>
-                            <li class="list-group-item">Price: {{ flight.price }}</li>
-                            <li class="list-group-item">Booking Agent: {{ flight.booking_agent_id }}</li>
-                        </ul>
-                        </div>
-                        <div class="card-footer text-muted">
-                            Purchase Date: {{ flight.purchase_date }}
-                        </div>
-
-                    </div>
-
-                </div>
-            </div>
-        </div>
-        </div>
-    {% endfor %}
-{% endblock content %}
-
-
-{% block extra_content %}
-
-<div>
-    <div class="bg-light p-5 rounded" id="spending_dashboard">
-        <div class="col-sm-10 mx-auto">
-            <legend>Spending Dashboard</legend>
-            <form class="row g-3" action="{{ url_for('dashboard_customer') }}" method="POST">
-                <div class="col-auto">
-                    <label for="start_date" class="form-control-label">Start Date</label>
-                    <input type="date" class="form-control" id="start_date" name="start_date" placeholder="Start Date">
-                </div>
-                <div class="col-auto">
-                    <label for="end_date" class="form-control-label">End Date</label>
-                    <input type="date" class="form-control" id="end_date" name="end_date" placeholder="End Date">
-                </div>
-                <div class="col-auto">
-                    <label class="form-label"></label>
-                    <div>
-                        <a href="#spending_dashboard">
-                            <button type="submit" class="btn btn-primary mb-3">Submit</button>
-                        </a>
-                    </div>
-                </div>
-                <small class="text-muted">* Leave blank to search for spending history within one year</small>
-            </form>
-
-            <div>
-                <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
-            </div>
+    
+    <!-- Added Flight Details Table -->
+    <div class="mt-5">
+        <h3>Flight Details</h3>
+        <p class="text-muted">Here is a summary of flights you have purchased:</p>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Flight Number</th>
+                        <th>Airline</th>
+                        <th>Departure Airport</th>
+                        <th>Departure Time</th>
+                        <th>Arrival Airport</th>
+                        <th>Arrival Time</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for flight in purchased_flights %}
+                    <tr>
+                        <td>{{ flight.flight_num }}</td>
+                        <td>{{ flight.airline_name }}</td>
+                        <td>{{ flight.departure_airport }}</td>
+                        <td>{{ flight.departure_time }}</td>
+                        <td>{{ flight.arrival_airport }}</td>
+                        <td>{{ flight.arrival_time }}</td>
+                        <td>${{ flight.price }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
-  const ctx = document.getElementById('myChart');
-  let date_list = JSON.parse({{ date_list | tojson }});
-  let spending_list = JSON.parse({{ spending_list | tojson }});
+    const ctx = document.getElementById('myChart');
+    let date_list = JSON.parse({{ date_list | tojson }});
+    let spending_list = JSON.parse({{ spending_list | tojson }});
 
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: date_list,
-      datasets: [{
-        label: 'money spent',
-        data: spending_list,
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: date_list,
+            datasets: [{
+                label: 'Money Spent',
+                backgroundColor: 'rgba(94, 96, 206, 0.7)',
+                borderColor: 'rgba(94, 96, 206, 1)',
+                data: spending_list,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 100,
+                        callback: function(value) {
+                            return '$' + value;
+                        }
+                    }
+                },
+                x: {
+                    ticks: {
+                        autoSkip: false,
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        font: {
+                            size: 16
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += '$' + context.parsed.y;
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
         }
-      }
-    }
-  });
+    });
 </script>
-
 {% endblock extra_content %}
