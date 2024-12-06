@@ -23,12 +23,12 @@ class CustomerRegistrationForm(FlaskForm):
 
 
 class StaffRegistrationForm(FlaskForm):
-    user_name = StringField('User Name', validators=[DataRequired(), Length(min=1, max=50)])
+    # user_name = StringField('User Name', validators=[DataRequired(), Length(min=1, max=50)])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=1, max=50)])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message='Please type your password again')])
     first_name = StringField('First Name', validators=[DataRequired(), Length(min=1, max=50)])
     last_name = StringField('Last Name', validators=[DataRequired(), Length(min=1, max=50)])
-    date_of_birth = DateField('Date of Birth', validators=[DataRequired()])
+    # date_of_birth = DateField('Date of Birth', validators=[DataRequired()])
     airline_name = StringField('Airline Name', validators=[DataRequired(), Length(min=1, max=50)])
 
     submit = SubmitField('Staff Sign Up')

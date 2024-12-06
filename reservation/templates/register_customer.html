@@ -81,7 +81,84 @@
                     {% endif %}
                 </div>
 
-                <!-- Additional fields structured in similar fashion -->
+                <!-- New fields added -->
+                <div class="mb-3">
+                    <label for="{{ form.building_number.id }}" class="form-label">{{ form.building_number.label.text }}</label>
+                    {{ form.building_number(class="form-control" + (" is-invalid" if form.building_number.errors else "")) }}
+                    {% if form.building_number.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.building_number.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="mb-3">
+                    <label for="{{ form.street.id }}" class="form-label">{{ form.street.label.text }}</label>
+                    {{ form.street(class="form-control" + (" is-invalid" if form.street.errors else "")) }}
+                    {% if form.street.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.street.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="mb-3">
+                    <label for="{{ form.city.id }}" class="form-label">{{ form.city.label.text }}</label>
+                    {{ form.city(class="form-control" + (" is-invalid" if form.city.errors else "")) }}
+                    {% if form.city.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.city.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="mb-3">
+                    <label for="{{ form.phone_number.id }}" class="form-label">{{ form.phone_number.label.text }}</label>
+                    {{ form.phone_number(class="form-control" + (" is-invalid" if form.phone_number.errors else "")) }}
+                    {% if form.phone_number.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.phone_number.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="mb-3">
+                    <label for="{{ form.passport_number.id }}" class="form-label">{{ form.passport_number.label.text }}</label>
+                    {{ form.passport_number(class="form-control" + (" is-invalid" if form.passport_number.errors else "")) }}
+                    {% if form.passport_number.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.passport_number.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="mb-3">
+                    <label for="{{ form.passport_expiration.id }}" class="form-label">{{ form.passport_expiration.label.text }}</label>
+                    {{ form.passport_expiration(class="form-control" + (" is-invalid" if form.passport_expiration.errors else "")) }}
+                    {% if form.passport_expiration.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.passport_expiration.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="mb-3">
+                    <label for="{{ form.passport_country.id }}" class="form-label">{{ form.passport_country.label.text }}</label>
+                    {{ form.passport_country(class="form-control" + (" is-invalid" if form.passport_country.errors else "")) }}
+                    {% if form.passport_country.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.passport_country.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
 
                 <div class="mt-4">
                     <button class="btn btn-primary" type="submit">Sign Up!</button>
