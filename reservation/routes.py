@@ -615,72 +615,108 @@ def create_flight():
 
 @app.route('/view_all_booking_agents', methods=['GET', 'POST'])
 def view_all_booking_agents():
-    # get top 5 booking agents based on number of tickets sales for the past month in this airline
+    # 获取过去一个月内此航空公司基于售票数量的前5名预订代理
     cursor = conn.cursor()
     query = f"SELECT booking_agent_id, COUNT(*) AS num_tickets FROM purchases NATURAL JOIN ticket WHERE airline_name = '{session['airline']}' AND purchase_date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH ) AND booking_agent_id IS NOT NULL GROUP BY booking_agent_id ORDER BY num_tickets DESC LIMIT 5"
     cursor.execute(query)
     top_5_agents_past_month = cursor.fetchall()
     cursor.close()
-    # covert result to list
-    temp_dic = {'booking_agent_id': [], 'num_tickets': []}
-    for i in range(5):
-        try:
-            agent = top_5_agents_past_month[i]
-            temp_dic['booking_agent_id'].append(agent['booking_agent_id'])
-            temp_dic['num_tickets'].append(agent['num_tickets'])
-        except:
-            temp_dic['booking_agent_id'].append("Empty")
-            temp_dic['num_tickets'].append(0)
-    top_5_agents_past_month = temp_dic
-    print(top_5_agents_past_month)
 
-    # get top 5 booking agents based on number of tickets sales for the past year in this airline
+    # 获取过去一年内此航空公司基于售票数量的前5名预订代理
     cursor = conn.cursor()
     query = f"SELECT booking_agent_id, COUNT(*) AS num_tickets FROM purchases NATURAL JOIN ticket WHERE airline_name = '{session['airline']}' AND purchase_date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR ) AND booking_agent_id IS NOT NULL GROUP BY booking_agent_id ORDER BY num_tickets DESC LIMIT 5"
     cursor.execute(query)
     top_5_agents_past_year = cursor.fetchall()
     cursor.close()
-    # convert result to list
-    temp_dic = {'booking_agent_id': [], 'num_tickets': []}
-    for i in range(5):
-        try:
-            agent = top_5_agents_past_year[i]
-            temp_dic['booking_agent_id'].append(f"Agent ID: {agent['booking_agent_id']}")
-            temp_dic['num_tickets'].append(agent['num_tickets'])
-        except:
-            temp_dic['booking_agent_id'].append("Empty")
-            temp_dic['num_tickets'].append(0)
-    top_5_agents_past_year = temp_dic
-    print(top_5_agents_past_year)
 
-    # get top 5 booking agents based on commission for the past month in this airline
+    # 获取过去一年内此航空公司基于佣金的前5名预订代理
     cursor = conn.cursor()
     query = f"SELECT booking_agent_id, SUM(price) AS commission FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE airline_name = '{session['airline']}' AND purchase_date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR ) AND booking_agent_id IS NOT NULL GROUP BY booking_agent_id ORDER BY commission DESC LIMIT 5"
     cursor.execute(query)
     top_5_agents_commission_past_year = cursor.fetchall()
     cursor.close()
-    # convert result to list
-    temp_dic = {'booking_agent_id': [], 'commission': []}
-    for i in range(5):
-        try:
-            agent = top_5_agents_commission_past_year[i]
-            temp_dic['booking_agent_id'].append(f"Agent ID: {agent['booking_agent_id']}")
-            temp_dic['commission'].append(int(agent['commission']))
-        except:
-            temp_dic['booking_agent_id'].append("Empty")
-            temp_dic['commission'].append(0)
-    top_5_agents_commission_past_year = temp_dic
-    print(top_5_agents_commission_past_year)
 
-    # get all booking agents in this airline
+    # 获取此航空公司的所有预订代理
     cursor = conn.cursor()
     query = f"SELECT * FROM booking_agent NATURAL JOIN booking_agent_work_for WHERE airline_name = '{session['airline']}'"
     cursor.execute(query)
     booking_agents = cursor.fetchall()
     cursor.close()
-    print(booking_agents)
 
-    return render_template('view_all_booking_agents.html', top_5_agents_past_month=json.dumps(top_5_agents_past_month), top_5_agents_past_year=json.dumps(top_5_agents_past_year), top_5_agents_commission_past_year=json.dumps(top_5_agents_commission_past_year), booking_agents=booking_agents)
+    return render_template('view_all_booking_agents.html', 
+                           top_5_agents_past_month=top_5_agents_past_month,
+                           top_5_agents_past_year=top_5_agents_past_year,
+                           top_5_agents_commission_past_year=top_5_agents_commission_past_year,
+                           booking_agents=booking_agents)
+
+# @app.route('/view_all_booking_agents', methods=['GET', 'POST'])
+# def view_all_booking_agents():
+#     # get top 5 booking agents based on number of tickets sales for the past month in this airline
+#     cursor = conn.cursor()
+#     query = f"SELECT booking_agent_id, COUNT(*) AS num_tickets FROM purchases NATURAL JOIN ticket WHERE airline_name = '{session['airline']}' AND purchase_date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH ) AND booking_agent_id IS NOT NULL GROUP BY booking_agent_id ORDER BY num_tickets DESC LIMIT 5"
+#     cursor.execute(query)
+#     top_5_agents_past_month = cursor.fetchall()
+#     cursor.close()
+#     # covert result to list
+#     temp_dic = {'booking_agent_id': [], 'num_tickets': []}
+#     for i in range(5):
+#         try:
+#             agent = top_5_agents_past_month[i]
+#             temp_dic['booking_agent_id'].append(agent['booking_agent_id'])
+#             temp_dic['num_tickets'].append(agent['num_tickets'])
+#         except:
+#             temp_dic['booking_agent_id'].append("Empty")
+#             temp_dic['num_tickets'].append(0)
+#     top_5_agents_past_month = temp_dic
+#     print(top_5_agents_past_month)
+
+#     # get top 5 booking agents based on number of tickets sales for the past year in this airline
+#     cursor = conn.cursor()
+#     query = f"SELECT booking_agent_id, COUNT(*) AS num_tickets FROM purchases NATURAL JOIN ticket WHERE airline_name = '{session['airline']}' AND purchase_date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR ) AND booking_agent_id IS NOT NULL GROUP BY booking_agent_id ORDER BY num_tickets DESC LIMIT 5"
+#     cursor.execute(query)
+#     top_5_agents_past_year = cursor.fetchall()
+#     cursor.close()
+#     # convert result to list
+#     temp_dic = {'booking_agent_id': [], 'num_tickets': []}
+#     for i in range(5):
+#         try:
+#             agent = top_5_agents_past_year[i]
+#             temp_dic['booking_agent_id'].append(f"Agent ID: {agent['booking_agent_id']}")
+#             temp_dic['num_tickets'].append(agent['num_tickets'])
+#         except:
+#             temp_dic['booking_agent_id'].append("Empty")
+#             temp_dic['num_tickets'].append(0)
+#     top_5_agents_past_year = temp_dic
+#     print(top_5_agents_past_year)
+
+#     # get top 5 booking agents based on commission for the past month in this airline
+#     cursor = conn.cursor()
+#     query = f"SELECT booking_agent_id, SUM(price) AS commission FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE airline_name = '{session['airline']}' AND purchase_date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR ) AND booking_agent_id IS NOT NULL GROUP BY booking_agent_id ORDER BY commission DESC LIMIT 5"
+#     cursor.execute(query)
+#     top_5_agents_commission_past_year = cursor.fetchall()
+#     cursor.close()
+#     # convert result to list
+#     temp_dic = {'booking_agent_id': [], 'commission': []}
+#     for i in range(5):
+#         try:
+#             agent = top_5_agents_commission_past_year[i]
+#             temp_dic['booking_agent_id'].append(f"Agent ID: {agent['booking_agent_id']}")
+#             temp_dic['commission'].append(int(agent['commission']))
+#         except:
+#             temp_dic['booking_agent_id'].append("Empty")
+#             temp_dic['commission'].append(0)
+#     top_5_agents_commission_past_year = temp_dic
+#     print(top_5_agents_commission_past_year)
+
+#     # get all booking agents in this airline
+#     cursor = conn.cursor()
+#     query = f"SELECT * FROM booking_agent NATURAL JOIN booking_agent_work_for WHERE airline_name = '{session['airline']}'"
+#     cursor.execute(query)
+#     booking_agents = cursor.fetchall()
+#     cursor.close()
+#     print(booking_agents)
+
+#     return render_template('view_all_booking_agents.html', top_5_agents_past_month=json.dumps(top_5_agents_past_month), top_5_agents_past_year=json.dumps(top_5_agents_past_year), top_5_agents_commission_past_year=json.dumps(top_5_agents_commission_past_year), booking_agents=booking_agents)
 
 @app.route('/frequent_customers', methods=['GET', 'POST'])
 def frequent_customers():

@@ -3,100 +3,60 @@
 {% block content %}
 <div>
     <legend class="mb-4">Top 5 Booking Agents of {{ session['airline'] }} Airline</legend>
-    <nav>
-        <div class="nav nav-tabs mb-3" id="nav-tab" role="tablist">
-            <button class="nav-link active" id="last-month-sales-tab" data-bs-toggle="tab" data-bs-target="#last-month-sales" type="button" role="tab" aria-controls="nav-last-month-sales" aria-selected="true">Based on Sales Last Month</button>
-            <button class="nav-link" id="last-year-sales-tab" data-bs-toggle="tab" data-bs-target="#last-year-sales" type="button" role="tab" aria-controls="nav-last-year-sales" aria-selected="false">Based on Sales Last Year</button>
-            <button class="nav-link" id="last-year-commission-tab" data-bs-toggle="tab" data-bs-target="#last-year-commission" type="button" role="tab" aria-controls="last-year-commission" aria-selected="false">Based on Commission Last Year</button>
-        </div>
-    </nav>
-    <div class="tab-content" id="nav-tabContent">
-        <div class="tab-pane fade show active" id="last-month-sales" role="tabpanel" aria-labelledby="last-month-sales-tab">
-            <canvas class="my-4 w-100" id="top5AgentsLastMonth" width="900" height="380"></canvas>
-        </div>
-        <div class="tab-pane fade" id="last-year-sales" role="tabpanel" aria-labelledby="last-year-sales-tab">
-            <canvas class="my-4 w-100" id="top5AgentsLastYear" width="900" height="380"></canvas>
-        </div>
-        <div class="tab-pane fade" id="last-year-commission" role="tabpanel" aria-labelledby="last-year-commission-tab">
-            <canvas class="my-4 w-100" id="top5AgentsOfCommission" width="900" height="380"></canvas>
-        </div>
-    </div>
+    <h4>Based on Sales Last Month</h4>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Agent ID</th>
+                <th scope="col">Number of Tickets Sold</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for agent in top_5_agents_past_month %}
+            <tr>
+                <td>{{ agent['booking_agent_id'] }}</td>
+                <td>{{ agent['num_tickets'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h4>Based on Sales Last Year</h4>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Agent ID</th>
+                <th scope="col">Number of Tickets Sold</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for agent in top_5_agents_past_year %}
+            <tr>
+                <td>{{ agent['booking_agent_id'] }}</td>
+                <td>{{ agent['num_tickets'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h4>Based on Commission Last Year</h4>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Agent ID</th>
+                <th scope="col">Sum of Commission</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for agent in top_5_agents_commission_past_year %}
+            <tr>
+                <td>{{ agent['booking_agent_id'] }}</td>
+                <td>{{ agent['commission'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script>
-  const ctx1 = document.getElementById('top5AgentsLastMonth');
-    let top_5_agents_past_month = JSON.parse({{ top_5_agents_past_month | tojson }});
-
-  new Chart(ctx1, {
-    type: 'bar',
-    data: {
-      labels: top_5_agents_past_month['booking_agent_id'],
-      datasets: [{
-        label: 'number of tickets sold',
-        data: top_5_agents_past_month['num_tickets'],
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      }
-    }
-  });
-</script>
-
-<script>
-  const ctx2 = document.getElementById('top5AgentsLastYear');
-    let top_5_agents_past_year = JSON.parse({{ top_5_agents_past_year | tojson }});
-
-  new Chart(ctx2, {
-    type: 'bar',
-    data: {
-      labels: top_5_agents_past_year['booking_agent_id'],
-      datasets: [{
-        label: 'number of tickets sold',
-        data: top_5_agents_past_year['num_tickets'],
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      }
-    }
-  });
-</script>
-
-<script>
-  const ctx3 = document.getElementById('top5AgentsOfCommission');
-    let top_5_agents_commission_past_year = JSON.parse({{ top_5_agents_commission_past_year | tojson }});
-
-  new Chart(ctx3, {
-    type: 'bar',
-    data: {
-      labels: top_5_agents_commission_past_year['booking_agent_id'],
-      datasets: [{
-        label: 'sum of commission',
-        data: top_5_agents_commission_past_year['commission'],
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      }
-    }
-  });
-</script>
-
 {% endblock content %}
 
 {% block extra_content %}
@@ -121,5 +81,4 @@
         </table>
     </div>
 </div>
-
 {% endblock extra_content %}
