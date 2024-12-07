@@ -4,11 +4,8 @@
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  {% if title %}
-      <title>Air Ticket Reservation System - {{ title }}</title>
-  {% else %}
-      <title>Air Ticket Reservation System</title>
-  {% endif %}
+
+  <title>Home</title>
 
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -16,43 +13,43 @@
   <!-- Custom styles -->
   <style>
     body {
-      font-family: Arial, sans-serif;
+        margin: 0;
+        font-family: Arial, sans-serif;
     }
     .navbar {
-      background-color: #007bff;
+        background-color: #007bff;
     }
     .navbar .nav-link, .navbar .navbar-brand {
-      color: #fff !important;
+        color: #fff !important;
     }
     .navbar .nav-link:hover, .navbar .navbar-brand:hover {
-      color: #e0e0e0 !important;
-    }
-    .dropdown-menu {
-      background-color: #007bff;
-    }
-    .dropdown-item {
-      color: #fff;
-    }
-    .dropdown-item:hover {
-      background-color: #0056b3;
+        color: #e0e0e0 !important;
     }
     .footer {
-      margin-top: 20px;
-      padding: 20px 0;
-      background-color: #f8f9fa;
-      text-align: center;
+        background-color: #007bff;
+        color: white;
+        padding: 20px 0;
+        text-align: center;
+        font-size: 0.9rem;
+        width: 100%;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        border-top: 5px solid #0056b3;
     }
     .content-wrapper {
-      padding: 20px;
+        padding: 20px;
+        min-height: 100vh; /* Ensures that the content wrapper stretches to at least the height of the viewport */
+        box-sizing: border-box; /* Includes padding in the height calculation */
     }
-  </style>
+</style>
 </head>
 <body>
 
 <!-- Navigation Bar -->
 <nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/">Air Ticket Reservation System</a>
+    <a class="navbar-brand" href="/">Home</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" 
       aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -170,6 +167,11 @@
   <div>
     {% block extra_content %}{% endblock %}
   </div>
+  {% block footer %}
+  <div class="footer">
+    <div>&copy; Databases Final Project - Junjie Huang & Lihan Feng</div>
+  </div>
+  {% endblock footer %}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
