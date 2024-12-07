@@ -984,9 +984,9 @@ def purchase(flight_num):
             form.customer.data = customer = session['email']
             agent = None
         else:
-            print("in the agent")
             customer = form.customer.data
             form.agent.data = agent = session['agent_id']
+            print(agent)
 
         cursor = conn.cursor()
         query_find_avil_ticket = "SELECT * FROM ticket AS t WHERE flight_num = '{}' and not exists \

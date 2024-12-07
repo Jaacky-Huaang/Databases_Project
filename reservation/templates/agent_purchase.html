@@ -1,74 +1,53 @@
 {% extends "layout.html" %}
 {% block content %}
-
-
-<legend class="border-bottom mb-4">Purchase Flight</legend>
-
-<div class="tab-content" id="nav-tabContent">
-    <div class="shadow card">
-            <div class="row g-0">
-                <div class="col-md-4">
-                    <img src="https://i.pinimg.com/564x/8a/52/da/8a52da7573738ca48432ed20be59ba78.jpg" class="d-block rounded-start" width="100%" height="100%" style="object-fit:cover">
-                </div>
-                <div class="col-md-8">
-                    <div class="card-header">
-                        Flight Status: {{ flight.status }}
-                    </div>
-                    <div class="bg-light mx-auto p-4">
-                    <div class="card-body">
-                        <h5 class="card-title">Flight Number: {{ flight.flight_num }} {{ flight.airline_name }} Airline</h5>
-                    </div>
-                    <ul class="list-group list-group-flush rounded" style="font-family:'Courier New' ">
-                        <li class="list-group-item">Departure: {{ flight.departure_airport }} {{ flight.departure_time }}</li>
-                        <li class="list-group-item">Arrival: {{ flight.arrival_airport }} {{ flight.arrival_time }}</li>
-                        <li class="list-group-item">Price: {{ flight.price }}</li>
-                        <li class="list-group-item">Seats: {{ left.leftt }} / {{all.alll}}</li>
-                    </ul>
-                    </div>
-                
-                </div>
-
-            </div>
+<div class="container py-5">
+    <div class="card border-0 shadow">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Purchase Flight</h4>
         </div>
-        <div class = "space"></div>
-</div>
-
-
-
-    <div class="content-section">
-        <div class="bd-example-snippet bd-code-snippet"><div class="bd-example">
-        <form class="row g-3" method="POST" action="">
-            {{ form.hidden_tag() }}
-                <div class="form-group">
-                    {{ form.customer.label(class="form-control-label") }}
-                    {% if form.customer.errors %}
-                        {{ form.customer(class="form-control is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.customer.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.customer(class="form-control") }}
-                    {% endif %}
-                </div> 
-
-            {{ form.agent.label(class="form-control-label") }}
-            {% if form.agent.errors %}
-                {{ form.agent(class="form-control is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.agent.errors %}
-                        <span>{{ error }}</span>
-                    {% endfor %}
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-lg-6">
+                    <h5 class="card-title">Flight Details</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>Flight Number:</strong> {{ flight.flight_num }}</li>
+                        <li class="list-group-item"><strong>Airline:</strong> {{ flight.airline_name }}</li>
+                        <li class="list-group-item"><strong>Departure:</strong> {{ flight.departure_airport }} at {{ flight.departure_time }}</li>
+                        <li class="list-group-item"><strong>Arrival:</strong> {{ flight.arrival_airport }} at {{ flight.arrival_time }}</li>
+                        <li class="list-group-item"><strong>Price:</strong> ${{ flight.price }}</li>
+                        <!-- <li class="list-group-item"><strong>Seats Available:</strong> {{ left.leftt }} of {{ all.alll }}</li> -->
+                    </ul>
                 </div>
-            {% else %}
-                {{ form.agent(class="form-control") }}
-            {% endif %}
-            <div class="space"></div>
-            
-            <div class="form-group">
-                {{ form.submit(class="btn btn-primary") }}
+                <div class="col-lg-6">
+                    <h5 class="card-title">Flight Status</h5>
+                    <p class="bg-light p-2 rounded">{{ flight.status }}</p>
+                </div>
             </div>
-        </form>
+            <form class="needs-validation" novalidate method="POST" action="">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    {{ form.agent.label(class="form-label") }}
+                    {{ form.agent(class="form-control" + (" is-invalid" if form.agent.errors else "")) }}
+                    <div class="invalid-feedback">
+                        {% for error in form.agent.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="mb-3">
+                    {{ form.customer.label(class="form-label") }}
+                    {{ form.customer(class="form-control" + (" is-invalid" if form.customer.errors else "")) }}
+                    <div class="invalid-feedback">
+                        {% for error in form.customer.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="text-end">
+                    {{ form.submit(class="btn btn-success") }}
+                </div>
+            </form>
+        </div>
     </div>
+</div>
 {% endblock content %}

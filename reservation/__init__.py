@@ -14,8 +14,8 @@ app.config['SECRET_KEY'] = '24c34e0557b4cddff58f81952034d281'
 # Configure MySQL
 conn = pymysql.connect(host='localhost',
                        user='root',
-                       password='Yiyi71012002',
-                       database='Airline_ticket_db213',
+                       password='',
+                       database='ticket_reservation',
                        charset='utf8mb4',
                        cursorclass=pymysql.cursors.DictCursor)
 
