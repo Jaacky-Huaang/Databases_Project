@@ -1,73 +1,101 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div>
-    <legend class="border-bottom mb-4">Total Amounts of Ticket Sold of {{ session['airline'] }} Airline</legend>
-    <form class="row g-3" method="POST" action="">
-        {{ form_view_ticket_reports.hidden_tag() }}
-        <div class="col-md-3">
-            <label class="form-label">{{ form_view_ticket_reports.start_date.label(class="form-control-label") }}</label>
-            {% if form_view_ticket_reports.start_date.errors %}
-                {{ form_view_ticket_reports.start_date(class="form-control is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form_view_ticket_reports.start_date.errors %}
-                        <span>{{ error }}</span>
-                    {% endfor %}
-                </div>
-            {% else %}
-                {{ form_view_ticket_reports.start_date(class="form-control") }}
-            {% endif %}
+<div class="container py-5">
+    <div class="card border-0 shadow">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Total Amounts of Tickets Sold by {{ session['airline'] }} Airline</h4>
         </div>
-        <div class="col-md-3">
-            <label class="form-label">{{ form_view_ticket_reports.end_date.label(class="form-control-label") }}</label>
-            {% if form_view_ticket_reports.end_date.errors %}
-                {{ form_view_ticket_reports.end_date(class="form-control is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form_view_ticket_reports.end_date.errors %}
-                        <span>{{ error }}</span>
-                    {% endfor %}
+        <div class="card-body">
+            <form class="row g-3 needs-validation" method="POST" action="" novalidate>
+                {{ form_view_ticket_reports.hidden_tag() }}
+                <div class="col-md-4">
+                    <label for="start_date" class="form-label">{{ form_view_ticket_reports.start_date.label }}</label>
+                    {{ form_view_ticket_reports.start_date(class="form-control" + (" is-invalid" if form_view_ticket_reports.start_date.errors else "")) }}
+                    <div class="invalid-feedback">
+                        {% for error in form_view_ticket_reports.start_date.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
                 </div>
-            {% else %}
-                {{ form_view_ticket_reports.end_date(class="form-control") }}
-            {% endif %}
-        </div>
-        <div class="col-md-3">
-            <label class="form-label"><br></label>
-            <div>
-                <button type="submit" class="btn btn-outline-secondary">Apply Date Range</button>
+                <div class="col-md-4">
+                    <label for="end_date" class="form-label">{{ form_view_ticket_reports.end_date.label }}</label>
+                    {{ form_view_ticket_reports.end_date(class="form-control" + (" is-invalid" if form_view_ticket_reports.end_date.errors else "")) }}
+                    <div class="invalid-feedback">
+                        {% for error in form_view_ticket_reports.end_date.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </form>
+            <div class="mt-4">
+                <canvas id="view-ticket-reports" width="900" height="380"></canvas>
             </div>
         </div>
-    </form>
-    <div class="space"></div>
-    <div>
-        <canvas class="my-4 w-100" id="view-ticket-reports" width="900" height="380"></canvas>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
   const ctx1 = document.getElementById('view-ticket-reports');
-    let tickets_report = JSON.parse({{ tickets_report | tojson }});
+  let tickets_report = JSON.parse({{ tickets_report | tojson }});
 
   new Chart(ctx1, {
     type: 'bar',
     data: {
       labels: tickets_report['year-month'],
       datasets: [{
-        label: 'number of tickets sold',
+        label: 'Number of Tickets Sold',
+        backgroundColor: 'rgba(0, 123, 255, 0.7)',
+        borderColor: 'rgba(0, 123, 255, 1)',
         data: tickets_report['num_tickets'],
         borderWidth: 1
       }]
     },
     options: {
+      responsive: true,
+      maintainAspectRatio: false,
       scales: {
         y: {
-          beginAtZero: true
+          beginAtZero: true,
+          ticks: {
+            stepSize: 1
+          }
+        },
+        x: {
+          ticks: {
+            autoSkip: false,
+            maxRotation: 45,
+            minRotation: 45
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: {
+            font: {
+              size: 16
+            }
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              let label = context.dataset.label || '';
+              if (label) {
+                label += ': ';
+              }
+              label += context.parsed.y;
+              return label;
+            }
+          }
         }
       }
     }
   });
 </script>
-
 {% endblock content %}

@@ -1,90 +1,152 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div>
-    <legend class="border-bottom">Compare Revenue in the Past Month</legend>
-    {% if direct_sales_revenue_past_month == 0 and indirect_sales_revenue_past_month == 0 %}
-        <div class="space"></div>
-        <p>No revenue in the past month.</p>
-    {% endif %}
-    {% if direct_sales_revenue_past_month != 0 or indirect_sales_revenue_past_month != 0 %}
-    <div class="row g-3">
-        <div class="col-md-6">
-            <p>Direct sales revenue in the past month:<br> {{ direct_sales_revenue_past_month }}</p>
-            <p>Indirect sales revenue in the past month:<br> {{ indirect_sales_revenue_past_month }}</p>
+<style>
+    .section-header {
+        font-size: 2rem;
+        font-weight: 600;
+        color: #007bff;
+        margin-bottom: 1em;
+    }
+    .explanation-text {
+        font-size: 1.1rem;
+        color: #495057;
+        margin-bottom: 1em;
+    }
+    .card {
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        margin-bottom: 2em;
+        background: #f8f9fa;
+    }
+    .card-body {
+        padding: 1.5em;
+    }
+    .chart-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 300px; /* Reduced size */
+        width: 300px; /* Reduced size */
+    }
+    .no-revenue {
+        font-size: 1.1rem;
+        color: #6c757d;
+        margin-top: 1em;
+    }
+    .revenue-label {
+        font-weight: 500;
+        margin-bottom: 0.5em;
+    }
+</style>
+
+<div class="container py-4">
+    <h1 class="section-header">Revenue Comparison</h1>
+    <p class="explanation-text">
+        Compare your airline's direct and indirect sales revenue from the past month and past year.
+        Use the tabs below to switch between different timeframes.
+    </p>
+
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-tabs" id="revenueTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="past-month-tab" data-bs-toggle="tab" data-bs-target="#past-month" type="button" role="tab" aria-controls="past-month" aria-selected="true">
+                Past Month
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="past-year-tab" data-bs-toggle="tab" data-bs-target="#past-year" type="button" role="tab" aria-controls="past-year" aria-selected="false">
+                Past Year
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="revenueTabContent">
+        <!-- Past Month Tab -->
+        <div class="tab-pane fade show active" id="past-month" role="tabpanel" aria-labelledby="past-month-tab">
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h2 class="mb-3" style="color: #17a2b8;">Revenue in the Past Month</h2>
+                    {% if direct_sales_revenue_past_month == 0 and indirect_sales_revenue_past_month == 0 %}
+                        <p class="no-revenue">No revenue in the past month.</p>
+                    {% else %}
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-6">
+                                <p class="revenue-label">Direct sales revenue:</p>
+                                <p>{{ direct_sales_revenue_past_month }}</p>
+                                <p class="revenue-label">Indirect sales revenue:</p>
+                                <p>{{ indirect_sales_revenue_past_month }}</p>
+                            </div>
+                            <div class="col-md-6 chart-container">
+                                <canvas id="month_chart"></canvas>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-        <div class="col-md-6">
-            <canvas id="month_chart" width="400" height="400"></canvas>
+
+        <!-- Past Year Tab -->
+        <div class="tab-pane fade" id="past-year" role="tabpanel" aria-labelledby="past-year-tab">
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h2 class="mb-3" style="color: #17a2b8;">Revenue in the Past Year</h2>
+                    {% if direct_sales_revenue_past_year == 0 and indirect_sales_revenue_past_year == 0 %}
+                        <p class="no-revenue">No revenue in the past year.</p>
+                    {% else %}
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-6">
+                                <p class="revenue-label">Direct sales revenue:</p>
+                                <p>{{ direct_sales_revenue_past_year }}</p>
+                                <p class="revenue-label">Indirect sales revenue:</p>
+                                <p>{{ indirect_sales_revenue_past_year }}</p>
+                            </div>
+                            <div class="col-md-6 chart-container">
+                                <canvas id="year_chart"></canvas>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </div>
-    {% endif %}
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   const ctx1 = document.getElementById('month_chart');
-
   new Chart(ctx1, {
     type: 'pie',
     data: {
-      labels: ['Direct Sales Revenue in the Past Month', 'Indirect Sales Revenue in the Past Month'],
+      labels: ['Direct Sales', 'Indirect Sales'],
       datasets: [{
-        label: 'Compare Revenue Past Month',
+        label: '',
         data: [{{ direct_sales_revenue_past_month }}, {{ indirect_sales_revenue_past_month }}],
         backgroundColor: [
-            'rgb(163, 189, 158)',
-            'rgb(63, 85, 58)'
-            ],
+            'rgb(255, 99, 132)', // Bright Red
+            'rgb(54, 162, 235)'  // Bright Blue
+        ],
         hoverOffset: 4
       }]
     }
   });
-</script>
 
-{% endblock content %}
-
-{% block extra_content %}
-<div class="bg-light p-5 rounded" id="flight_status">
-    <div class="col-sm-10 mx-auto">
-        <legend class="border-bottom mb-4">Compare Revenue in the Past Year</legend>
-        {% if direct_sales_revenue_past_year == 0 and indirect_sales_revenue_past_year == 0 %}
-            <div class="space"></div>
-            <p>No revenue in the past year.</p>
-        {% endif %}
-        {% if direct_sales_revenue_past_year != 0 or indirect_sales_revenue_past_year != 0 %}
-        <div class="row g-3">
-            <div class="col-md-6">
-                <p>Direct sales revenue in the past year:<br> {{ direct_sales_revenue_past_year }}</p>
-                <p>Indirect sales revenue in the past year:<br> {{ indirect_sales_revenue_past_year }}</p>
-            </div>
-            <div class="col-md-6">
-                <canvas id="year_chart" width="100" height="100"></canvas>
-            </div>
-        </div>
-        {% endif %}
-
-    </div>
-</div>
-
-<script>
   const ctx2 = document.getElementById('year_chart');
-
   new Chart(ctx2, {
     type: 'pie',
     data: {
-      labels: ['Direct Sales Revenue in the Past Year', 'Indirect Sales Revenue in the Past Year'],
+      labels: ['Direct Sales', 'Indirect Sales'],
       datasets: [{
-        label: 'Compare Revenue Past Month',
+        label: '',
         data: [{{ direct_sales_revenue_past_year }}, {{ indirect_sales_revenue_past_year }}],
         backgroundColor: [
-            'rgb(120, 148, 186)',
-            'rgb(41, 74, 102)'
-            ],
+            'rgb(255, 206, 86)', // Bright Yellow
+            'rgb(75, 192, 192)'  // Bright Green
+        ],
         hoverOffset: 4
       }]
     }
   });
 </script>
-
-{% endblock extra_content %}
+{% endblock content %}

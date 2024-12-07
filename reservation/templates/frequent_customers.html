@@ -1,26 +1,53 @@
 {% extends "layout.html" %}
 
 {% block content %}
-    <div>
-        <legend class="border-bottom mb-4">Frequent Customers</legend>
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th scope="col">Rank</th>
-                    <th scope="col">Customer Email</th>
-                    <th scope="col">Number of Tickets Bought Last Year</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for i in range(customers | length) %}
-                    {% set customer = customers[i] %}
+<style>
+    .card-custom {
+        box-shadow: 0 0.75rem 1.5rem rgba(18,38,63,.03);
+        border: 1px solid #e3e6f0;
+        border-radius: 0.5rem;
+    }
+
+    .card-header-custom {
+        background-color: #007bff;
+        color: white;
+        border-bottom: none;
+        padding: 0.75rem 1.25rem;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f8f9fc;
+    }
+</style>
+
+<div class="container py-4">
+    <div class="card card-custom">
+        <div class="card-header card-header-custom">
+            Frequent Customers
+        </div>
+        <div class="card-body">
+            <table class="table table-hover mb-0">
+                <thead>
                     <tr>
-                        <td>{{ i + 1 }}</td>
-                        <td>{{ customer.customer_email }}</td>
-                        <td><a class="text-decoration-none" href="{{ url_for("view_customer_tickets", customer_email=customer.customer_email) }}">{{ customer.num_tickets }}</a></td>
+                        <th scope="col">Rank</th>
+                        <th scope="col">Customer Email</th>
+                        <th scope="col">Number of Tickets Bought Last Year</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for i in range(customers | length) %}
+                        {% set customer = customers[i] %}
+                        <tr>
+                            <td>{{ i + 1 }}</td>
+                            <td>{{ customer.customer_email }}</td>
+                            <td><a class="text-decoration-none" href="{{ url_for("view_customer_tickets", customer_email=customer.customer_email) }}">{{ customer.num_tickets }}</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
+</div>
 {% endblock content %}

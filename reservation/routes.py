@@ -381,15 +381,22 @@ def dashboard_airline_staff():
     change_flight_status_form = forms.ChangeFlightStatusForm()
     grant_new_permission_form = forms.GrantNewPermissionForm()
     add_booking_agent_to_airline_form = forms.AddBookingAgentToAirlineForm()
+    create_flight_form = forms.CreateFlightForm()
 
     # handle the search flight form
-    departure_place = '' if airline_staff_search_form.departure_place.data==None else airline_staff_search_form.departure_place.data
-    arrival_place = '' if airline_staff_search_form.arrival_place.data==None else airline_staff_search_form.arrival_place.data
-    start_time = datetime.date.today() if airline_staff_search_form.start_time.data==None else airline_staff_search_form.start_time.data
-    end_time = datetime.date.today() + relativedelta(days=30) if airline_staff_search_form.end_time.data==None else airline_staff_search_form.end_time.data
+    departure_place = '' if airline_staff_search_form.departure_place.data is None else airline_staff_search_form.departure_place.data
+    arrival_place = '' if airline_staff_search_form.arrival_place.data is None else airline_staff_search_form.arrival_place.data
+    start_time = datetime.date.today() if airline_staff_search_form.start_time.data is None else airline_staff_search_form.start_time.data
+    end_time = (datetime.date.today() + relativedelta(days=30)) if airline_staff_search_form.end_time.data is None else airline_staff_search_form.end_time.data
 
     cursor = conn.cursor()
-    query = f"SELECT * FROM flight F LEFT JOIN airport A1 ON F.departure_airport = A1.airport_name LEFT JOIN airport A2 ON F.arrival_airport = A2.airport_name WHERE F.airline_name = '{session['airline']}' AND (F.departure_airport LIKE '%{departure_place}%' OR A1.airport_city LIKE '%{departure_place}%') AND (F.arrival_airport LIKE '%{arrival_place}%' OR A2.airport_city LIKE '%{arrival_place}%') AND (F.departure_time BETWEEN '{start_time}' AND '{end_time}' OR F.arrival_time BETWEEN '{start_time}' AND '{end_time}')"
+    query = (f"SELECT * FROM flight F "
+             f"LEFT JOIN airport A1 ON F.departure_airport = A1.airport_name "
+             f"LEFT JOIN airport A2 ON F.arrival_airport = A2.airport_name "
+             f"WHERE F.airline_name = '{session['airline']}' "
+             f"AND (F.departure_airport LIKE '%{departure_place}%' OR A1.airport_city LIKE '%{departure_place}%') "
+             f"AND (F.arrival_airport LIKE '%{arrival_place}%' OR A2.airport_city LIKE '%{arrival_place}%') "
+             f"AND (F.departure_time BETWEEN '{start_time}' AND '{end_time}' OR F.arrival_time BETWEEN '{start_time}' AND '{end_time}')")
     cursor.execute(query)
     flights = cursor.fetchall()
     cursor.close()
@@ -421,7 +428,7 @@ def dashboard_airline_staff():
     if add_airport_form.identifier.data == 'add_airport' and add_airport_form.validate_on_submit():
         airport_name = add_airport_form.airport_name.data
         airport_city = add_airport_form.airport_city.data
-        print('True')
+
         # check whether the airport exists
         cursor = conn.cursor()
         query = "SELECT * FROM airport WHERE airport_name = '{}'"
@@ -469,7 +476,7 @@ def dashboard_airline_staff():
     # handle the grant new permission form
     if grant_new_permission_form.identifier.data == 'grant_new_permission' and grant_new_permission_form.validate_on_submit():
         email = grant_new_permission_form.email.data
-        permission_type = grant_new_permission_form.permission_type.data
+        permission_type = grant_new_permission_form.permission.data
 
         # check whether the email exists
         cursor = conn.cursor()
@@ -483,7 +490,7 @@ def dashboard_airline_staff():
         else:
             # check whether the email has already been granted the permission
             cursor = conn.cursor()
-            query = "SELECT * FROM user_permissions WHERE username = '{}' AND permission_type = '{}'"
+            query = "SELECT * FROM permission WHERE username = '{}' AND permission_type = '{}'"
             cursor.execute(query.format(email, permission_type))
             data = cursor.fetchone()
             cursor.close()
@@ -493,7 +500,7 @@ def dashboard_airline_staff():
             else:
                 # grant the permission to the email
                 cursor = conn.cursor()
-                query = "INSERT INTO user_permissions VALUES ('{}', '{}')"
+                query = "INSERT INTO permission VALUES ('{}', '{}')"
                 cursor.execute(query.format(email, permission_type))
                 conn.commit()
                 cursor.close()
@@ -514,7 +521,7 @@ def dashboard_airline_staff():
             flash('The booking agent does not exist!', 'danger')
             return redirect(url_for('dashboard_airline_staff'))
         else:
-            # check whether the email has already been added to the airline
+            # check whether the agent is already working for the airline
             cursor = conn.cursor()
             query = "SELECT * FROM booking_agent_work_for WHERE email = '{}' AND airline_name = '{}'"
             cursor.execute(query.format(agent_email, session['airline']))
@@ -524,7 +531,7 @@ def dashboard_airline_staff():
                 flash(f"The booking agent has already been added to {session['airline']} airline!", 'danger')
                 return redirect(url_for('dashboard_airline_staff'))
             else:
-                # grant the permission to the email
+                # add the booking agent to the airline
                 cursor = conn.cursor()
                 query = "INSERT INTO booking_agent_work_for VALUES ('{}', '{}')"
                 cursor.execute(query.format(agent_email, session['airline']))
@@ -533,7 +540,76 @@ def dashboard_airline_staff():
                 flash(f'You have successfully added booking agent {agent_email} to your airline!', 'success')
                 return redirect(url_for('dashboard_airline_staff'))
 
-    return render_template('dashboard_airline_staff.html', add_airplane_form=add_airplane_form, add_airport_form=add_airport_form, airline_staff_search_form=airline_staff_search_form, flights=flights, change_flight_status_form=change_flight_status_form, grant_new_permission_form=grant_new_permission_form, add_booking_agent_to_airline_form=add_booking_agent_to_airline_form)
+    # handle the create flight form (merged from create_flight route)
+    if create_flight_form.validate_on_submit():
+        # Check user permissions
+        if 'permission_type' not in session:
+            flash('Please login as an airline staff first!', 'danger')
+            return redirect(url_for('login'))
+        elif 'Admin' not in session['permission_type']:
+            flash('You are not admin, so you are not authorized :(', 'danger')
+            return redirect(url_for('dashboard_airline_staff'))
+
+        flight_num = create_flight_form.flight_num.data
+        departure_airport = create_flight_form.departure_airport.data
+        departure_time = create_flight_form.departure_time.data
+        arrival_airport = create_flight_form.arrival_airport.data
+        arrival_time = create_flight_form.arrival_time.data
+        price = create_flight_form.price.data
+        status = create_flight_form.status.data
+        airplane_id = create_flight_form.airplane_id.data
+
+        # check whether the flight already exists
+        cursor = conn.cursor()
+        query = "SELECT * FROM flight WHERE flight_num = '{}'"
+        cursor.execute(query.format(flight_num))
+        data = cursor.fetchone()
+        cursor.close()
+        if data:
+            flash('The flight already exists!', 'danger')
+        else:
+            # add the flight to the database
+            cursor = conn.cursor()
+            query = ("INSERT INTO flight VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')")
+            cursor.execute(query.format(session['airline'], flight_num, departure_airport, departure_time, arrival_airport, arrival_time, price, status, airplane_id))
+            conn.commit()
+            cursor.close()
+
+            # get the latest ticket_id
+            cursor = conn.cursor()
+            query = "SELECT MAX(ticket_id) as max_id FROM ticket"
+            cursor.execute(query)
+            latest_id = cursor.fetchone()
+            cursor.close()
+
+            # get the capacity of the airplane
+            cursor = conn.cursor()
+            query = "SELECT seats FROM airplane WHERE airplane_id = '{}'"
+            cursor.execute(query.format(airplane_id))
+            capacity = cursor.fetchone()
+            cursor.close()
+
+            max_ticket_id = latest_id['max_id'] if latest_id['max_id'] is not None else 0
+            for i in range(1, int(capacity['seats'])+1):
+                # add tickets for each seat on the flight
+                cursor = conn.cursor()
+                query = "INSERT INTO ticket VALUES ('{}', '{}', '{}')"
+                cursor.execute(query.format(max_ticket_id + i, session['airline'], flight_num))
+                conn.commit()
+                cursor.close()
+
+            flash('You have successfully added a new flight!', 'success')
+            return redirect(url_for('dashboard_airline_staff'))
+
+    return render_template('dashboard_airline_staff.html',
+                           add_airplane_form=add_airplane_form,
+                           add_airport_form=add_airport_form,
+                           airline_staff_search_form=airline_staff_search_form,
+                           flights=flights,
+                           change_flight_status_form=change_flight_status_form,
+                           grant_new_permission_form=grant_new_permission_form,
+                           add_booking_agent_to_airline_form=add_booking_agent_to_airline_form,
+                           create_flight_form=create_flight_form)
 
 @app.route('/view_customer/<flight_num>', methods=['GET', 'POST'])
 def view_customer(flight_num):
@@ -546,72 +622,72 @@ def view_customer(flight_num):
     return render_template('view_customer.html', flight_num=flight_num, customers=customers)
 
 
-@app.route('/create_flight', methods=['GET', 'POST'])
-def create_flight():
+# @app.route('/create_flight', methods=['GET', 'POST'])
+# def create_flight():
 
-    # handle illegal access
-    if 'permission_type' not in session:
-        flash('Please login as an airline staff first!', 'danger')
-        return redirect(url_for('login'))
-    elif 'Admin' not in session['permission_type']:
-        flash('You are not allowed to access this page!', 'danger')
-        return redirect(url_for('dashboard_airline_staff'))
+#     # handle illegal access
+#     if 'permission_type' not in session:
+#         flash('Please login as an airline staff first!', 'danger')
+#         return redirect(url_for('login'))
+#     elif 'Admin' not in session['permission_type']:
+#         flash('You are not admin, so you are not authorized :(', 'danger')
+#         return redirect(url_for('dashboard_airline_staff'))
 
-    create_flight_form = forms.CreateFlightForm()
-    if create_flight_form.validate_on_submit():
-        flight_num = create_flight_form.flight_num.data
-        departure_airport = create_flight_form.departure_airport.data
-        departure_time = create_flight_form.departure_time.data
-        arrival_airport = create_flight_form.arrival_airport.data
-        arrival_time = create_flight_form.arrival_time.data
-        price = create_flight_form.price.data
-        status = create_flight_form.status.data
-        airplane_id = create_flight_form.airplane_id.data
+#     create_flight_form = forms.CreateFlightForm()
+#     if create_flight_form.validate_on_submit():
+#         flight_num = create_flight_form.flight_num.data
+#         departure_airport = create_flight_form.departure_airport.data
+#         departure_time = create_flight_form.departure_time.data
+#         arrival_airport = create_flight_form.arrival_airport.data
+#         arrival_time = create_flight_form.arrival_time.data
+#         price = create_flight_form.price.data
+#         status = create_flight_form.status.data
+#         airplane_id = create_flight_form.airplane_id.data
 
-        # check whether the flight exists
-        cursor = conn.cursor()
-        query = "SELECT * FROM flight WHERE flight_num = '{}'"
-        cursor.execute(query.format(flight_num))
-        data = cursor.fetchone()
-        cursor.close()
-        if data:
-            flash('The flight already exists!', 'danger')
-        else:
-            # add the flight to the database
-            cursor = conn.cursor()
-            query = "INSERT INTO flight VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')"
-            cursor.execute(query.format(session['airline'], flight_num, departure_airport, departure_time, arrival_airport, arrival_time, price, status, airplane_id))
-            conn.commit()
-            cursor.close()
+#         # check whether the flight exists
+#         cursor = conn.cursor()
+#         query = "SELECT * FROM flight WHERE flight_num = '{}'"
+#         cursor.execute(query.format(flight_num))
+#         data = cursor.fetchone()
+#         cursor.close()
+#         if data:
+#             flash('The flight already exists!', 'danger')
+#         else:
+#             # add the flight to the database
+#             cursor = conn.cursor()
+#             query = "INSERT INTO flight VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')"
+#             cursor.execute(query.format(session['airline'], flight_num, departure_airport, departure_time, arrival_airport, arrival_time, price, status, airplane_id))
+#             conn.commit()
+#             cursor.close()
 
-            # check the existing ticket id:
-            cursor = conn.cursor()
-            query = "SELECT MAX(ticket_id) FROM ticket"
-            cursor.execute(query)
-            latest_id = cursor.fetchone()
-            cursor.close()
-            print("latest_id: ", latest_id)
+#             # check the existing ticket id:
+#             cursor = conn.cursor()
+#             query = "SELECT MAX(ticket_id) FROM ticket"
+#             cursor.execute(query)
+#             latest_id = cursor.fetchone()
+#             cursor.close()
+#             print("latest_id: ", latest_id)
 
-            # check the capacity of the flight
-            cursor = conn.cursor()
-            query = "SELECT seats FROM airplane WHERE airplane_id = '{}'"
-            cursor.execute(query.format(airplane_id))
-            capacity = cursor.fetchone()
-            cursor.close()
-            print("capacity: ", capacity)
+#             # check the capacity of the flight
+#             cursor = conn.cursor()
+#             query = "SELECT seats FROM airplane WHERE airplane_id = '{}'"
+#             cursor.execute(query.format(airplane_id))
+#             capacity = cursor.fetchone()
+#             cursor.close()
+#             print("capacity: ", capacity)
 
-            for i in range(1, int(capacity['seats'])+1):
-                # add tickets to the flight
-                cursor = conn.cursor()
-                query = "INSERT INTO ticket VALUES ('{}', '{}', '{}')"
-                cursor.execute(query.format(int(latest_id['MAX(ticket_id)'])+i, session['airline'], flight_num))
-                conn.commit()
-                cursor.close()
+#             for i in range(1, int(capacity['seats'])+1):
+#                 # add tickets to the flight
+#                 cursor = conn.cursor()
+#                 query = "INSERT INTO ticket VALUES ('{}', '{}', '{}')"
+#                 cursor.execute(query.format(int(latest_id['MAX(ticket_id)'])+i, session['airline'], flight_num))
+#                 conn.commit()
+#                 cursor.close()
 
-            flash('You have successfully added a new flight!', 'success')
-            return redirect(url_for('dashboard_airline_staff'))
+#             flash('You have successfully added a new flight!', 'success')
+#             return redirect(url_for('dashboard_airline_staff'))
 
-    return render_template('create_flight.html', create_flight_form=create_flight_form)
+#     return render_template('create_flight.html', create_flight_form=create_flight_form)
 
 @app.route('/view_all_booking_agents', methods=['GET', 'POST'])
 def view_all_booking_agents():

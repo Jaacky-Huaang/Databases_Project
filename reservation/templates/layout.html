@@ -66,10 +66,10 @@
         {% if session.get('status') == 'airline_staff' %}
           <!-- Statistics Dropdown -->
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('view_all_booking_agents') }}">All Booking Agents</a>
+            <a class="nav-link" href="{{ url_for('view_all_booking_agents') }}">Check Agents</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('frequent_customers') }}">Frequent Customers</a>
+            <a class="nav-link" href="{{ url_for('frequent_customers') }}">Check Customers</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('view_reports') }}">Ticket Reports</a>
@@ -80,13 +80,13 @@
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('view_top_destinations') }}">Top Destinations</a>
           </li>
-          <li class="nav-item"><a href="/dashboard_airline_staff#" class="nav-link">Airline Staff</a></li>
+          <li class="nav-item"><a href="/dashboard_airline_staff#" class="nav-link">Operate</a></li>
           <li class="nav-item"><a href="/dashboard_airline_staff#search_flight" class="nav-link">Flights Operated</a></li>
           {% if 'Admin' in session.get('permission_type', []) %}
-            <li class="nav-item"><a href="/dashboard_airline_staff#add_airplane" class="nav-link">Add Airplane</a></li>
+            <!-- <li class="nav-item"><a href="/dashboard_airline_staff#add_airplane" class="nav-link">Add Airplane</a></li>
             <li class="nav-item"><a href="/dashboard_airline_staff#add_airport" class="nav-link">Add Airport</a></li>
             <li class="nav-item"><a href="/dashboard_airline_staff#grant_new_permission" class="nav-link">Grant Permission</a></li>
-            <li class="nav-item"><a href="/dashboard_airline_staff#add_booking_agent_to_airline" class="nav-link">Add Booking Agent</a></li>
+            <li class="nav-item"><a href="/dashboard_airline_staff#add_booking_agent_to_airline" class="nav-link">Add Booking Agent</a></li> -->
           {% elif 'Operator' in session.get('permission_type', []) %}
             <li class="nav-item"><a href="/dashboard_airline_staff#change_flight_status" class="nav-link">Change Flight Status</a></li>
           

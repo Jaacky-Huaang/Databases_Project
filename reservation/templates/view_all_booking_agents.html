@@ -1,84 +1,131 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div>
-    <legend class="mb-4">Top 5 Booking Agents of {{ session['airline'] }} Airline</legend>
-    <h4>Based on Sales Last Month</h4>
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th scope="col">Agent ID</th>
-                <th scope="col">Number of Tickets Sold</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for agent in top_5_agents_past_month %}
-            <tr>
-                <td>{{ agent['booking_agent_id'] }}</td>
-                <td>{{ agent['num_tickets'] }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<style>
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #0056b3; /* Deep blue shade for a professional look */
+        margin-bottom: 1em;
+        border-bottom: 2px solid #dee2e6;
+        padding-bottom: 0.5em;
+    }
+    .nav-tabs .nav-link {
+        margin-right: 5px;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+        font-size: 1rem;
+        font-weight: bold;
+    }
+    .nav-tabs .nav-link.active, .nav-tabs .nav-link:hover {
+        border-color: #dee2e6 #dee2e6 #fff;
+        background-color: #0056b3;
+        color: white;
+    }
+    .nav-tabs .nav-link {
+        color: #0056b3;
+        background-color: transparent;
+    }
+    .card-header {
+        background-color: #0056b3;
+        color: white;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+    .card-body {
+        transition: all 0.3s ease-in-out;
+    }
+    .table-hover tbody tr:hover {
+        background-color: #e8f4f8;
+    }
+    .table {
+        margin-bottom: 0;
+    }
+    .card {
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        border: none;
+    }
+</style>
 
-    <h4>Based on Sales Last Year</h4>
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th scope="col">Agent ID</th>
-                <th scope="col">Number of Tickets Sold</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for agent in top_5_agents_past_year %}
-            <tr>
-                <td>{{ agent['booking_agent_id'] }}</td>
-                <td>{{ agent['num_tickets'] }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="container py-4">
+    <h1 class="section-title">Top Booking Agents of {{ session['airline'] }} Airline</h1>
 
-    <h4>Based on Commission Last Year</h4>
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th scope="col">Agent ID</th>
-                <th scope="col">Sum of Commission</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for agent in top_5_agents_commission_past_year %}
-            <tr>
-                <td>{{ agent['booking_agent_id'] }}</td>
-                <td>{{ agent['commission'] }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-{% endblock content %}
+    <ul class="nav nav-tabs" id="agentTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="month-tab" data-bs-toggle="tab" href="#month" role="tab" aria-controls="month" aria-selected="true">Last Month</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="year-tab" data-bs-toggle="tab" href="#year" role="tab" aria-controls="year" aria-selected="false">Last Year</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="commission-tab" data-bs-toggle="tab" href="#commission" role="tab" aria-controls="commission" aria-selected="false">Commission</a>
+        </li>
+    </ul>
 
-{% block extra_content %}
-<div class="bg-light p-5 rounded" id="flight_status">
-    <div class="col-sm-10 mx-auto">
-        <legend class="border-bottom mb-4">All Agents of {{ session['airline'] }} Airline</legend>
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th scope="col">Agent ID</th>
-                    <th scope="col">Agent Email</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for agent in booking_agents %}
-                <tr>
-                    <td>{{ agent['booking_agent_id'] }}</td>
-                    <td>{{ agent['email'] }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="tab-content" id="agentTabContent">
+        <div class="tab-pane fade show active" id="month" role="tabpanel" aria-labelledby="month-tab">
+            <div class="card-body">
+                <p class="text-muted mb-3">Agents with the highest ticket sales last month.</p>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Agent ID</th>
+                            <th scope="col">Tickets Sold</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for agent in top_5_agents_past_month %}
+                        <tr>
+                            <td>{{ agent['booking_agent_id'] }}</td>
+                            <td>{{ agent['num_tickets'] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="year" role="tabpanel" aria-labelledby="year-tab">
+            <div class="card-body">
+                <p class="text-muted mb-3">Agents with the highest ticket sales over the past year.</p>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Agent ID</th>
+                            <th scope="col">Tickets Sold</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for agent in top_5_agents_past_year %}
+                        <tr>
+                            <td>{{ agent['booking_agent_id'] }}</td>
+                            <td>{{ agent['num_tickets'] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="commission" role="tabpanel" aria-labelledby="commission-tab">
+            <div class="card-body">
+                <p class="text-muted mb-3">Agents who earned the most in commissions last year.</p>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Agent ID</th>
+                            <th scope="col">Total Commission</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for agent in top_5_agents_commission_past_year %}
+                        <tr>
+                            <td>{{ agent['booking_agent_id'] }}</td>
+                            <td>{{ agent['commission'] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
-{% endblock extra_content %}
+{% endblock content %}

@@ -1,46 +1,99 @@
 {% extends "layout.html" %}
-{% block content %}
-    <div>
-        <legend>View Top Destinations in the Past Month</legend>
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th scope="col">Destination</th>
-                    <th scope="col">Number of Tickets</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for destination in top_destinations_past_month %}
-                    <tr>
-                        <td>{{ destination.destination }}</td>
-                        <td>{{ destination.num_tickets }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-   </div>
-{% endblock content %}
 
-{% block extra_content %}
-<div class="bg-light p-5 rounded">
-    <div class="col-sm-10 mx-auto">
-        <legend>View Top Destinations in the Past Year</legend>
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th scope="col">Destination</th>
-                    <th scope="col">Number of Tickets</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for destination in top_destinations_past_year %}
-                    <tr>
-                        <td>{{ destination.destination }}</td>
-                        <td>{{ destination.num_tickets }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+{% block content %}
+<style>
+    .section-header {
+        font-size: 1.75rem;
+        font-weight: bold;
+        color: #007bff;
+        margin-bottom: 1em;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #dee2e6;
+    }
+    .card-custom {
+        border: none;
+        box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+        border-radius: 0.5rem;
+        margin-top: 2rem;
+    }
+    .card-header-custom {
+        background-color: #007bff;
+        color: #fff;
+        padding: 0.75rem 1.25rem;
+        font-size: 1.2rem;
+        border-bottom: 1px solid rgba(0,0,0,.125);
+    }
+    .table-hover tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+</style>
+
+<div class="container py-5">
+    <h1 class="section-header">Top Destinations Overview</h1>
+    <ul class="nav nav-tabs" id="topDestTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="past-month-tab" data-bs-toggle="tab" data-bs-target="#past-month" type="button" role="tab" aria-controls="past-month" aria-selected="true">
+                Past Month
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="past-year-tab" data-bs-toggle="tab" data-bs-target="#past-year" type="button" role="tab" aria-controls="past-year" aria-selected="false">
+                Past Year
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="topDestTabContent">
+        <div class="tab-pane fade show active" id="past-month" role="tabpanel" aria-labelledby="past-month-tab">
+            <div class="card card-custom">
+                <div class="card-header card-header-custom">
+                    Top Destinations in the Past Month
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Destination</th>
+                                <th scope="col">Number of Tickets</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for destination in top_destinations_past_month %}
+                            <tr>
+                                <td>{{ destination.destination }}</td>
+                                <td>{{ destination.num_tickets }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="past-year" role="tabpanel" aria-labelledby="past-year-tab">
+            <div class="card card-custom">
+                <div class="card-header card-header-custom">
+                    Top Destinations in the Past Year
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Destination</th>
+                                <th scope="col">Number of Tickets</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for destination in top_destinations_past_year %}
+                            <tr>
+                                <td>{{ destination.destination }}</td>
+                                <td>{{ destination.num_tickets }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-{% endblock extra_content %}
+{% endblock content %}
