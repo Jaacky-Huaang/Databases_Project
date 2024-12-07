@@ -113,7 +113,7 @@ def register_agent():
         cursor = conn.cursor()
         # check for duplicate
         query_find_email = "SELECT email FROM booking_agent WHERE email = '{}'"
-        cursor.execute(query_find_email.forhmat(email))
+        cursor.execute(query_find_email.format(email))
         dup_emails = cursor.fetchall()
         query_find_agent_id = "SELECT booking_agent_id FROM booking_agent WHERE booking_agent_id = '{}'"
         cursor.execute(query_find_agent_id.format(booking_agent_id))
@@ -1004,7 +1004,7 @@ def purchase(flight_num):
     if status == 'customer':
         return render_template('customer_purchase.html',form = form,flight = flight,left = left,all = all)
     elif status == 'agent':
-        return render_template('customer_purchase.html',form = form,flight = flight,left = left,all = all)
+        return render_template('agent_purchase.html',form = form,flight = flight,left = left,all = all)
 
 
 
