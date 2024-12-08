@@ -77,15 +77,16 @@
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('view_top_destinations') }}">Top Destinations</a>
           </li>
-          <li class="nav-item"><a href="/dashboard_airline_staff#" class="nav-link">Operate</a></li>
-          <li class="nav-item"><a href="/dashboard_airline_staff#search_flight" class="nav-link">Flights Operated</a></li>
+          
           {% if 'Admin' in session.get('permission_type', []) %}
+          <li class="nav-item"><a href="/dashboard_staff#" class="nav-link">Operate</a></li>
+          <li class="nav-item"><a href="/dashboard_staff#search_flight" class="nav-link">Flights Operated</a></li>
             <!-- <li class="nav-item"><a href="/dashboard_airline_staff#add_airplane" class="nav-link">Add Airplane</a></li>
             <li class="nav-item"><a href="/dashboard_airline_staff#add_airport" class="nav-link">Add Airport</a></li>
             <li class="nav-item"><a href="/dashboard_airline_staff#grant_new_permission" class="nav-link">Grant Permission</a></li>
             <li class="nav-item"><a href="/dashboard_airline_staff#add_booking_agent_to_airline" class="nav-link">Add Booking Agent</a></li> -->
           {% elif 'Operator' in session.get('permission_type', []) %}
-            <li class="nav-item"><a href="/dashboard_airline_staff#change_flight_status" class="nav-link">Change Flight Status</a></li>
+            <li class="nav-item"><a href="/dashboard_staff#change_flight_status" class="nav-link">Change Flight Status</a></li>
           
           {% endif %}
           <li class="nav-item"></li>
@@ -167,14 +168,15 @@
   <div>
     {% block extra_content %}{% endblock %}
   </div>
-  {% block footer %}
-  <div class="footer">
-    <div>&copy; Databases Final Project - Junjie Huang & Lihan Feng</div>
-  </div>
-  {% endblock footer %}
+  
 </div>
+<!-- {% block footer %} -->
+  
+  <!-- {% endblock footer %} -->
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+<!-- <div class="footer">
+  <div>&copy; Databases Final Project - Junjie Huang & Lihan Feng</div>
+</div> -->
 </body>
 </html>

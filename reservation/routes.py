@@ -1,15 +1,28 @@
 from flask import render_template, request, url_for, redirect, session, flash
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, DateField, DateTimeField, SelectField
+from wtforms.validators import DataRequired, Length, Email, EqualTo, NumberRange
 from reservation import app, conn, bcrypt
-import reservation.forms as forms
+# import reservation.forms as forms
 import json
 import datetime
 from dateutil.relativedelta import relativedelta
+
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home', methods=['GET', 'POST'])
 def home():
     # public search
-    form_upcoming_flight = forms.PublicSearchUpcomingFlightForm()
+    class PublicSearchUpcomingFlightForm(FlaskForm):
+        departure_place = StringField('Departure Airport/City', validators=[])
+        arrival_place = StringField('Arrival Airport/City', validators=[])
+
+        # Maybe DateTimeField?
+        departure_time = StringField('Departure Time', validators=[])
+        arrival_time = StringField('Arrival Time', validators=[])
+        submit = SubmitField('Search')
+    
+    form_upcoming_flight = PublicSearchUpcomingFlightForm()
     if form_upcoming_flight.validate_on_submit():
         departure_place = form_upcoming_flight.departure_place.data
         arrival_place = form_upcoming_flight.arrival_place.data
@@ -26,7 +39,13 @@ def home():
         else:
             return redirect(url_for('upcoming_flight', search_result=json.dumps(search_result, default=str)))
 
-    form_flight_status = forms.PublicSearchFlightStatusForm()
+    class PublicSearchFlightStatusForm(FlaskForm):
+        flight_number = IntegerField('Flight Number', validators=[])
+        departure_time = StringField('Departure Time', validators=[])
+        arrival_time = StringField('Arrival Time', validators=[])
+        submit = SubmitField('Search')
+    
+    form_flight_status = PublicSearchFlightStatusForm()
     flight_number = '' if form_flight_status.flight_number.data==None else form_flight_status.flight_number.data
     departure_time = '' if form_flight_status.departure_time.data==None else form_flight_status.departure_time.data
     arrival_time = '' if form_flight_status.arrival_time.data==None else form_flight_status.arrival_time.data
@@ -52,7 +71,6 @@ def upcoming_flight(search_result):
         else:
             status = 'staff'
     search_result = json.loads(search_result)
-    # print(type(search_result[0]))
     return render_template('upcoming_flight.html', search_result=search_result,status = status)
 
 
@@ -62,11 +80,26 @@ def upcoming_flight(search_result):
 def register():
     return render_template('register.html')
 
-
-@app.route('/register_customer', methods=['GET', 'POST'])
+# customer registration
+@app.route('/customer_registration', methods=['GET', 'POST'])
 def register_customer():
-    form = forms.CustomerRegistrationForm()
+    class CustomerRegistrationForm(FlaskForm):
+        email = StringField('Email', validators=[DataRequired(), Email(), Length(min=1, max=50)])
+        name = StringField('Name', validators=[DataRequired(), Length(min=1, max=50)])
+        password = PasswordField('Password', validators=[DataRequired(), Length(min=1, max=50)])
+        confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message='Please enter the same password again')])
+        building_number = StringField('Building Number', validators=[DataRequired(), Length(min=1, max=30)])
+        street = StringField('Street', validators=[DataRequired(), Length(min=1, max=30)])
+        city = StringField('City', validators=[DataRequired(), Length(min=1, max=30)])
+        state = StringField('State', validators=[DataRequired(), Length(min=1, max=30)])
+        phone_number = IntegerField('Phone Number', validators=[DataRequired()])
+        passport_number = StringField('Passport Number', validators=[DataRequired(), Length(min=1, max=30)])
+        passport_expiration = DateField('Passport Expiration', validators=[DataRequired()])
+        passport_country = StringField('Passport Country', validators=[DataRequired(), Length(min=1, max=50)])
+        date_of_birth = DateField('Date of Birth', validators=[DataRequired()])
+        submit = SubmitField('Customer Sign Up')
 
+    form = CustomerRegistrationForm()
     if form.validate_on_submit():
         email = form.email.data
         name = form.name.data
@@ -101,10 +134,18 @@ def register_customer():
 
     return render_template('register_customer.html', title='Register as Customer', form=form)
 
-
-@app.route('/register_agent', methods=['GET', 'POST'])
+# define route for agent registration
+@app.route('/agent_registration', methods=['GET', 'POST'])
 def register_agent():
-    form = forms.BookingAgentRegistrationForm()
+
+    class BookingAgentRegistrationForm(FlaskForm):
+        email = StringField('Email', validators=[DataRequired(), Email(), Length(min=1, max=50)])
+        password = PasswordField('Password', validators=[DataRequired(), Length(min=1, max=50)])
+        confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message='Please type your password again')])
+        booking_agent_id = IntegerField('Booking Agent ID', validators=[DataRequired()])  # how to set length to be 11?
+        submit = SubmitField('Booking Agent Sign Up')
+
+    form = BookingAgentRegistrationForm()
     if form.validate_on_submit():
         email = form.email.data
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -136,10 +177,20 @@ def register_agent():
 
     return render_template('register_agent.html', title='Register as Agent', form=form)
 
-
-@app.route('/register_airline_staff', methods=['GET', 'POST'])
+# define route for airline staff registration
+@app.route('/staff_registration', methods=['GET', 'POST'])
 def register_airline_staff():
-    form = forms.StaffRegistrationForm()
+    class StaffRegistrationForm(FlaskForm):
+        user_name = StringField('User Name', validators=[DataRequired(), Length(min=1, max=50)])
+        password = PasswordField('Password', validators=[DataRequired(), Length(min=1, max=50)])
+        confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message='Please type your password again')])
+        first_name = StringField('First Name', validators=[DataRequired(), Length(min=1, max=50)])
+        last_name = StringField('Last Name', validators=[DataRequired(), Length(min=1, max=50)])
+        date_of_birth = DateField('Date of Birth', validators=[DataRequired()])
+        airline_name = StringField('Airline Name', validators=[DataRequired(), Length(min=1, max=50)])
+        submit = SubmitField('Staff Sign Up')
+
+    form = StaffRegistrationForm()
     if form.validate_on_submit():
         user_name = form.user_name.data
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -166,15 +217,21 @@ def register_airline_staff():
 
     return render_template('register_airline_staff.html', title='Register as Airline Staff', form=form)
 
-
+# define route for login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     return render_template('login.html')
 
-
+# define route for customer login
 @app.route('/login_customer', methods=['GET', 'POST'])
 def login_customer():
-    form = forms.CustomerLoginForm()
+
+    class CustomerLoginForm(FlaskForm):
+        email = StringField('Email', validators=[DataRequired(), Email(), Length(min=1, max=50)])
+        password = PasswordField('Password', validators=[DataRequired(), Length(min=1, max=50)])
+        submit = SubmitField('Login')
+    
+    form = CustomerLoginForm()
     if form.validate_on_submit():
         email = form.email.data
         password = form.password.data
@@ -200,10 +257,16 @@ def login_customer():
 
     return render_template('login_customer.html', title='Login as Customer', form=form)
 
-
+# define route for agent login
 @app.route('/login_agent', methods=['GET', 'POST'])
 def login_agent():
-    form = forms.BookingAgentLoginForm()
+    
+    class BookingAgentLoginForm(FlaskForm):
+        email = StringField('Email', validators=[DataRequired(), Email(), Length(min=1, max=50)])
+        password = PasswordField('Password', validators=[DataRequired(), Length(min=1, max=50)])
+        submit = SubmitField('Login')
+    
+    form = BookingAgentLoginForm()
     if form.validate_on_submit():
         email = form.email.data
         password = form.password.data
@@ -230,10 +293,15 @@ def login_agent():
 
     return render_template('login_agent.html', title='Login as Agent', form=form)
 
-
-@app.route('/login_airline_staff', methods=['GET', 'POST'])
+# define route for airline staff login
+@app.route('/login_staff', methods=['GET', 'POST'])
 def login_airline_staff():
-    form = forms.StaffLoginForm()
+    class StaffLoginForm(FlaskForm):
+        user_name = StringField('User Name', validators=[DataRequired(), Length(min=1, max=50)])
+        password = PasswordField('Password', validators=[DataRequired(), Length(min=1, max=50)])
+        submit = SubmitField('Login')
+
+    form = StaffLoginForm()
     if form.validate_on_submit():
         user_name = form.user_name.data
         password = form.password.data
@@ -278,7 +346,7 @@ def login_airline_staff():
 
     return render_template('login_airline_staff.html', title='Login as Airline Staff', form=form)
 
-
+# define route for logout
 @app.route('/logout')
 def logout():
     session.pop('email', None)
@@ -293,6 +361,12 @@ def logout():
 
 @app.route('/dashboard_customer', methods=['GET', 'POST'])
 def dashboard_customer():
+
+    class CustomerSpendingForm(FlaskForm):
+        start_date = DateField('Start Date', validators=[])
+        end_date = DateField('End Date', validators=[])
+        submit = SubmitField('Search')
+
     # display purchased flight info
     cursor = conn.cursor()
     query = f"SELECT * FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE customer_email = '{session['email']}'"
@@ -300,10 +374,8 @@ def dashboard_customer():
     purchased_flights = cursor.fetchall()
     cursor.close()
 
-    print(purchased_flights)
-
     # track customer spending
-    form_customer_spending = forms.CustomerSpendingForm()
+    form_customer_spending = CustomerSpendingForm()
     start_date = datetime.date.today() - relativedelta(years=1) if form_customer_spending.start_date.data==None else form_customer_spending.start_date.data
     end_date = datetime.date.today() if form_customer_spending.end_date.data==None else form_customer_spending.end_date.data
 
@@ -312,8 +384,6 @@ def dashboard_customer():
     cursor.execute(query)
     customer_spending = cursor.fetchall()
     cursor.close()
-
-    print(customer_spending)
 
     spending_date_dic = {}
     for row in customer_spending:
@@ -334,16 +404,20 @@ def dashboard_customer():
 
 @app.route('/dashboard_agent', methods=['GET', 'POST'])
 def dashboard_agent():
+    class CustomerSpendingForm(FlaskForm):
+        start_date = DateField('Start Date', validators=[])
+        end_date = DateField('End Date', validators=[])
+        submit = SubmitField('Search')
+
     # display purchased flight info
     cursor = conn.cursor()
     query = f"SELECT * FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE booking_agent_id = '{session['agent_id']}'"
     cursor.execute(query)
     purchased_flights = cursor.fetchall()
     cursor.close()
-    print(purchased_flights)
 
     # track customer spending
-    form_customer_spending = forms.CustomerSpendingForm()
+    form_customer_spending = CustomerSpendingForm()
     start_date = datetime.date.today() - relativedelta(years=1) if form_customer_spending.start_date.data==None else form_customer_spending.start_date.data
     end_date = datetime.date.today() if form_customer_spending.end_date.data==None else form_customer_spending.end_date.data
 
@@ -353,7 +427,6 @@ def dashboard_agent():
     customer_spending = cursor.fetchall()
     cursor.close()
 
-    print(customer_spending)
 
     spending_date_dic = {}
     for row in customer_spending:
@@ -373,15 +446,59 @@ def dashboard_agent():
 
 
 
-@app.route('/dashboard_airline_staff', methods=['GET', 'POST'])
+@app.route('/dashboard_staff', methods=['GET', 'POST'])
 def dashboard_airline_staff():
-    airline_staff_search_form = forms.AirlineStaffSearchForm()
-    add_airplane_form = forms.AddAirplaneForm()
-    add_airport_form = forms.AddAirportForm()
-    change_flight_status_form = forms.ChangeFlightStatusForm()
-    grant_new_permission_form = forms.GrantNewPermissionForm()
-    add_booking_agent_to_airline_form = forms.AddBookingAgentToAirlineForm()
-    create_flight_form = forms.CreateFlightForm()
+    class AddAirplaneForm(FlaskForm):
+        identifier = StringField('Identifier')
+        airplane_id = IntegerField('Airplane ID', validators=[DataRequired()])
+        seats = IntegerField('Seats', validators=[DataRequired()])
+        submit = SubmitField('Add')
+    class AddAirportForm(FlaskForm):
+        identifier = StringField('Identifier')
+        airport_name = StringField('Airport Name', validators=[DataRequired(), Length(min=1, max=50)])
+        airport_city = StringField('Airport City', validators=[DataRequired(), Length(min=1, max=50)])
+        submit = SubmitField('Add')
+    class AirlineStaffSearchForm(FlaskForm):
+        identifier = StringField('Identifier')
+        start_time = DateField('Start Time', validators=[])
+        end_time = DateField('End Time', validators=[])
+        departure_place = StringField('Departure Airport/City', validators=[])
+        arrival_place = StringField('Arrival Airport/City', validators=[])
+        submit = SubmitField('Search Flight')
+    class GrantNewPermissionForm(FlaskForm):
+        identifier = StringField('Identifier')
+        email = StringField('Email', validators=[DataRequired(), Email(), Length(min=1, max=50)])
+        permission = SelectField('Permission', choices=['Operator', 'Admin'])
+        submit = SubmitField('Grant Permission')
+
+    class AddBookingAgentToAirlineForm(FlaskForm):
+        identifier = StringField('Identifier')
+        email = StringField('Email', validators=[DataRequired(), Email(), Length(min=1, max=50)])
+        submit = SubmitField('Add Booking Agent to Airline')
+    class ChangeFlightStatusForm(FlaskForm):
+        identifier = StringField('Identifier')
+        flight_num = IntegerField('Flight Number', validators=[DataRequired()])
+        status = SelectField('New Status', choices=['', 'upcoming', 'in_progress', 'delayed'])
+        submit = SubmitField('Submit Change')
+    
+    class CreateFlightForm(FlaskForm):
+        flight_num = IntegerField('Flight Number', validators=[DataRequired()])
+        departure_airport = StringField('Departure Airport', validators=[DataRequired(), Length(min=1, max=50)])
+        departure_time = DateTimeField('Departure Time', validators=[DataRequired()])
+        arrival_airport = StringField('Arrival Airport', validators=[DataRequired(), Length(min=1, max=50)])
+        arrival_time = DateTimeField('Arrival Time', validators=[DataRequired()])
+        price = IntegerField('Price', validators=[DataRequired()])
+        status = SelectField('Status', choices=['upcoming', 'in_progress', 'delayed'])
+        airplane_id = IntegerField('Airplane ID', validators=[DataRequired()])
+        submit = SubmitField('Create')
+    
+    airline_staff_search_form = AirlineStaffSearchForm()
+    add_airplane_form = AddAirplaneForm()
+    add_airport_form = AddAirportForm()
+    change_flight_status_form = ChangeFlightStatusForm()
+    grant_new_permission_form = GrantNewPermissionForm()
+    add_booking_agent_to_airline_form = AddBookingAgentToAirlineForm()
+    create_flight_form = CreateFlightForm()
 
     # handle the search flight form
     departure_place = '' if airline_staff_search_form.departure_place.data is None else airline_staff_search_form.departure_place.data
@@ -611,6 +728,7 @@ def dashboard_airline_staff():
                            add_booking_agent_to_airline_form=add_booking_agent_to_airline_form,
                            create_flight_form=create_flight_form)
 
+# define route for view customer
 @app.route('/view_customer/<flight_num>', methods=['GET', 'POST'])
 def view_customer(flight_num):
     cursor = conn.cursor()
@@ -689,6 +807,7 @@ def view_customer(flight_num):
 
 #     return render_template('create_flight.html', create_flight_form=create_flight_form)
 
+# define route for view all booking agents
 @app.route('/view_all_booking_agents', methods=['GET', 'POST'])
 def view_all_booking_agents():
     # 获取过去一个月内此航空公司基于售票数量的前5名预订代理
@@ -794,6 +913,7 @@ def view_all_booking_agents():
 
 #     return render_template('view_all_booking_agents.html', top_5_agents_past_month=json.dumps(top_5_agents_past_month), top_5_agents_past_year=json.dumps(top_5_agents_past_year), top_5_agents_commission_past_year=json.dumps(top_5_agents_commission_past_year), booking_agents=booking_agents)
 
+# define route for view frequent customers in the airline
 @app.route('/frequent_customers', methods=['GET', 'POST'])
 def frequent_customers():
     # get customers sorted by number of tickets purchased in the past year
@@ -803,10 +923,9 @@ def frequent_customers():
     cursor.execute(query)
     customers = cursor.fetchall()
     cursor.close()
-    print(customers)
     return render_template('frequent_customers.html', customers=customers)
 
-
+# define route for view ticket
 @app.route('/view_customer_tickets/<customer_email>', methods=['GET', 'POST'])
 def view_customer_tickets(customer_email):
     # get all tickets purchased by this customer
@@ -815,13 +934,18 @@ def view_customer_tickets(customer_email):
     cursor.execute(query)
     tickets = cursor.fetchall()
     cursor.close()
-    print(tickets)
     return render_template('view_customer_tickets.html', tickets=tickets, customer_email=customer_email)
 
-
+# define route for view reports
 @app.route('/view_reports', methods=['GET', 'POST'])
 def view_reports():
-    form_view_ticket_reports = forms.ViewTicketReportsForm()
+    class ViewTicketReportsForm(FlaskForm):
+        identifier = StringField('Identifier')
+        start_date = DateField('Start Date', validators=[])
+        end_date = DateField('End Date', validators=[])
+        submit = SubmitField('View Reports')
+
+    form_view_ticket_reports = ViewTicketReportsForm()
     # Total amounts of ticket sold based on range of dates
     # Month wise tickets sold in a bar chart
     start_date = datetime.date.today() - relativedelta(years=1) if form_view_ticket_reports.start_date.data == None else form_view_ticket_reports.start_date.data
@@ -863,8 +987,6 @@ def view_compare_revenue():
     if direct_sales_past_month is None:
         direct_sales_past_month = 0
     cursor.close()
-    print(direct_sales_past_month)
-
     # get total revenue from direct sales in the past year
     cursor = conn.cursor()
     query = f"SELECT SUM(price) AS revenue FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE airline_name = '{session['airline']}' AND purchase_date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR ) AND booking_agent_id IS NULL"
@@ -873,7 +995,6 @@ def view_compare_revenue():
     if direct_sales_past_year is None:
         direct_sales_past_year = 0
     cursor.close()
-    print(direct_sales_past_year)
 
     # get total revenue from indirect sales in the past month
     cursor = conn.cursor()
@@ -883,7 +1004,6 @@ def view_compare_revenue():
     if indirect_sales_past_month is None:
         indirect_sales_past_month = 0
     cursor.close()
-    print(indirect_sales_past_month)
 
     # get total revenue from indirect sales in the past year
     cursor = conn.cursor()
@@ -893,7 +1013,6 @@ def view_compare_revenue():
     if indirect_sales_past_year is None:
         indirect_sales_past_year = 0
     cursor.close()
-    print(indirect_sales_past_year)
 
     return render_template('view_compare_revenue.html', direct_sales_revenue_past_month=direct_sales_past_month, direct_sales_revenue_past_year=direct_sales_past_year, indirect_sales_revenue_past_month=indirect_sales_past_month, indirect_sales_revenue_past_year=indirect_sales_past_year)
 
@@ -905,7 +1024,6 @@ def view_top_destinations():
     cursor.execute(query)
     top_destinations_past_month = cursor.fetchall()
     cursor.close()
-    print(top_destinations_past_month)
 
     # get top 3 destinations in the past year
     cursor = conn.cursor()
@@ -913,11 +1031,10 @@ def view_top_destinations():
     cursor.execute(query)
     top_destinations_past_year = cursor.fetchall()
     cursor.close()
-    print(top_destinations_past_year)
-
     return render_template('view_top_destinations.html', top_destinations_past_month=top_destinations_past_month, top_destinations_past_year=top_destinations_past_year)
 
-@app.route('/view_all_customers', methods=['GET', 'POST'])
+
+@app.route('/view_top_customers', methods=['GET', 'POST'])
 def view_all_customers():
 
     # get top 5 customers based on number of tickets sales for the past 6 months
@@ -937,8 +1054,6 @@ def view_all_customers():
             temp_dic['customer_email'].append("Empty")
             temp_dic['num_tickets'].append(0)
     top_5_customers_past_month = temp_dic
-    print(top_5_customers_past_month)
-
     # get top 5 customers based on commission for the past year
     cursor = conn.cursor()
     query = f"SELECT customer_email, SUM(price) * 0.1 AS commission FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE booking_agent_id = '{session['agent_id']}' AND purchase_date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR ) GROUP BY customer_email ORDER BY commission DESC LIMIT 5"
@@ -956,14 +1071,20 @@ def view_all_customers():
             temp_dic['customer_email'].append("Empty")
             temp_dic['commission'].append(0)
     top_5_commissions_past_year = temp_dic
-    print(top_5_commissions_past_year)
 
 
     return render_template('view_all_customers.html', top_5_customers_past_month=json.dumps(top_5_customers_past_month), top_5_commissions_past_year=json.dumps(top_5_commissions_past_year))
 
+
 @app.route('/view_commissions', methods=['GET', 'POST'])
 def view_commissions():
-    form_view_commissions_reports = forms.ViewCommissionsForm()
+    class ViewCommissionsForm(FlaskForm):
+        identifier = StringField('Identifier')
+        start_date = DateField('Start Date', validators=[])
+        end_date = DateField('End Date', validators=[])
+        submit = SubmitField('View Reports')
+
+    form_view_commissions_reports = ViewCommissionsForm()
     # Total amounts of ticket sold based on range of dates
     # Month wise tickets sold in a bar chart
     start_date = datetime.date.today() - relativedelta(month=1) if form_view_commissions_reports.start_date.data == None else form_view_commissions_reports.start_date.data
@@ -986,21 +1107,28 @@ def view_commissions():
         commissions_avg = None
         commissions_sum = 0
 
-    print(ticket_num,commissions_sum, commissions_avg)
     return render_template('view_commissions.html', form_view_commissions_reports=form_view_commissions_reports, ticket_num = ticket_num,commissions_sum = commissions_sum, commissions_avg = commissions_avg)
 
 
 @app.route('/purchase/<flight_num>', methods=['GET', 'POST'])
 def purchase(flight_num):
+    class PurchaseCus(FlaskForm):
+        customer = StringField('Your Email', validators=[])
+        submit = SubmitField('Purchase')
+    class PurchaseAgen(FlaskForm):
+        customer = StringField('Email of your customer', validators=[DataRequired(), Email(), Length(min=1, max=50)])
+        agent = StringField('Agent_ID', validators=[])
+        submit = SubmitField('Purchase')
+
     if 'status' not in session:
         return redirect(url_for('home'))
     else:
         if session['status'] == 'customer':
             status = 'customer'
-            form = forms.PurchaseCus()
+            form = PurchaseCus()
         elif session['status'] == 'agent':
             status = 'agent'
-            form = forms.PurchaseAgen()
+            form = PurchaseAgen()
         else:
             return redirect(url_for('home'))
     #get flight info
@@ -1032,7 +1160,6 @@ def purchase(flight_num):
     cursor.execute(query)
     all = cursor.fetchone()
     cursor.close()
-    print("hello?")
     if form.validate_on_submit():
         
         #updating seat info
@@ -1055,14 +1182,12 @@ def purchase(flight_num):
         cursor.execute(query)
         all = cursor.fetchone()
         cursor.close()
-        print("submittingggggg")
         if session['status'] == 'customer':
             form.customer.data = customer = session['email']
             agent = None
         else:
             customer = form.customer.data
             form.agent.data = agent = session['agent_id']
-            print(agent)
 
         cursor = conn.cursor()
         query_find_avil_ticket = "SELECT * FROM ticket AS t WHERE flight_num = '{}' and not exists \
@@ -1086,7 +1211,6 @@ def purchase(flight_num):
                 cursor.execute(query_find_airline.format(agent,airline_name))
                 work_for = cursor.fetchall()
 
-                print(work_for)
 
             #make sure customer correct
             cursor = conn.cursor()
