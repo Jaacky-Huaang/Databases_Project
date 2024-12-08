@@ -29,12 +29,12 @@
     <!-- Navigation Tabs -->
     <ul class="nav nav-tabs" id="flightTab" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="upcoming-flights-tab" data-bs-toggle="tab" data-bs-target="#upcoming-flights" type="button" role="tab" aria-controls="upcoming-flights" aria-selected="true">
+            <button class="nav-link {% if active_tab == '#upcoming-flights' or not active_tab %}active{% endif %}" id="upcoming-flights-tab" data-bs-toggle="tab" data-bs-target="#upcoming-flights" type="button" role="tab" aria-controls="upcoming-flights" aria-selected="true">
                 Find Upcoming Flights
             </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="flight-status-tab" data-bs-toggle="tab" data-bs-target="#flight-status-tab-pane" type="button" role="tab" aria-controls="flight-status-tab-pane" aria-selected="false">
+            <button class="nav-link {% if active_tab == '#flight-status-tab-pane' %}active{% endif %}" id="flight-status-tab" data-bs-toggle="tab" data-bs-target="#flight-status-tab-pane" type="button" role="tab" aria-controls="flight-status-tab-pane" aria-selected="false">
                 Flight Status
             </button>
         </li>
@@ -42,10 +42,11 @@
 
     <div class="tab-content mt-4" id="flightTabContent">
         <!-- Upcoming Flights Tab -->
-        <div class="tab-pane fade show active" id="upcoming-flights" role="tabpanel" aria-labelledby="upcoming-flights-tab">
+        <div class="tab-pane fade {% if active_tab == '#upcoming-flights' or not active_tab %}show active{% endif %}" id="upcoming-flights" role="tabpanel" aria-labelledby="upcoming-flights-tab">
             <section id="search-flights">
                 <form method="POST" action="" id="upcoming_flight_form">
                     {{ form_upcoming_flight.hidden_tag() }}
+                    <input type="hidden" name="active_tab" id="active_tab_upcoming" value="#upcoming-flights">
                     <fieldset>
                         <legend class="mb-3">Find Upcoming Flights</legend>
                         <div class="form-group">
@@ -107,11 +108,12 @@
         </div>
 
         <!-- Flight Status Tab -->
-        <div class="tab-pane fade" id="flight-status-tab-pane" role="tabpanel" aria-labelledby="flight-status-tab">
+        <div class="tab-pane fade {% if active_tab == '#flight-status-tab-pane' %}show active{% endif %}" id="flight-status-tab-pane" role="tabpanel" aria-labelledby="flight-status-tab">
             <section id="flight-status" class="mt-3">
                 <div class="col-12 col-md-10 col-lg-8 mx-auto">
                     <form method="POST" action="">
                         {{ form_flight_status.hidden_tag() }}
+                        <input type="hidden" name="active_tab" id="active_tab_status" value="#flight-status-tab-pane">
                         <fieldset>
                             <legend class="mb-3">Check Flight Status</legend>
                             <div class="row">
@@ -188,7 +190,24 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', (event) => {
+  const activeTabUpcoming = document.getElementById('active_tab_upcoming');
+  const activeTabStatus = document.getElementById('active_tab_status');
+
+  document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tabButton => {
+    tabButton.addEventListener('shown.bs.tab', (e) => {
+      const activeTabId = e.target.getAttribute('data-bs-target');
+      if (activeTabId === '#upcoming-flights') {
+        activeTabUpcoming.value = '#upcoming-flights';
+      } else if (activeTabId === '#flight-status-tab-pane') {
+        activeTabStatus.value = '#flight-status-tab-pane';
+      }
+    });
+  });
+});
+</script>
 {% endblock content %}
 
 {% block extra_content %}{% endblock extra_content %}
-

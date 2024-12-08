@@ -25,9 +25,7 @@ def home():
         cursor.execute(query_upcoming_flight)
         search_result = cursor.fetchall()
         cursor.close()
-        if len(search_result) == 0:
-            flash('No flight found', 'danger')
-        else:
+        if len(search_result) != 0:
             return redirect(url_for('upcoming_flight', search_result=json.dumps(search_result, default=str)))
 
     form_flight_status = forms.PublicSearchFlightStatusForm()
@@ -36,7 +34,7 @@ def home():
     arrival_time = '' if form_flight_status.arrival_time.data==None else form_flight_status.arrival_time.data
     cursor = conn.cursor()
     print(flight_number, departure_time, arrival_time)
-    query_flight_status = f'SELECT * FROM flight WHERE flight_num LIKE "%{flight_number}%" AND departure_time LIKE "%{departure_time}%" AND arrival_time LIKE "%{arrival_time}%" AND status = "upcoming"'
+    query_flight_status = f'SELECT * FROM flight WHERE flight_num LIKE "%{flight_number}%" AND departure_time LIKE "%{departure_time}%" AND arrival_time LIKE "%{arrival_time}%"'
     cursor.execute(query_flight_status)
     status_search_result = cursor.fetchall()
     cursor.close()
