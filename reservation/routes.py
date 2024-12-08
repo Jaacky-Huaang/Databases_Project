@@ -3,26 +3,17 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, DateField, DateTimeField, SelectField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, NumberRange
 from reservation import app, conn, bcrypt
-# import reservation.forms as forms
+import reservation.forms as forms
 import json
 import datetime
 from dateutil.relativedelta import relativedelta
-
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home', methods=['GET', 'POST'])
 def home():
     # public search
-    class PublicSearchUpcomingFlightForm(FlaskForm):
-        departure_place = StringField('Departure Airport/City', validators=[])
-        arrival_place = StringField('Arrival Airport/City', validators=[])
-
-        # Maybe DateTimeField?
-        departure_time = StringField('Departure Time', validators=[])
-        arrival_time = StringField('Arrival Time', validators=[])
-        submit = SubmitField('Search')
-    
-    form_upcoming_flight = PublicSearchUpcomingFlightForm()
+    active_tab = request.form.get('active_tab', '#upcoming-flights')
+    form_upcoming_flight = forms.PublicSearchUpcomingFlightForm()
     if form_upcoming_flight.validate_on_submit():
         departure_place = form_upcoming_flight.departure_place.data
         arrival_place = form_upcoming_flight.arrival_place.data
@@ -30,7 +21,7 @@ def home():
         arrival_time = form_upcoming_flight.arrival_time.data
 
         cursor = conn.cursor()
-        query_upcoming_flight = f'SELECT * FROM flight F LEFT JOIN airport A1 ON F.departure_airport = A1.airport_name LEFT JOIN airport A2 ON F.arrival_airport = A2.airport_name NATURAL JOIN airplane P WHERE (A1.airport_name LIKE "%{departure_place}%" OR A1.airport_city LIKE "%{departure_place}%") AND (A2.airport_name LIKE "%{arrival_place}%" OR A2.airport_city LIKE "%{arrival_place}%") AND F.departure_time LIKE "%{departure_time}%" AND F.arrival_time LIKE "%{arrival_time}%"'
+        query_upcoming_flight = f'SELECT * FROM flight F LEFT JOIN airport A1 ON F.departure_airport = A1.airport_name LEFT JOIN airport A2 ON F.arrival_airport = A2.airport_name NATURAL JOIN airplane P WHERE (A1.airport_name LIKE "%{departure_place}%" OR A1.airport_city LIKE "%{departure_place}%") AND (A2.airport_name LIKE "%{arrival_place}%" OR A2.airport_city LIKE "%{arrival_place}%") AND F.departure_time LIKE "%{departure_time}%" AND F.arrival_time LIKE "%{arrival_time}%" AND F.status = "upcoming"'
         cursor.execute(query_upcoming_flight)
         search_result = cursor.fetchall()
         cursor.close()
@@ -39,23 +30,66 @@ def home():
         else:
             return redirect(url_for('upcoming_flight', search_result=json.dumps(search_result, default=str)))
 
-    class PublicSearchFlightStatusForm(FlaskForm):
-        flight_number = IntegerField('Flight Number', validators=[])
-        departure_time = StringField('Departure Time', validators=[])
-        arrival_time = StringField('Arrival Time', validators=[])
-        submit = SubmitField('Search')
-    
-    form_flight_status = PublicSearchFlightStatusForm()
+    form_flight_status = forms.PublicSearchFlightStatusForm()
     flight_number = '' if form_flight_status.flight_number.data==None else form_flight_status.flight_number.data
     departure_time = '' if form_flight_status.departure_time.data==None else form_flight_status.departure_time.data
     arrival_time = '' if form_flight_status.arrival_time.data==None else form_flight_status.arrival_time.data
     cursor = conn.cursor()
-    query_flight_status = f'SELECT * FROM flight WHERE flight_num LIKE "%{flight_number}%" AND departure_time LIKE "%{departure_time}%" AND arrival_time LIKE "%{arrival_time}%"'
+    print(flight_number, departure_time, arrival_time)
+    query_flight_status = f'SELECT * FROM flight WHERE flight_num LIKE "%{flight_number}%" AND departure_time LIKE "%{departure_time}%" AND arrival_time LIKE "%{arrival_time}%" AND status = "upcoming"'
     cursor.execute(query_flight_status)
     status_search_result = cursor.fetchall()
     cursor.close()
 
-    return render_template('index.html', form_upcoming_flight=form_upcoming_flight, form_flight_status=form_flight_status, status_search_result=status_search_result)
+    return render_template('index.html', active_tab=active_tab,
+                           form_upcoming_flight=form_upcoming_flight, form_flight_status=form_flight_status, status_search_result=status_search_result)
+# @app.route('/', methods=['GET', 'POST'])
+# @app.route('/home', methods=['GET', 'POST'])
+# def home():
+#     # public search
+#     class PublicSearchUpcomingFlightForm(FlaskForm):
+#         departure_place = StringField('Departure Airport/City', validators=[])
+#         arrival_place = StringField('Arrival Airport/City', validators=[])
+
+#         # Maybe DateTimeField?
+#         departure_time = StringField('Departure Time', validators=[])
+#         arrival_time = StringField('Arrival Time', validators=[])
+#         submit = SubmitField('Search')
+    
+#     form_upcoming_flight = PublicSearchUpcomingFlightForm()
+#     if form_upcoming_flight.validate_on_submit():
+#         departure_place = form_upcoming_flight.departure_place.data
+#         arrival_place = form_upcoming_flight.arrival_place.data
+#         departure_time = form_upcoming_flight.departure_time.data
+#         arrival_time = form_upcoming_flight.arrival_time.data
+
+#         cursor = conn.cursor()
+#         query_upcoming_flight = f'SELECT * FROM flight F LEFT JOIN airport A1 ON F.departure_airport = A1.airport_name LEFT JOIN airport A2 ON F.arrival_airport = A2.airport_name NATURAL JOIN airplane P WHERE (A1.airport_name LIKE "%{departure_place}%" OR A1.airport_city LIKE "%{departure_place}%") AND (A2.airport_name LIKE "%{arrival_place}%" OR A2.airport_city LIKE "%{arrival_place}%") AND F.departure_time LIKE "%{departure_time}%" AND F.arrival_time LIKE "%{arrival_time}%" AND F.status = "upcoming"'
+#         cursor.execute(query_upcoming_flight)
+#         search_result = cursor.fetchall()
+#         cursor.close()
+#         if len(search_result) == 0:
+#             flash('No flight found', 'danger')
+#         else:
+#             return redirect(url_for('upcoming_flight', search_result=json.dumps(search_result, default=str)))
+
+#     class PublicSearchFlightStatusForm(FlaskForm):
+#         flight_number = IntegerField('Flight Number', validators=[])
+#         departure_time = StringField('Departure Time', validators=[])
+#         arrival_time = StringField('Arrival Time', validators=[])
+#         submit = SubmitField('Search')
+    
+#     form_flight_status = PublicSearchFlightStatusForm()
+#     flight_number = '' if form_flight_status.flight_number.data==None else form_flight_status.flight_number.data
+#     departure_time = '' if form_flight_status.departure_time.data==None else form_flight_status.departure_time.data
+#     arrival_time = '' if form_flight_status.arrival_time.data==None else form_flight_status.arrival_time.data
+#     cursor = conn.cursor()
+#     query_flight_status = f'SELECT * FROM flight WHERE flight_num LIKE "%{flight_number}%" AND departure_time LIKE "%{departure_time}%" AND arrival_time LIKE "%{arrival_time}%"'
+#     cursor.execute(query_flight_status)
+#     status_search_result = cursor.fetchall()
+#     cursor.close()
+
+#     return render_template('index.html', form_upcoming_flight=form_upcoming_flight, form_flight_status=form_flight_status, status_search_result=status_search_result)
 
 
 # Define route for searching upcoming flight
@@ -525,9 +559,10 @@ def dashboard_airline_staff():
 
         # check whether the airplane exists
         cursor = conn.cursor()
-        query = "SELECT * FROM airplane WHERE airplane_id = '{}'"
-        cursor.execute(query.format(airplane_id))
+        query = "SELECT * FROM airplane WHERE airplane_id = '{}' AND airline_name = '{}'"
+        cursor.execute(query.format(airplane_id, session['airline']))
         data = cursor.fetchone()
+        print(data)
         cursor.close()
         if data:
             flash('The airplane already exists!', 'danger')
